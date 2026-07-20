@@ -1,4 +1,11 @@
-/* src/features/panel/panel.css - Estilos Máster Pro para la Ventana Nativa Panel (100% vh/vw) */
+/* src/features/panel/panel.css - Estilos Master de la Ventana Nativa Panel (Fondo 100% Sólido Opaco) */
+
+:root {
+  --bg-card: #0f172a;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-sub: #94a3b8;
+}
 
 html, body {
   margin: 0;
@@ -6,103 +13,78 @@ html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: transparent !important;
+  font-family: var(--ff_O, 'Outfit', sans-serif);
+  background: #090d16 !important;
+  color: var(--text-main);
   user-select: none;
-  font-family: var(--font-family, 'Outfit', sans-serif);
 }
 
 .panel_app_wrapper {
-  width: 100vw;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-main, #0b1120);
+  width: 100vw;
+  height: 100vh;
   box-sizing: border-box;
   overflow: hidden;
+  background-color: #090d16;
+  background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.12), transparent 45%),
+                    radial-gradient(circle at bottom left, rgba(14, 190, 255, 0.12), transparent 45%);
 }
 
-/* --- HEADER ESPECIAL PRO DEL PANEL --- */
+/* --- HEADER SUPERIOR NATIVO DE LA VENTANA --- */
 .panel_header {
-  height: 48px;
-  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  background: var(--bg-header, rgba(15, 23, 42, 0.9));
-  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-  cursor: grab;
-}
-
-.panel_header:active {
-  cursor: grabbing;
+  padding: 8px 14px;
+  background: #0d1322;
+  border-bottom: 1px solid var(--border-color);
+  -webkit-app-region: drag;
 }
 
 .panel_header_left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .panel_logo_box {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .panel_logo_img {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   object-fit: cover;
-  box-shadow: 0 0 12px var(--primary-glow, rgba(99, 102, 241, 0.4));
 }
 
 .panel_header_meta {
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
 
 .panel_header_title {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-main, #f8fafc);
+  font-weight: 700;
+  color: var(--text-main);
   letter-spacing: 0.3px;
-}
-
-.panel_header_status {
-  font-size: 11px;
-  color: var(--text-sub, #94a3b8);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pulse_dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--mco, #10b981);
-  box-shadow: 0 0 8px var(--mco, #10b981);
-  animation: pulseDot 2s infinite;
-}
-
-@keyframes pulseDot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.6; }
 }
 
 .panel_header_right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  -webkit-app-region: no-drag;
 }
 
 .panel_win_divider {
   width: 1px;
-  height: 16px;
+  height: 14px;
   background: rgba(255, 255, 255, 0.15);
   margin: 0 4px;
 }
@@ -110,21 +92,21 @@ html, body {
 .panel_win_btn {
   background: transparent;
   border: none;
-  color: var(--text-sub, #94a3b8);
-  width: 32px;
-  height: 32px;
+  color: var(--text-sub);
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s ease;
+  font-size: 12px;
+  transition: all 0.15s ease;
 }
 
 .panel_win_btn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: var(--text-main, #ffffff);
+  color: var(--text-main);
 }
 
 .panel_win_btn.close:hover {
@@ -136,7 +118,7 @@ html, body {
 .panel_body_layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 62% calc(38% - 16px);
+  grid-template-columns: 60% calc(40% - 16px);
   gap: 16px;
   padding: 12px 16px;
   box-sizing: border-box;
@@ -157,20 +139,22 @@ html, body {
   overflow: hidden;
 }
 
-/* --- COLUMNA DERECHA: RELOJ HERO (Estilo inicio/) --- */
+/* --- COLUMNA DERECHA: RELOJ HERO (Estilo Inicio Neón) --- */
 .panel_col_right {
   display: flex;
   flex-direction: column;
+  gap: 1.5vh;
   overflow: hidden;
+  height: 100%;
 }
 
 .reloj_hero_card {
   flex: 1;
-  background: var(--bg-card, rgba(15, 23, 42, 0.65));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: #0f172a;
+  border: 1px solid var(--border-color);
   border-left: 4px solid var(--cielo, #0EBEFF);
   border-radius: 12px;
-  padding: 18px 20px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -208,24 +192,26 @@ html, body {
   border: 1px solid rgba(14, 190, 255, 0.25);
 }
 
+/* RELOJ DIGITAL NEÓN GIGANTE EN UNA SOLA LÍNEA */
 .reloj_hero_clock {
-  font-size: 46px;
+  font-size: clamp(2.2rem, 3.4vw, 3rem);
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   color: var(--cielo, #0EBEFF);
   text-align: left;
-  margin: 12px 0;
+  margin: 16px 0;
   font-family: var(--ff_O, 'Outfit', sans-serif);
-  text-shadow: 0 0 22px rgba(14, 190, 255, 0.55);
+  text-shadow: 0 0 20px rgba(14, 190, 255, 0.55);
+  white-space: nowrap;
 }
 
 .reloj_hero_footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px dashed rgba(255, 255, 255, 0.1);
-  padding-top: 10px;
-  margin-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  padding-top: 12px;
+  margin-top: 12px;
 }
 
 .reloj_hero_date {
@@ -264,13 +250,13 @@ html, body {
 }
 
 .reloj_progress_container {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .reloj_progress_info {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-sub, #94a3b8);
   margin-bottom: 6px;
 }
@@ -278,7 +264,7 @@ html, body {
 .reloj_progress_bar {
   height: 6px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -286,22 +272,16 @@ html, body {
 .reloj_progress_fill {
   height: 100%;
   width: var(--progreso-pct, 0%);
-  background: linear-gradient(90deg, var(--primary, #6366f1), var(--mco, #10b981));
+  background: linear-gradient(90deg, var(--cielo, #0EBEFF), var(--mco, #10b981));
   border-radius: 3px;
   transition: width 0.5s ease;
 }
 
-/* --- COLUMNA DERECHA: HORARIO & AGENDA --- */
-.panel_col_right {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
+/* --- HORARIO CARD (COLUMNA IZQUIERDA) --- */
 .horario_card {
   flex: 1;
-  background: var(--bg-card, rgba(15, 23, 42, 0.6));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: #0f172a;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -310,10 +290,9 @@ html, body {
   overflow: hidden;
 }
 
-/* Banner de Actividad Actual */
 .horario_current_banner {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(16, 185, 129, 0.12));
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(14, 190, 255, 0.15), rgba(16, 185, 129, 0.15));
+  border: 1px solid rgba(14, 190, 255, 0.35);
   border-radius: 10px;
   padding: 10px 14px;
   display: flex;
@@ -324,7 +303,7 @@ html, body {
 
 .current_live_tag {
   font-size: 11px;
-  color: var(--mco, #34d399);
+  color: var(--cielo, #0EBEFF);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -332,6 +311,14 @@ html, body {
   align-items: center;
   gap: 6px;
   margin-bottom: 2px;
+}
+
+.live_dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cielo, #0EBEFF);
+  box-shadow: 0 0 8px var(--cielo, #0EBEFF);
 }
 
 .current_banner_title {
@@ -347,8 +334,8 @@ html, body {
 }
 
 .current_time_badge {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: rgba(14, 190, 255, 0.25);
+  color: var(--cielo, #0EBEFF);
   font-size: 11px;
   font-weight: 600;
   padding: 3px 8px;
@@ -377,10 +364,11 @@ html, body {
 
 .horario_filter_tabs {
   display: flex;
-  background: rgba(15, 23, 42, 0.6);
+  background: #0b1120;
   padding: 3px;
   border-radius: 8px;
   gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .horario_tab {
@@ -400,6 +388,48 @@ html, body {
   font-weight: 500;
 }
 
+/* --- BARRA DE DÍAS DE LA SEMANA --- */
+.horario_dias_bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+}
+.horario_dias_bar::-webkit-scrollbar {
+  display: none;
+}
+
+.dia_pill_btn {
+  background: #131c31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-sub, #94a3b8);
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dia_pill_btn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-main, #ffffff);
+}
+
+.dia_pill_btn.active {
+  background: var(--primary, #6366f1);
+  color: #ffffff;
+  border-color: var(--primary, #6366f1);
+  font-weight: 600;
+}
+
+.dia_pill_btn.is_today {
+  border-color: var(--mco, #10b981);
+}
+
 .horario_timeline {
   flex: 1;
   overflow-y: auto;
@@ -413,14 +443,14 @@ html, body {
   width: 5px;
 }
 .horario_timeline::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 
 .horario_item {
   display: flex;
   gap: 12px;
-  background: rgba(15, 23, 42, 0.4);
+  background: #131c31;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
   padding: 8px 12px;
@@ -428,13 +458,13 @@ html, body {
 }
 
 .horario_item:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.18);
   transform: translateY(-1px);
 }
 
 .horario_item.en_curso {
-  border-left: 4px solid var(--mco, #10b981);
-  background: rgba(16, 185, 129, 0.06);
+  border-left: 4px solid var(--cielo, #0EBEFF);
+  background: #0e1e36;
 }
 
 .horario_item.proximo {
@@ -443,93 +473,73 @@ html, body {
 
 .horario_item.completado {
   border-left: 4px solid #3b82f6;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .horario_item_time {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-width: 55px;
-  font-size: 12px;
+  align-items: center;
+  min-width: 50px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-sub, #94a3b8);
 }
 
-.time_sep {
-  opacity: 0.5;
-  font-size: 10px;
-}
-
 .horario_item_content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .horario_item_top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  justify-content: space-between;
 }
 
 .horario_categoria {
-  font-size: 11px;
-  color: var(--primary, #818cf8);
-  font-weight: 500;
+  font-size: 10px;
   text-transform: uppercase;
+  color: var(--text-sub, #94a3b8);
   letter-spacing: 0.5px;
 }
 
 .badge_estado {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 500;
-  display: flex;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
 }
 
 .badge_estado.en_curso {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
+  background: rgba(14, 190, 255, 0.2);
+  color: var(--cielo, #0EBEFF);
 }
 
 .badge_estado.proximo {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
 }
 
 .badge_estado.completado {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.15);
   color: #60a5fa;
 }
 
 .horario_item_title {
-  margin: 2px 0 4px 0;
-  font-size: 14px;
+  margin: 0;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-main, #f8fafc);
 }
 
-.horario_item_sub {
-  margin: 0;
-  font-size: 12px;
-  color: var(--text-sub, #94a3b8);
-}
-
 .horario_item_footer {
-  margin-top: 8px;
   font-size: 11px;
-  color: var(--text-sub, #94a3b8);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.horario_empty {
-  text-align: center;
-  padding: 40px 20px;
   color: var(--text-sub, #94a3b8);
 }

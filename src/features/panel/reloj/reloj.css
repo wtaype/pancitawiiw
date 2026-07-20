@@ -1,0 +1,143 @@
+/* src/features/panel/reloj/reloj.css - Reloj Hero Neón con font-size en vh masivo */
+
+.reloj_hero_card {
+  height: 55%;
+  min-height: 240px;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--cielo, #0EBEFF);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.reloj_hero_top_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.reloj_welcome_tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cielo, #0EBEFF);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.reloj_welcome_icon_box {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(14, 190, 255, 0.15);
+  color: var(--cielo, #0EBEFF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid rgba(14, 190, 255, 0.25);
+}
+
+/* RELOJ DIGITAL GIGANTE MASIVO CENTRADO CON FONT-SIZE EN VH */
+.reloj_hero_clock_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin: 4px 0;
+}
+
+.reloj_hero_clock {
+  font-size: clamp(3.2rem, 10vh, 5.8rem);
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--cielo, #0EBEFF);
+  text-align: center;
+  font-family: var(--ff_O, 'Outfit', sans-serif);
+  text-shadow: 0 0 28px rgba(14, 190, 255, 0.65);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.reloj_hero_footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+  margin-top: 4px;
+  gap: 12px;
+}
+
+.reloj_hero_date {
+  font-size: 12px;
+  color: var(--text-main, #e2e8f0);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.reloj_roles_box {
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  flex: 1;
+}
+
+.reloj_role_item {
+  position: absolute;
+  right: 0;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.4s ease;
+  font-size: 12px;
+  color: var(--cielo, #0EBEFF);
+  font-weight: 500;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.reloj_role_item.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reloj_progress_container {
+  margin-top: 8px;
+}
+
+.reloj_progress_info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-sub, #94a3b8);
+  margin-bottom: 4px;
+}
+
+.reloj_progress_bar {
+  height: 5px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.reloj_progress_fill {
+  height: 100%;
+  width: var(--progreso-pct, 0%);
+  background: linear-gradient(90deg, var(--cielo, #0EBEFF), var(--mco, #10b981));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}

@@ -1,0 +1,361 @@
+/* src/features/panel/musica/musica.css - Reproductor & Lista de Música Lofi Pro (45% Altura - 100% Clases CSS) */
+
+.musica_panel_card {
+  height: 55%;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--cielo, #0EBEFF);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: 8px;
+}
+
+/* 1. REPRODUCTOR EN VIVO (HERO PLAYER CARD) */
+.msc_hero_player {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(14, 190, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.msc_now_playing_tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cielo, #0EBEFF);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.msc_track_title_now {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main, #f8fafc);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* BARRA DE PROGRESO DE TIEMPO */
+.msc_timeline_wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.msc_time_text {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-sub, #94a3b8);
+  min-width: 28px;
+}
+
+.msc_progress_bar_container {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+.msc_progress_fill_cyan {
+  width: 0%;
+  height: 100%;
+  background: var(--cielo, #0EBEFF);
+  border-radius: 2px;
+  position: relative;
+}
+
+.msc_progress_thumb {
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cielo, #0EBEFF);
+  box-shadow: 0 0 8px var(--cielo, #0EBEFF);
+}
+
+/* BOTONES DE CONTROL CON PLAY CIRCULAR CIAN */
+.msc_controls_row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.msc_ctrl_btn {
+  background: transparent;
+  border: none;
+  color: var(--text-sub, #94a3b8);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.msc_ctrl_btn:hover {
+  color: var(--cielo, #0EBEFF);
+}
+
+.msc_ctrl_btn.play_cyan_btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cielo, #0EBEFF);
+  color: #090d16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 0 14px rgba(14, 190, 255, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.msc_ctrl_btn.play_cyan_btn:hover {
+  transform: scale(1.08);
+  color: #090d16;
+}
+
+/* DETALLES DE META PISTA */
+.msc_meta_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-sub, #94a3b8);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 4px;
+}
+
+/* 2. BARRA DE BÚSQUEDA Y FILTRO DE PISTAS */
+.msc_search_bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.msc_search_input_wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #131c31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0 8px;
+}
+
+.msc_search_input_wrap i {
+  font-size: 11px;
+  color: var(--text-sub, #94a3b8);
+  margin-right: 6px;
+}
+
+.msc_search_input {
+  background: transparent;
+  border: none;
+  color: var(--text-main, #f8fafc);
+  font-size: 11px;
+  width: 100%;
+  padding: 5px 0;
+  outline: none;
+}
+
+.msc_search_input::placeholder {
+  color: var(--text-sub, #64748b);
+}
+
+.msc_sort_select {
+  background: #131c31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-sub, #94a3b8);
+  font-size: 11px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* 3. LISTA DE CANCIONES SCROLLABLE (TOP 5 VISIBLE) */
+.msc_track_list_scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.msc_track_list_scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.msc_track_list_scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.msc_track_card_item {
+  background: #131c31;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.msc_track_card_item:hover {
+  border-color: rgba(14, 190, 255, 0.3);
+  background: rgba(14, 190, 255, 0.05);
+}
+
+.msc_track_card_item.active {
+  border-color: var(--cielo, #0EBEFF);
+  background: rgba(14, 190, 255, 0.12);
+}
+
+.msc_track_item_left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.msc_track_idx {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-sub, #94a3b8);
+  min-width: 12px;
+}
+
+.msc_track_meta_mini {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.msc_track_name_mini {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main, #f8fafc);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msc_track_sub_mini {
+  font-size: 9px;
+  color: var(--text-sub, #64748b);
+}
+
+.msc_track_item_right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.msc_fav_icon_mini {
+  font-size: 10px;
+  color: var(--text-sub, #94a3b8);
+}
+
+.msc_btn_play_mini {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cielo, #0EBEFF);
+  color: #090d16;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.msc_btn_play_mini.pause_mini {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* 4. BARRA SELECTORA DE CARPETA (AL FINAL DE TODO) */
+.msc_folder_bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #131c31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 4px 6px;
+  margin-top: auto;
+}
+
+.msc_folder_input {
+  flex: 1;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-sub, #94a3b8);
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msc_btn_action {
+  background: rgba(14, 190, 255, 0.15);
+  border: 1px solid rgba(14, 190, 255, 0.25);
+  color: var(--cielo, #0EBEFF);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.msc_btn_action:hover {
+  background: var(--cielo, #0EBEFF);
+  color: #090d16;
+}
+
+.msc_btn_icon_only {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-sub, #94a3b8);
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.msc_btn_icon_only:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main, #ffffff);
+}

@@ -1,8 +1,9 @@
 // src/features/panel/panel.js
-// Orquestador principal de la ventana nativa Panel (Horario + Reloj)
+// Orquestador principal de la ventana nativa Panel (Horario 60% | Reloj Hero 55% + Música 45% en Columna Derecha)
 
 import { renderHeaderPanel, bindHeaderPanelEvents } from './componentes/header_panel.js';
-import { renderReloj, initRelojTimer } from './componentes/reloj.js';
+import { renderReloj, initRelojTimer } from './reloj/reloj.js';
+import { renderMusica, bindMusicaEvents } from './musica/musica.js';
 import { renderHorario, bindHorarioEvents } from './componentes/horario.js';
 import { volverAAppPrincipal } from './lib/controles.js';
 
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.setAttribute('data-theme', temaGuardado);
   document.documentElement.setAttribute('data-font', fuenteGuardada);
 
-  // Renderizar la maqueta completa de 2 columnas (Horario a la Izquierda, Reloj a la Derecha)
+  // Renderizar la maqueta completa de 2 columnas (Horario 60% a la Izquierda | Reloj 55% + Música 45% a la Derecha)
   root.innerHTML = `
     ${renderHeaderPanel()}
     <main class="panel_body_layout">
@@ -25,13 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
       </section>
       <section class="panel_col_right">
         ${renderReloj()}
+        ${renderMusica()}
       </section>
     </main>
   `;
 
-  // Inicializar eventos y temporizadores
+  // Inicializar eventos y temporizadores de todos los módulos
   bindHeaderPanelEvents(root);
-  const cleanupTimer = initRelojTimer(root);
+  const cleanupRelojTimer = initRelojTimer(root);
+  bindMusicaEvents(root);
   bindHorarioEvents(root);
 
   // Función de refresco suave de horario
@@ -72,6 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('beforeunload', () => {
     clearInterval(autoRefreshInterval);
-    if (typeof cleanupTimer === 'function') cleanupTimer();
+    if (typeof cleanupRelojTimer === 'function') cleanupRelojTimer();
   });
 });
