@@ -2,12 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>pancitawii Panel</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pancitawii Panel</title>
+
+  <!-- Sistema de Diseño Base witema y App -->
   <link rel="stylesheet" href="../../core/witema.css">
   <link rel="stylesheet" href="./panel.css">
-    <!-- FontAwesome Iconos Locales -->
+
+  <!-- FontAwesome Iconos Locales -->
   <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+  
+  <!-- Google Fuentes Locales -->
+  <link rel="stylesheet" href="/google/fonts.css">
 
   <script type="importmap">
   {
@@ -22,10 +28,7 @@
   </script>
 </head>
 <body>
-  <div id="panel_root" class="panel_app_wrapper">
-    <!-- El Header especial y las secciones (Reloj + Horario) se renderizan dinámicamente -->
-  </div>
-
+  <div id="panel_root" class="panel_app_wrapper"></div>
   <script type="module" src="./panel.js"></script>
 </body>
 </html>
