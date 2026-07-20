@@ -1,4 +1,4 @@
-// src-tauri/src/nucleo/ridev.rs
+// src-tauri/src/nucleo/ridev/mod.rs
 // Registro de submódulos de utilidades del sistema genéricas y reutilizables
 pub mod consola;
 pub mod archivos;
