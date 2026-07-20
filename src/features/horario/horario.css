@@ -1,16 +1,432 @@
-/* src/features/horario/horario.css */
-/* Estilos del Módulo Horario Semanal */
+/* src/features/inicio/horario.css */
+/* Estilos responsivos del módulo de Horario consumiendo exclusivamente variables de witema.css */
 
-.horario_feature_wrap {
+.horario_container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.5vh;
+  padding: 1.5vh 1.5vw;
   width: 100%;
+  height: 100%;
+  flex: 1;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
-.horario_card {
+/* Cabecera Compacta del Horario */
+.horario_header {
   background: var(--wb);
-  border: 1px solid var(--txe);
-  border-radius: 14px;
-  padding: 1.5rem;
+  border: 1px solid var(--brd);
+  border-radius: 1.2vh;
+  padding: 1.5vh 1.8vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--bs_l);
+  gap: 1vw;
+  flex-wrap: wrap;
+  backdrop-filter: blur(12px);
+}
+
+.horario_header_title {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+}
+
+.horario_header_title h2 {
+  font-size: var(--fz_m4);
+  font-weight: 700;
+  color: var(--tx1);
+  margin: 0;
+}
+
+.horario_header_title p {
+  font-size: var(--fz_s4);
+  color: var(--tx2);
+  margin: 0.2vh 0 0 0;
+}
+
+/* Tabs (Vista Previa | Editar) */
+.horario_tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  background: var(--bg4);
+  padding: 0.4vh 0.4vw;
+  border-radius: 0.8vh;
+  border: 1px solid var(--brd);
+}
+
+.tab_btn {
+  background: transparent;
+  border: none;
+  color: var(--tx2);
+  padding: 0.8vh 1.2vw;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  transition: all var(--tr_f);
+}
+
+.tab_btn:hover {
+  color: var(--tx1);
+}
+
+.tab_btn.active {
+  background: var(--mco);
+  color: var(--txa);
+}
+
+/* Banner de Estado en Vivo */
+.horario_live_status {
+  background: var(--bg3);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  padding: 1.2vh 1.5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1vw;
+  box-shadow: var(--bs_l);
+}
+
+.live_status_left {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  color: var(--tx1);
+}
+
+.live_status_left i {
+  color: var(--mco);
+  font-size: var(--fz_m2);
+}
+
+.live_status_right {
+  font-size: var(--fz_s4);
+  font-weight: 600;
+  color: var(--tx2);
+}
+
+/* ==================== VISTA PREVIA (Matriz Semanal Unificada Estilo Tabla Premium) ==================== */
+.horario_preview_grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  width: 100%;
+  border: 1px solid var(--brd);
+  border-radius: 1.2vh;
+  overflow: hidden;
+  box-shadow: var(--bs_l);
+  background: var(--bg3);
+}
+
+.dia_column {
+  background: var(--bg3);
+  padding: 1.2vh 0.5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh;
+  border-right: 1px solid var(--brd);
+  box-sizing: border-box;
+}
+
+.dia_column:last-child {
+  border-right: none;
+}
+
+/* Bordes redondeados unificados en esquinas de la tabla */
+.dia_column:first-child {
+  border-top-left-radius: 1.2vh;
+  border-bottom-left-radius: 1.2vh;
+}
+
+.dia_column:last-child {
+  border-top-right-radius: 1.2vh;
+  border-bottom-right-radius: 1.2vh;
+}
+
+.dia_column_header {
+  font-size: var(--fz_s4);
+  font-weight: 700;
+  color: var(--mco);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding-bottom: 0.6vh;
+  border-bottom: 1px solid var(--brd);
+}
+
+.bloque_card_preview {
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 0.6vh;
+  padding: 0.8vh 0.5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vh;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--tr_f);
+}
+
+.bloque_card_preview::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.25vw;
+  min-width: 3px;
+  height: 100%;
+  background: var(--bloque-color, var(--mco));
+}
+
+.bloque_card_preview:hover {
+  border-color: var(--mco);
+}
+
+.bloque_hora {
+  font-size: var(--fz_s2);
+  font-weight: 700;
+  color: var(--tx2);
+  letter-spacing: -0.2px;
+}
+
+.bloque_titulo {
+  font-size: var(--fz_s4);
+  font-weight: 600;
+  color: var(--tx1);
+  line-height: 1.2;
+}
+
+.bloque_tipo_badge {
+  font-size: var(--fz_s1);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--mco);
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+  margin-top: 0.2vh;
+}
+
+/* ==================== VISTA EDITAR CON BOTONES EDITAR Y ELIMINAR ==================== */
+.horario_editor_box {
+  background: var(--bg3);
+  border: 1px solid var(--brd);
+  border-radius: 1.2vh;
+  padding: 2vh 1.8vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8vh;
+}
+
+.editor_top_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1vw;
+  flex-wrap: wrap;
+}
+
+.editor_selector_dias {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  flex-wrap: wrap;
+}
+
+.dia_pill {
+  background: var(--inp);
+  border: 1px solid var(--brd);
+  color: var(--tx2);
+  padding: 0.8vh 1.1vw;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--tr_f);
+}
+
+.dia_pill:hover {
+  border-color: var(--mco);
+  color: var(--tx1);
+}
+
+.dia_pill.active {
+  background: var(--mco);
+  color: var(--txa);
+  border-color: var(--mco);
+}
+
+.btn_reset_rutina {
+  background: var(--bg4);
+  color: var(--tx2);
+  border: 1px solid var(--brd);
+  padding: 0.8vh 1vw;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s3);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  transition: all var(--tr_f);
+}
+
+.btn_reset_rutina:hover {
+  border-color: var(--mco);
+  color: var(--mco);
+}
+
+/* Formulario de Agregar / Editar Bloque */
+.form_agregar_bloque {
+  background: var(--wb);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  padding: 1.5vh 1.2vw;
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  flex-wrap: wrap;
+}
+
+.form_field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vh;
+  flex: 1;
+  min-width: 110px;
+}
+
+.form_field label {
+  font-size: var(--fz_s2);
+  font-weight: 700;
+  color: var(--tx2);
+  text-transform: uppercase;
+}
+
+.form_field input, .form_field select {
+  background: var(--inp);
+  border: 1px solid var(--brd);
+  color: var(--tx1);
+  padding: 0.8vh 0.8vw;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  outline: none;
+  transition: border-color var(--tr_f);
+}
+
+.form_field input:focus, .form_field select:focus {
+  border-color: var(--mco);
+}
+
+.btn_agregar_submit {
+  background: var(--mco);
+  color: var(--txa);
+  border: none;
+  padding: 1vh 1.4vw;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  font-weight: 700;
+  cursor: pointer;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  transition: all var(--tr_f);
+}
+
+.btn_agregar_submit:hover {
+  opacity: 0.9;
+}
+
+/* Lista de Bloques en Editor */
+.editor_lista_bloques {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8vh;
+}
+
+.bloque_editor_row {
+  background: var(--wb);
+  border: 1px solid var(--brd);
+  border-radius: 0.8vh;
+  padding: 1vh 1.2vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1vw;
+}
+
+.bloque_editor_info {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.bloque_editor_time {
+  font-size: var(--fz_s4);
+  font-weight: 700;
+  color: var(--mco);
+  min-width: 110px;
+}
+
+.bloque_editor_title {
+  font-size: var(--fz_m1);
+  font-weight: 600;
+  color: var(--tx1);
+}
+
+.bloque_action_btns {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+}
+
+.bloque_btn_edit {
+  background: var(--bg4);
+  color: var(--mco);
+  border: 1px solid var(--brd);
+  width: 3.2vh;
+  height: 3.2vh;
+  border-radius: 0.6vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--tr_f);
+}
+
+.bloque_btn_edit:hover {
+  background: var(--mco);
+  color: var(--txa);
+  border-color: var(--mco);
+}
+
+.bloque_btn_delete {
+  background: var(--bg4);
+  color: var(--tx3);
+  border: 1px solid var(--brd);
+  width: 3.2vh;
+  height: 3.2vh;
+  border-radius: 0.6vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--tr_f);
+}
+
+.bloque_btn_delete:hover {
+  background: #e11d48;
+  color: #fff;
+  border-color: #e11d48;
 }
