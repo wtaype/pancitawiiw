@@ -23,6 +23,9 @@ export function renderHeader() {
       </div>
 
       <div class="nv_right">
+        <button id="wii_pin_btn" class="win_btn pin" title="Fijar Sonrisa Flotante">
+          <i class="fa-solid fa-thumbtack"></i>
+        </button>
         <button id="wii_toggle_panel" class="win_btn" title="Alternar a Vista Panel Flotante">
           <i class="fa-solid fa-expand"></i>
         </button>
@@ -41,6 +44,19 @@ export function renderHeader() {
 }
 
 export function bindHeaderEvents(container) {
+  const pinBtn = container.querySelector('#wii_pin_btn');
+  if (pinBtn) {
+    pinBtn.addEventListener('click', () => {
+      if (window.__TAURI__) {
+        const core = window.__TAURI__.core || window.__TAURI__.tauri;
+        if (core && typeof core.invoke === 'function') {
+          core.invoke('fijar_sonrisa', { fijar: true })
+            .catch(err => console.error('Error al fijar sonrisa:', err));
+        }
+      }
+    });
+  }
+
   const toggleBtn = container.querySelector('#wii_toggle_panel');
   if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {

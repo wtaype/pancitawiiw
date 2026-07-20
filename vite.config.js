@@ -11,7 +11,13 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        smile: path.resolve(__dirname, 'src/features/smile/smile.html')
+      }
+    }
   },
   resolve: {
     alias: {

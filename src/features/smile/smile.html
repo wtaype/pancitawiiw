@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>pancitawii Smile</title>
+  
+  <link rel="stylesheet" href="../../core/witema.css">
+  <link rel="stylesheet" href="./smile.css">
+  
+  <script type="importmap">
+  {
+    "imports": {
+      "widev": "../../core/widev/widev.js",
+      "@widev": "../../core/widev/widev.js",
+      "@wii": "../../wii.js",
+      "@core/": "../../core/",
+      "@features/": "../../features/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Contenedor circular con drag region para mover la burbuja flotante -->
+  <div class="smile-container" id="smile_bubble" data-tauri-drag-region>
+    <img src="/smile.avif" alt="Smile" class="smile-avatar" data-tauri-drag-region>
+    <div class="smile-glow" data-tauri-drag-region></div>
+  </div>
+
+  <script type="module" src="./smile.js"></script>
+</body>
+</html>
