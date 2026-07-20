@@ -1,16 +1,9 @@
 // src/features/panel/reloj/reloj.js
-// Reloj Hero Neón 12h (55% de Altura) - Saludo corregido y timer neón
+// Reloj Hero Neón 12h (55% de Altura) - Conectado a mensajes_reloj.js en vivo
 
 import { Saludar, fechaHoy, Capi } from '@widev';
+import { obtenerAvisosHorarioEnVivo } from './mensajes_reloj.js';
 import './reloj.css';
-
-const MENSAJES_PANCITA = [
-  'Recuerda tomar un vaso de agua 💧',
-  'En 30 min tienes que descansar 🌙',
-  'Enfoque activo en tu materia principal 📚',
-  '¡Vas excelente en tus metas hoy! 🏆',
-  'Organiza tu horario semanal con Pancita 🎓'
-];
 
 export function renderReloj() {
   const hrs = new Date().getHours();
@@ -18,6 +11,7 @@ export function renderReloj() {
   const saludoLimpio = Saludar().toUpperCase().replace(/,/g, '');
   const saludoTag = `${saludoLimpio}, PANCITA!`;
   const fechaTexto = fechaHoy();
+  const avisos = obtenerAvisosHorarioEnVivo();
 
   return `
     <div class="reloj_hero_card">
@@ -43,10 +37,8 @@ export function renderReloj() {
           <span id="reloj_fecha_text">${Capi(fechaTexto)}</span>
         </div>
 
-        <div class="reloj_roles_box">
-          ${MENSAJES_PANCITA.map((msg, i) => `
-            <span class="reloj_role_item ${i === 0 ? 'active' : ''}">${msg}</span>
-          `).join('')}
+        <div class="reloj_roles_box" id="reloj_roles_box_container">
+          ${renderAvisosHTML(avisos)}
         </div>
       </div>
 
@@ -63,11 +55,17 @@ export function renderReloj() {
   `;
 }
 
+function renderAvisosHTML(avisos) {
+  return avisos.map((msg, i) => `
+    <span class="reloj_role_item ${i === 0 ? 'active' : ''}">${msg}</span>
+  `).join('');
+}
+
 export function initRelojTimer(container) {
   const clockEl = container.querySelector('#panel_hero_live_clock');
   const pctEl = container.querySelector('#reloj_progress_pct');
   const fillEl = container.querySelector('#reloj_progress_fill');
-  const roleItems = container.querySelectorAll('.reloj_role_item');
+  const rolesContainer = container.querySelector('#reloj_roles_box_container');
 
   function actualizarReloj() {
     const ahora = new Date();
@@ -87,13 +85,25 @@ export function initRelojTimer(container) {
     if (fillEl) fillEl.style.setProperty('--progreso-pct', `${porcentaje}%`);
   }
 
+  // Refrescar lista de avisos dinámicos en vivo
   let roleIdx = 0;
   function rotarMensajes() {
+    if (!rolesContainer) return;
+    const roleItems = rolesContainer.querySelectorAll('.reloj_role_item');
     if (!roleItems || roleItems.length === 0) return;
+
     roleItems.forEach(el => el.classList.remove('active'));
     roleIdx = (roleIdx + 1) % roleItems.length;
-    if (roleItems[roleIdx]) {
-      roleItems[roleIdx].classList.add('active');
+
+    // Si dimos la vuelta a la lista, recalcular los avisos de horarioDB
+    if (roleIdx === 0) {
+      const nuevosAvisos = obtenerAvisosHorarioEnVivo();
+      rolesContainer.innerHTML = renderAvisosHTML(nuevosAvisos);
+    }
+
+    const nuevosRoleItems = rolesContainer.querySelectorAll('.reloj_role_item');
+    if (nuevosRoleItems[roleIdx]) {
+      nuevosRoleItems[roleIdx].classList.add('active');
     }
   }
 
