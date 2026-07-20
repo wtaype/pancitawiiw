@@ -1,5 +1,5 @@
 // src/features/horario/horario.js
-// Módulo de Horario Semanal Interactivo (Sin Parpadeo, Matriz Unificada Gap 0, Botones Editar/Eliminar & @widev witip)
+// Módulo de Horario Semanal Interactivo (Sin Parpadeo, Matriz Unificada Gap 0, Toggle de Edición con --mco y @widev witip)
 
 import { wiTip } from '@widev';
 import { horarioDB } from './lib/horario_db.js';
@@ -102,6 +102,21 @@ export function arrancar(container) {
 
     // 3. Eventos en Pestaña Editar
     if (tabActiva === 'editar') {
+      // Si estamos en modo edición, rellenar el formulario con los datos del bloque seleccionado
+      if (bloqueEditandoId) {
+        const itemEdit = horario.find(b => b.id === bloqueEditandoId);
+        if (itemEdit) {
+          const inpStart = container.querySelector('#inp_hora_inicio');
+          const inpEnd = container.querySelector('#inp_hora_fin');
+          const inpTitle = container.querySelector('#inp_titulo');
+          const selType = container.querySelector('#sel_tipo');
+          if (inpStart) inpStart.value = itemEdit.horaInicio;
+          if (inpEnd) inpEnd.value = itemEdit.horaFin;
+          if (inpTitle) inpTitle.value = itemEdit.titulo;
+          if (selType) selType.value = itemEdit.tipo;
+        }
+      }
+
       container.querySelectorAll('.dia_pill').forEach(pill => {
         pill.addEventListener('click', () => {
           diaActivoEdit = pill.getAttribute('data-dia');
@@ -172,19 +187,18 @@ export function arrancar(container) {
         });
       }
 
-      // Evento Editar Bloque
+      // Evento Toggle Editar Bloque (Primer clic activa, Segundo clic cancela y limpia)
       container.querySelectorAll('.bloque_btn_edit').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
-          const item = horario.find(b => b.id === id);
-          if (item) {
+          if (bloqueEditandoId === id) {
+            // Toggle Off: Cancelar edición y limpiar selección
+            bloqueEditandoId = null;
+          } else {
+            // Toggle On: Seleccionar bloque para editar
             bloqueEditandoId = id;
-            container.querySelector('#inp_hora_inicio').value = item.horaInicio;
-            container.querySelector('#inp_hora_fin').value = item.horaFin;
-            container.querySelector('#inp_titulo').value = item.titulo;
-            container.querySelector('#sel_tipo').value = item.tipo;
-            container.querySelector('.btn_agregar_submit').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios';
           }
+          render();
         });
       });
 
@@ -279,34 +293,37 @@ function renderVistaEditar(horario) {
           </select>
         </div>
         <button type="submit" class="btn_agregar_submit" data-witip="Guardar o actualizar bloque">
-          <i class="fa-solid fa-plus"></i> ${bloqueEditandoId ? 'Guardar Cambios' : 'Agregar'}
+          <i class="fa-solid ${bloqueEditandoId ? 'fa-floppy-disk' : 'fa-plus'}"></i> ${bloqueEditandoId ? 'Guardar Cambios' : 'Agregar'}
         </button>
       </form>
 
-      <!-- Lista de Bloques del Día Activo con Editar y Eliminar -->
+      <!-- Lista de Bloques del Día Activo con Toggle de Editar y Eliminar -->
       <div class="editor_lista_bloques">
         <h4 style="font-size: var(--fz_s4); color: var(--tx2); margin: 0.5vh 0; text-transform: uppercase;">
           Bloques configurados para el ${diaActivoEdit}:
         </h4>
-        ${bloquesDia.length > 0 ? bloquesDia.map(b => `
-          <div class="bloque_editor_row">
-            <div class="bloque_editor_info">
-              <span class="bloque_editor_time"><i class="fa-regular fa-clock"></i> ${b.horaInicio} - ${b.horaFin}</span>
-              <span class="bloque_editor_title">${b.titulo}</span>
-              <span class="bloque_tipo_badge" style="margin-left: 1vw;">
-                ${b.tipo === 'fijo' ? '<i class="fa-solid fa-lock"></i> FIJO' : '<i class="fa-solid fa-unlock"></i> FLEXIBLE'}
-              </span>
+        ${bloquesDia.length > 0 ? bloquesDia.map(b => {
+          const isEditingThis = b.id === bloqueEditandoId;
+          return `
+            <div class="bloque_editor_row">
+              <div class="bloque_editor_info">
+                <span class="bloque_editor_time"><i class="fa-regular fa-clock"></i> ${b.horaInicio} - ${b.horaFin}</span>
+                <span class="bloque_editor_title">${b.titulo}</span>
+                <span class="bloque_tipo_badge" style="margin-left: 1vw;">
+                  ${b.tipo === 'fijo' ? '<i class="fa-solid fa-lock"></i> FIJO' : '<i class="fa-solid fa-unlock"></i> FLEXIBLE'}
+                </span>
+              </div>
+              <div class="bloque_action_btns">
+                <button class="bloque_btn_edit ${isEditingThis ? 'active' : ''}" data-id="${b.id}" data-witip="${isEditingThis ? 'Cancelar edición' : 'Editar este bloque'}">
+                  <i class="fa-solid ${isEditingThis ? 'fa-xmark' : 'fa-pen'}"></i>
+                </button>
+                <button class="bloque_btn_delete" data-id="${b.id}" data-witip="Eliminar este bloque">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
             </div>
-            <div class="bloque_action_btns">
-              <button class="bloque_btn_edit" data-id="${b.id}" data-witip="Editar este bloque">
-                <i class="fa-solid fa-pen"></i>
-              </button>
-              <button class="bloque_btn_delete" data-id="${b.id}" data-witip="Eliminar este bloque">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
-          </div>
-        `).join('') : '<p style="font-size: var(--fz_s4); color: var(--tx2);">No hay bloques asignados para este día.</p>'}
+          `;
+        }).join('') : '<p style="font-size: var(--fz_s4); color: var(--tx2);">No hay bloques asignados para este día.</p>'}
       </div>
     </div>
   `;

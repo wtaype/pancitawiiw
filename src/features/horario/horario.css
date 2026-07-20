@@ -405,10 +405,12 @@
   transition: all var(--tr_f);
 }
 
-.bloque_btn_edit:hover {
+.bloque_btn_edit:hover,
+.bloque_btn_edit.active {
   background: var(--mco);
   color: var(--txa);
   border-color: var(--mco);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .bloque_btn_delete {
