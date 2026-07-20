@@ -1,63 +1,94 @@
 // src/features/panel/componentes/horario.js
-// Componente de Horario Interactivo (Estilo horario/) con Banner de Actividad Actual y Tarjetas Organizadas
+// Componente de Horario Interactivo (conectado en tiempo real a horarioDB de pancitawii)
 
-const DEMO_HORARIO = [
-  {
-    id: 1,
-    titulo: 'Evaluación Clínica y Diagnóstico',
-    subtitulo: 'Módulo de Medicina Interna',
-    horaInicio: '08:00',
-    horaFin: '09:30',
-    estado: 'completado', // 'en_curso' | 'proximo' | 'completado'
-    categoria: 'Clase Magistral',
-    aula: 'Aula 204'
-  },
-  {
-    id: 2,
-    titulo: 'Farmacología Aplicada',
-    subtitulo: 'Revisión de Tratamientos y Dosis',
-    horaInicio: '10:00',
-    horaFin: '12:00',
-    estado: 'en_curso',
-    categoria: 'Laboratorio',
-    aula: 'Lab Simulación'
-  },
-  {
-    id: 3,
-    titulo: 'Sesión Clínica y Rondas',
-    subtitulo: 'Presentación de Casos Clínicos',
-    horaInicio: '14:00',
-    horaFin: '16:00',
+import { horarioDB } from '../../horario/lib/horario_db.js';
+
+function obtenerHorarioProcesado() {
+  const lista = horarioDB.obtenerHorario();
+  const ahora = new Date();
+  const diasInglesEsp = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
+  const diaHoy = diasInglesEsp[ahora.getDay()];
+  const diaManana = diasInglesEsp[(ahora.getDay() + 1) % 7];
+  const minsAhora = ahora.getHours() * 60 + ahora.getMinutes();
+
+  // Filtrar bloques del día actual
+  let bloquesHoy = lista.filter(b => b.dia === diaHoy);
+  if (bloquesHoy.length === 0) bloquesHoy = lista;
+
+  // Filtrar bloques de mañana
+  let bloquesManana = lista.filter(b => b.dia === diaManana);
+
+  let bloqueEnCurso = null;
+
+  const itemsProcesados = bloquesHoy.map(b => {
+    const [hI, mI] = (b.horaInicio || '00:00').split(':').map(Number);
+    const [hF, mF] = (b.horaFin || '00:00').split(':').map(Number);
+    const startMins = (hI || 0) * 60 + (mI || 0);
+    let endMins = (hF || 0) * 60 + (mF || 0);
+    if (endMins < startMins) endMins += 24 * 60; // Caso trasnoche
+
+    let estado = 'proximo';
+    let minsRestantes = 0;
+
+    if (minsAhora >= startMins && minsAhora < endMins) {
+      estado = 'en_curso';
+      minsRestantes = endMins - minsAhora;
+    } else if (minsAhora >= endMins) {
+      estado = 'completado';
+    }
+
+    const itemProcesado = {
+      ...b,
+      estado,
+      minsRestantes,
+      categoria: b.tipo === 'fijo' ? 'Actividad Principal' : 'Flexible',
+      aula: b.dia || 'Lunes'
+    };
+
+    if (estado === 'en_curso') {
+      bloqueEnCurso = itemProcesado;
+    }
+
+    return itemProcesado;
+  });
+
+  const itemsMananaProcesados = bloquesManana.map(b => ({
+    ...b,
     estado: 'proximo',
-    categoria: 'Práctica',
-    aula: 'Auditorio A'
-  },
-  {
-    id: 4,
-    titulo: 'Taller de Suturas y Emergencias',
-    subtitulo: 'Procedimientos Clínicos Básicos',
-    horaInicio: '16:30',
-    horaFin: '18:00',
-    estado: 'proximo',
-    categoria: 'Taller',
-    aula: 'Sala Quirúrgica'
-  }
-];
+    minsRestantes: 0,
+    categoria: b.tipo === 'fijo' ? 'Actividad Principal' : 'Flexible',
+    aula: b.dia || 'Mañana'
+  }));
+
+  return { 
+    items: itemsProcesados, 
+    itemsManana: itemsMananaProcesados,
+    enCurso: bloqueEnCurso || itemsProcesados[0] 
+  };
+}
 
 export function renderHorario() {
-  const enCurso = DEMO_HORARIO.find(b => b.estado === 'en_curso') || DEMO_HORARIO[0];
+  const { items, enCurso } = obtenerHorarioProcesado();
+  const esActivoReal = enCurso && enCurso.estado === 'en_curso';
+
+  const badgeBanner = esActivoReal 
+    ? `<span class="current_live_tag"><span class="live_dot"></span> En curso (Restan ${enCurso.minsRestantes} min)</span>`
+    : `<span class="current_live_tag"><i class="fa-solid fa-sparkles"></i> Siguiente Actividad</span>`;
+
+  const aulaTexto = enCurso && enCurso.aula ? enCurso.aula : (enCurso && enCurso.dia ? enCurso.dia : 'Diario');
+  const categoriaTexto = enCurso && enCurso.categoria ? enCurso.categoria : 'Modo Enfoque';
 
   return `
     <div class="horario_card">
-      <!-- Banner de Actividad Actual Destacada -->
+      <!-- Banner de Actividad Actual / Siguiente -->
       <div class="horario_current_banner">
         <div class="current_banner_left">
-          <span class="current_live_tag"><span class="live_dot"></span> En curso ahora</span>
-          <h4 class="current_banner_title">${enCurso.titulo}</h4>
-          <span class="current_banner_sub"><i class="fa-solid fa-location-dot"></i> ${enCurso.aula} · ${enCurso.categoria}</span>
+          ${badgeBanner}
+          <h4 class="current_banner_title">${enCurso ? enCurso.titulo : 'Planificación Diario 🌟'}</h4>
+          <span class="current_banner_sub"><i class="fa-solid fa-location-dot"></i> ${aulaTexto} · ${categoriaTexto}</span>
         </div>
         <div class="current_banner_right">
-          <span class="current_time_badge">${enCurso.horaInicio} - ${enCurso.horaFin}</span>
+          <span class="current_time_badge">${enCurso ? enCurso.horaInicio : '--:--'} - ${enCurso ? enCurso.horaFin : '--:--'}</span>
         </div>
       </div>
 
@@ -67,14 +98,15 @@ export function renderHorario() {
           <h3>Agenda del Día</h3>
         </div>
         <div class="horario_filter_tabs">
-          <button class="horario_tab active" data-filter="todos">Todas</button>
+          <button class="horario_tab active" data-filter="todos">Todos</button>
+          <button class="horario_tab" data-filter="proximo">Próximos</button>
+          <button class="horario_tab" data-filter="manana">Mañana</button>
           <button class="horario_tab" data-filter="en_curso">En curso</button>
-          <button class="horario_tab" data-filter="proximo">Próximas</button>
         </div>
       </div>
 
       <div class="horario_timeline" id="horario_timeline_list">
-        ${renderListaItems(DEMO_HORARIO, 'todos')}
+        ${renderListaItems(items, 'todos')}
       </div>
     </div>
   `;
@@ -90,12 +122,16 @@ function renderBadgeEstado(estado) {
   return `<span class="badge_estado completado"><i class="fa-solid fa-check"></i> Completado</span>`;
 }
 
-function renderListaItems(items, filtro) {
-  const filtrados = items.filter(item => {
-    if (filtro === 'en_curso') return item.estado === 'en_curso';
-    if (filtro === 'proximo') return item.estado === 'proximo';
-    return true;
-  });
+function renderListaItems(items, filtro, itemsManana = []) {
+  let filtrados = items;
+
+  if (filtro === 'en_curso') {
+    filtrados = items.filter(item => item.estado === 'en_curso');
+  } else if (filtro === 'proximo') {
+    filtrados = items.filter(item => item.estado === 'proximo');
+  } else if (filtro === 'manana') {
+    filtrados = itemsManana;
+  }
 
   if (filtrados.length === 0) {
     return `
@@ -120,9 +156,8 @@ function renderListaItems(items, filtro) {
           ${renderBadgeEstado(item.estado)}
         </div>
         <h4 class="horario_item_title">${item.titulo}</h4>
-        <p class="horario_item_sub">${item.subtitulo}</p>
         <div class="horario_item_footer">
-          <span><i class="fa-solid fa-location-dot"></i> ${item.aula}</span>
+          <span><i class="fa-solid fa-location-dot"></i> ${item.aula || item.dia}</span>
         </div>
       </div>
     </div>
@@ -140,7 +175,8 @@ export function bindHorarioEvents(container) {
 
       const filtro = tab.dataset.filter;
       if (listEl) {
-        listEl.innerHTML = renderListaItems(DEMO_HORARIO, filtro);
+        const { items, itemsManana } = obtenerHorarioProcesado();
+        listEl.innerHTML = renderListaItems(items, filtro, itemsManana);
       }
     });
   });

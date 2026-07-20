@@ -60,6 +60,9 @@ export const horarioDB = {
   guardarHorario(lista) {
     try {
       localStorage.setItem(KEY_HORARIO, JSON.stringify(lista));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('mihorario_update', { detail: lista }));
+      }
     } catch (e) {
       console.error('Error al guardar en localStorage mihorario:', e);
     }

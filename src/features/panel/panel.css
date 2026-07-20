@@ -132,11 +132,11 @@ html, body {
   color: #ffffff;
 }
 
-/* --- CUERPO PRINCIPAL DEL PANEL (2 COLUMNAS) --- */
+/* --- CUERPO PRINCIPAL DEL PANEL (2 COLUMNAS: 60% Horario, 40% Reloj) --- */
 .panel_body_layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 62% calc(38% - 16px);
   gap: 16px;
   padding: 12px 16px;
   box-sizing: border-box;
@@ -161,6 +161,7 @@ html, body {
 .panel_col_right {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .reloj_hero_card {
@@ -209,14 +210,14 @@ html, body {
 }
 
 .reloj_hero_clock {
-  font-size: 46px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: var(--text-main, #f8fafc);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-main, #ffffff);
   text-align: center;
   margin: 18px 0 12px 0;
-  font-family: monospace;
-  text-shadow: 0 0 25px var(--primary-glow, rgba(99, 102, 241, 0.35));
+  font-family: var(--ff_O, 'Outfit', sans-serif);
+  text-shadow: 0 0 25px rgba(99, 102, 241, 0.45);
 }
 
 .reloj_hero_date {

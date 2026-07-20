@@ -1,9 +1,8 @@
 // src/features/panel/componentes/header_panel.js
-// Header Especial Pro para la ventana nativa Panel (Sin Sidebar, con logo_square.webp y botón de retorno limpio)
+// Header Especial Pro para la ventana nativa Panel (Con logo_square.webp, retorno y botones de ventana min/max/close)
 
 import { 
   volverAAppPrincipal, 
-  fijarSonrisa, 
   minimizarVentana, 
   alternarMaximarVentana, 
   cerrarVentana 
@@ -17,20 +16,13 @@ export function renderHeaderPanel() {
           <img src="/logo_square.webp" alt="pancitawii Logo" class="panel_logo_img" data-tauri-drag-region onerror="this.onerror=null;this.src='/smile.avif';">
         </div>
         <div class="panel_header_meta" data-tauri-drag-region>
-          <span class="panel_header_title" data-tauri-drag-region>pancitawii · Panel de Control</span>
-          <span class="panel_header_status" data-tauri-drag-region>
-            <span class="pulse_dot"></span>
-            Horario & Modo Enfoque
-          </span>
+          <span class="panel_header_title" data-tauri-drag-region>Pancita Panel</span>
         </div>
       </div>
 
       <div class="panel_header_right">
         <button id="pnl_btn_return" class="panel_win_btn" title="Volver a la Ventana Principal">
           <i class="fa-solid fa-arrow-left"></i>
-        </button>
-        <button id="pnl_btn_pin" class="panel_win_btn" title="Fijar Sonrisa Flotante">
-          <i class="fa-solid fa-thumbtack"></i>
         </button>
         <div class="panel_win_divider"></div>
         <button id="pnl_btn_min" class="panel_win_btn" title="Minimizar">
@@ -50,9 +42,6 @@ export function renderHeaderPanel() {
 export function bindHeaderPanelEvents(container) {
   const btnReturn = container.querySelector('#pnl_btn_return');
   if (btnReturn) btnReturn.addEventListener('click', volverAAppPrincipal);
-
-  const btnPin = container.querySelector('#pnl_btn_pin');
-  if (btnPin) btnPin.addEventListener('click', fijarSonrisa);
 
   const btnMin = container.querySelector('#pnl_btn_min');
   if (btnMin) btnMin.addEventListener('click', minimizarVentana);

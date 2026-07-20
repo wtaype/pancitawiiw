@@ -34,6 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const cleanupTimer = initRelojTimer(root);
   bindHorarioEvents(root);
 
+  // Función de refresco suave de horario
+  const refrescarHorario = () => {
+    const colLeft = root.querySelector('.panel_col_left');
+    if (colLeft) {
+      colLeft.innerHTML = renderHorario();
+      bindHorarioEvents(root);
+    }
+  };
+
   // Escuchar tecla Escape para volver a la ventana principal
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -41,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Escuchar cambios de tema en caliente
+  // Escuchar cambios inter-ventanas (storage) y locales (mihorario_update)
   window.addEventListener('storage', (e) => {
     if ((e.key === 'wiTema' || e.key === 'witema') && e.newValue) {
       document.documentElement.setAttribute('data-theme', e.newValue);
@@ -49,9 +58,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'wiFont' && e.newValue) {
       document.documentElement.setAttribute('data-font', e.newValue);
     }
+    if (e.key === 'mihorario') {
+      refrescarHorario();
+    }
   });
 
+  window.addEventListener('mihorario_update', () => {
+    refrescarHorario();
+  });
+
+  // Refrescar automáticamente cada 30s para actualizar minutos restantes en vivo
+  const autoRefreshInterval = setInterval(refrescarHorario, 30000);
+
   window.addEventListener('beforeunload', () => {
+    clearInterval(autoRefreshInterval);
     if (typeof cleanupTimer === 'function') cleanupTimer();
   });
 });
