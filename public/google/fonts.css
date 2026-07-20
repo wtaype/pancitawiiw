@@ -1,4 +1,39 @@
-/* public/google/fonts.css - Registro de Fuentes Locales Google (Outfit & Poppins) */
+/* public/google/fonts.css - Registro de Fuentes Locales Google (Outfit, Poppins & Orbitron) */
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('./Orbitron-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('./Orbitron-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('./Orbitron-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('./Orbitron-800.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('./Orbitron-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
 
 @font-face {
   font-family: 'Outfit';

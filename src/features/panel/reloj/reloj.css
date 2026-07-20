@@ -1,4 +1,4 @@
-/* src/features/panel/reloj/reloj.css - Reloj Hero Neón con font-size en vh masivo */
+/* src/features/panel/reloj/reloj.css - Reloj Hero Neón con Fuente Local Orbitron */
 
 .reloj_hero_card {
   height: 55%;
@@ -47,7 +47,7 @@
   border: 1px solid rgba(14, 190, 255, 0.25);
 }
 
-/* RELOJ DIGITAL GIGANTE MASIVO CENTRADO CON FONT-SIZE EN VH */
+/* RELOJ DIGITAL GIGANTE MASIVO CON FUENTE ORBITRON LOCAL */
 .reloj_hero_clock_wrap {
   display: flex;
   align-items: center;
@@ -57,12 +57,12 @@
 }
 
 .reloj_hero_clock {
-  font-size: clamp(3.2rem, 10vh, 5.8rem);
+  font-size: clamp(3.2rem, 6.8vh, 5.8rem);
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   color: var(--cielo, #0EBEFF);
   text-align: center;
-  font-family: var(--ff_O, 'Outfit', sans-serif);
+  font-family: 'Orbitron', var(--ff_O, 'Outfit'), sans-serif;
   text-shadow: 0 0 28px rgba(14, 190, 255, 0.65);
   line-height: 1;
   white-space: nowrap;
