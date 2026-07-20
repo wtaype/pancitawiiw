@@ -1,0 +1,16 @@
+/* src/features/chatwii/chat.css */
+/* Estilos específicos para Pancita Asistente */
+
+.chat_feature_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.chat_card {
+  background: var(--wb);
+  border: 1px solid var(--txe);
+  border-radius: 14px;
+  padding: 1.5rem;
+}

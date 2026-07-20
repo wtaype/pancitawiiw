@@ -1,0 +1,16 @@
+/* src/features/horario/horario.css */
+/* Estilos del Módulo Horario Semanal */
+
+.horario_feature_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.horario_card {
+  background: var(--wb);
+  border: 1px solid var(--txe);
+  border-radius: 14px;
+  padding: 1.5rem;
+}

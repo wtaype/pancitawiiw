@@ -1,0 +1,24 @@
+/* src/features/reloj/reloj.css */
+/* Estilos del Módulo Reloj Digital y Cronómetro */
+
+.reloj_feature_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.reloj_card {
+  background: var(--wb);
+  border: 1px solid var(--txe);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.reloj_display_preview {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--txa);
+  font-family: var(--ff_R);
+  margin: 1rem 0;
+}

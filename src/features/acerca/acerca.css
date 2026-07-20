@@ -1,0 +1,32 @@
+/* src/features/acerca/acerca.css - Estilos de la Pestaña de Acerca De */
+
+.about_wrap {
+  padding: 3vh;
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+}
+
+.about_card {
+  background: var(--wb);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  padding: 2.5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+}
+
+.about_desc {
+  font-size: var(--fz_m2);
+  line-height: 1.6;
+  color: var(--tx2);
+}
+
+.about_footer {
+  margin-top: 2vh;
+  color: var(--tx3);
+  font-size: var(--fz_s2);
+}

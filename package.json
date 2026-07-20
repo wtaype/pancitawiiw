@@ -1,0 +1,15 @@
+{
+  "name": "pancitawii",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"cargo tauri dev\"",
+    "build": "vite build",
+    "exe": "vite build && cargo tauri build --no-bundle"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3",
+    "vite": "^5.4.0"
+  }
+}

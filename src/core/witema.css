@@ -1,0 +1,389 @@
+/* ==================== VARIABLES GLOBALES ==================== */
+:root {
+--fz_s1: clamp(0.625rem, 0.8vh, 0.7rem);
+--fz_s2: clamp(0.675rem, 0.85vh, 0.75rem);
+--fz_s3: clamp(0.725rem, 0.9vh, 0.8rem);
+--fz_s4: clamp(0.775rem, 1vh, 0.85rem);
+--fz_m: clamp(0.8rem, 1.05vh, 0.9rem);
+--fz_m1: clamp(0.85rem, 1.1vh, 0.95rem);
+--fz_m2: clamp(0.9rem, 1.15vh, 1rem);
+--fz_m3: clamp(0.95rem, 1.2vh, 1.05rem);
+--fz_m4: clamp(1rem, 1.3vh, 1.1rem);
+--fz_m5: clamp(1.15rem, 1.5vh, 1.25rem);
+--fz_l1: clamp(1.5rem, 2vh, 1.7rem);
+--fz_l2: clamp(1.8rem, 2.3vh, 2rem);
+--fz_x1: clamp(2.2rem, 3vh, 2.8rem);
+--fz_x2: clamp(2.5rem, 3.6vh, 3.5rem);
+--fz_x3: clamp(2.9rem, 5vh, 3.9rem);
+--fz_x4: clamp(3.3rem, 5.9vh, 4.3rem);
+--fz_y1: clamp(3rem, 14vh, 8rem);
+--bs_m: 0 0 0.3vh 0.1vh var(--white);
+--bs_l: 0 0.4vh 0.8vh rgba(0, 0, 0, 0.15);
+--tr_s: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+--tr_m: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+--tr_f: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+--ff_P: 'Poppins', 'Segoe UI', system-ui;
+--ff_O: 'Outfit', 'Segoe UI', system-ui;
+
+--success: #3cd741;
+--error: #ff3849;
+--warning: #ffa726;
+--info: #00a8e6;
+
+--white: #fff;
+--offline: #ddd;
+--pdf: #555;
+--cielo: #0EBEFF;
+--dulce: #FF5C69;
+--paz: #29C72E;
+--oro: #FFDA34;
+--mora: #7000FF;
+--futuro: #21273B;
+}
+
+:root[data-theme="cielo"] {
+--bg: #ccefff;
+--wb: #e5f7ff;
+--tx: #000;
+--tx1: #1a1a1a;
+--tx2: #333;
+--tx3: #666;
+--txa: #FFF;
+--txe: #000;
+--hv: #00a8e6;
+--hva: #1873cd;
+--mco: #1978d7;
+--mbg: #1978d7;
+--brd: #b8d9eb;
+--inp: #f0f9ff;
+--bg1: #ffffff26;
+--bg2: #1978d7;
+--bg3: #e5f7ff;
+--bg4: rgba(25, 120, 215, 0.1);
+--bg5: rgba(25, 120, 215, 0.2);
+--bg6: rgba(204, 239, 255, 0.5);
+--bg7: #FFF;
+--bg8: #FFF;
+--bt: #1978d7;
+}
+
+:root[data-theme="dulce"] {
+--bg: #ffccd1;
+--wb: #ffebed;
+--tx: #000;
+--tx1: #1a0000;
+--tx2: #330000;
+--tx3: #660000;
+--txa: #FFF;
+--txe: #000;
+--hv: #ff7a85;
+--hva: #ff3849;
+--mco: #ff3849;
+--mbg: #ff3849;
+--brd: #ffb3ba;
+--inp: #fff5f6;
+--bg1: #ffffff61;
+--bg2: #ff3849;
+--bg3: #ffebed;
+--bg4: rgba(255, 56, 73, 0.1);
+--bg5: rgba(255, 56, 73, 0.2);
+--bg6: rgba(255, 204, 209, 0.5);
+--bg7: #FFF;
+--bg8: #FFF;
+--bt: #ff3849;
+}
+
+:root[data-theme="paz"] {
+--bg: #ccffce;
+--wb: #ebffeb;
+--tx: #000;
+--tx1: #001a00;
+--tx2: #003300;
+--tx3: #006600;
+--txa: #FFF;
+--txe: #000;
+--hv: #3cd741;
+--hva: #25b62a;
+--mco: #25b62a;
+--mbg: #25b62a;
+--brd: #a8e6ab;
+--inp: #f0fff1;
+--bg1: #ffffff42;
+--bg2: #25b62a;
+--bg3: #ebffeb;
+--bg4: rgba(37, 182, 42, 0.1);
+--bg5: rgba(37, 182, 42, 0.2);
+--bg6: rgba(204, 255, 206, 0.5);
+--bg7: #FFF;
+--bg8: #FFF;
+--bt: #25b62a;
+}
+
+:root[data-theme="oro"] {
+--bg: #fff8d1;
+--wb: #fffde8;
+--tx: #000;
+--tx1: #1a1500;
+--tx2: #332b00;
+--tx3: #665500;
+--txa: #000;
+--txe: #000;
+--hv: #f0cc00;
+--hva: #c9a800;
+--mco: #F5AF00;
+--mbg: #facc00;
+--brd: #ffe066;
+--inp: #fffef5;
+--bg1: #ffffff42;
+--bg2: #FFDA34;
+--bg3: #fffde8;
+--bg4: rgba(255, 218, 52, 0.1);
+--bg5: rgba(255, 218, 52, 0.2);
+--bg6: rgba(255, 243, 176, 0.5);
+--bg7: #FFF;
+--bg8: #FFF;
+--bt: #FFDA34;
+}
+
+:root[data-theme="mora"] {
+--bg: #e4ccff;
+--wb: #f4ebff;
+--tx: #000;
+--tx1: #1a001a;
+--tx2: #330033;
+--tx3: #660066;
+--txa: #FFF;
+--txe: #000;
+--hv: #9442ff;
+--hva: #5f00db;
+--mco: #6a00f5;
+--mbg: #6a00f5;
+--brd: #c9a3ff;
+--inp: #faf5ff;
+--bg1: #ffffff61;
+--bg2: #6a00f5;
+--bg3: #f4ebff;
+--bg4: rgba(106, 0, 245, 0.1);
+--bg5: rgba(106, 0, 245, 0.2);
+--bg6: rgba(228, 204, 255, 0.5);
+--bg7: #FFF;
+--bg8: #FFF;
+--bt: #6a00f5;
+}
+
+:root[data-theme="futuro"] {
+--bg: #0a0e1a;
+--wb: #151b2e;
+--tx: #e0e7ff;
+--tx1: #c7d2fe;
+--tx2: #a5b4fc;
+--tx3: #818cf8;
+--txa: #0a0e1a;
+--txe: #00f3ff;
+--hv: #00d4ff;
+--hva: #00f3ff;
+--mco: #00f3ff;
+--mbg: #151b2e;
+--brd: #2d3a52;
+--inp: #0f1421;
+--bg1: rgba(0, 243, 255, 0.08);
+--bg2: #00f3ff;
+--bg3: #1a2235;
+--bg4: rgba(0, 243, 255, 0.12);
+--bg5: rgba(0, 243, 255, 0.25);
+--bg6: rgba(26, 34, 53, 0.7);
+--bg7: #00f3ff;
+--bg8: #1a2235;
+--bt: #00f3ff;
+}
+
+*,
+*::before,
+*::after {
+margin: 0;
+padding: 0;
+box-sizing: border-box
+}
+
+html { scroll-behavior: smooth }
+
+* {
+font-family: var(--ff_P);
+scrollbar-width: thin;
+scrollbar-color: var(--mco) var(--bg)
+}
+
+a {
+text-decoration: none
+}
+
+
+/* ==================== TEMAS ==================== */
+#wiTema {
+display: flex;
+gap: 0.2vh;
+padding: 0.5vh 0.35vw;
+background: var(--bg1);
+border-radius: 0.8vh;
+position: fixed;
+flex-direction: column;
+top: 70vh;
+right: .3vh;
+z-index: 1;
+}
+
+.tema {
+width: var(--fz_l1);
+height: var(--fz_l1);
+border-radius: 50%;
+cursor: pointer;
+transition: all var(--tr_f);
+border: 2px solid transparent;
+position: relative
+}
+
+.tema:hover {
+transform: scale(1.01);
+box-shadow: 0 0 1vh rgba(0, 0, 0, 0.3)
+}
+
+.tema.mtha {
+border-color: var(--white);
+box-shadow: 0 0 1.5vh rgba(255, 255, 255, 0.6), inset 0 0 0.5vh rgba(255, 255, 255, 0.3);
+transform: scale(1.01)
+}
+
+.skip-link:focus {
+left: 50%;
+transform: translateX(-50%);
+top: 0
+}
+
+.tema[data-ths^="cielo"] {
+background: var(--cielo)
+}
+
+.tema[data-ths^="dulce"] {
+background: var(--dulce)
+}
+
+.tema[data-ths^="paz"] {
+background: var(--paz)
+}
+
+.tema[data-ths^="mora"] {
+background: var(--mora)
+}
+
+.tema[data-ths^="futuro"] {
+background: var(--futuro)
+}
+
+.tema[data-ths^="oro"] {
+background: var(--oro)
+}
+
+#wiTema:hover {
+transform: translateY(-0.2vh);
+transition: var(--tr_m)
+}
+
+
+/* ==================== WIANIMA GLOBAL v12 ==================== */
+.wi_fadeUp,
+.wi_fadeLeft,
+.wi_fadeRight,
+.wi_fadeIn,
+.wi_scale {
+opacity: 0;
+transition: opacity .6s cubic-bezier(.4, 0, .2, 1), transform .6s cubic-bezier(.4, 0, .2, 1)
+}
+
+.wi_fadeUp {
+transform: translateY(5vh)
+}
+
+.wi_fadeLeft {
+transform: translateX(-5vh)
+}
+
+.wi_fadeRight {
+transform: translateX(5vh)
+}
+
+.wi_scale {
+transform: scale(.95)
+}
+
+.wi_visible {
+opacity: 1 !important;
+transform: none !important
+}
+
+
+/* ==================== ESTILOS PARA MODALES GENERALES (PREMIUM) ==================== */
+.wiModal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10000;
+}
+
+.wiModal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.modal-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0px);
+}
+
+.modalBody, .wiModal-content {
+  position: relative;
+  background: var(--bg3, #ffffff);
+  color: var(--tx1, #212529);
+  border: 1px solid var(--brd, rgba(255, 255, 255, 0.1));
+  padding: 3.5vh;
+  border-radius: 1.5vh;
+  width: 92%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3vh) scale(0.97);
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10001;
+}
+
+.wiModal.active .modalBody, .wiModal.active .wiModal-content {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.modalX {
+  z-index: 10002;
+  background: 0 0;
+  border: 0;
+  color: var(--mco);
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform .15s, opacity .15s;
+  text-shadow: 0 1px 2px rgba(0,0,0,.15);
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.modalX:hover {
+  transform: scale(1.08);
+  opacity: .95;
+}

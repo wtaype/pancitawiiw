@@ -1,0 +1,574 @@
+/* ==================== FUENTES LOCALES DESDE PUBLIC ==================== */
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Outfit-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Outfit-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Outfit-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Poppins-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/Poppins-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/Poppins-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Poppins-700.woff2') format('woff2');
+}
+
+html, body {
+width: 100vw;
+height: 100vh;
+margin: 0;
+padding: 0;
+overflow: hidden;
+background: transparent;
+}
+
+#appwii {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: url('/wpuntos.svg'), var(--bg);
+  border-radius: 12px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.wii_content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.wii_main {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ==================== CABECERA GLOBAL wii_header ==================== */
+.wii_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--brd);
+  background: var(--bg3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  user-select: none;
+  cursor: grab;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.wii_header:active {
+  cursor: grabbing;
+}
+
+/* Zona izquierda: ícono/avatar + título/subtítulo */
+.wii_header .nv_left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Zona derecha: controles de ventana */
+.wii_header .nv_right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Ícono circular (Limpiador, Ajustes, Acerca) */
+.wii_header_icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mco);
+  font-size: var(--fz_m4);
+  flex-shrink: 0;
+}
+
+/* Avatar circular (ChatWii) */
+.wii_header_avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--mco);
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* Bloque texto: título + subtítulo */
+.wii_header_info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wii_header_title {
+  font-size: var(--fz_m3);
+  font-weight: 700;
+  color: var(--tx1);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wii_header_sub {
+  display: flex;
+  align-items: center;
+  gap: 0.5vh;
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  line-height: 1;
+}
+
+/* Punto online de estado */
+.wii_online_dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 4px var(--success);
+  flex-shrink: 0;
+}
+
+/* Botones de control de ventana dentro del header */
+.win_btn {
+  background: none;
+  border: none;
+  color: var(--tx2);
+  font-size: var(--fz_s3);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all var(--tr_f);
+}
+
+.win_btn:hover {
+  background: var(--bg4);
+  color: var(--tx1);
+}
+
+.win_btn.close:hover {
+  background: var(--error) !important;
+  color: var(--txa) !important;
+}
+
+#wii_nuevo_chat {
+  color: var(--mco);
+  background: var(--bg4);
+}
+
+#wii_nuevo_chat:hover {
+  background: var(--mco);
+  color: var(--txa);
+}
+
+/* ==================== ESTILOS GENERALES DEL WORKSPACE ==================== */
+
+/* Sidebar Estilo PC Manager (wii) */
+#wii_sidebar {
+  width: 15vw;
+  min-width: 70px;
+  max-width: 180px;
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--wb);
+  border-right: 1px solid var(--brd);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2vh 0;
+  gap: 0;
+  user-select: none;
+  position: relative;
+}
+
+.sidebar_brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 2vh;
+}
+
+.brand_logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.brand_info {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand_title {
+  font-size: var(--fz_m2);
+  font-weight: 700;
+  color: var(--tx1);
+}
+
+.brand_subtitle {
+  font-size: var(--fz_s1);
+  color: var(--tx3);
+}
+
+.sidebar_nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  width: 100%;
+  padding: 0 5px;
+}
+
+.sidebar_nav.nav_bottom {
+  margin-top: auto;
+}
+
+.nav_btn {
+  background: none;
+  border: none;
+  color: var(--tx2);
+  width: 100%;
+  padding: 1.2vh 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5vh;
+  font-size: var(--fz_s2);
+  cursor: pointer;
+  border-radius: 0.8vh;
+  transition: all var(--tr_f);
+}
+
+.nav_btn i {
+  font-size: var(--fz_m4);
+}
+
+.nav_btn span {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.nav_btn:hover {
+  background: var(--bg4);
+  color: var(--mco);
+  transform: translateY(0);
+}
+
+.nav_btn.active {
+  background: var(--bg5);
+  color: var(--mco);
+  font-weight: 600;
+}
+
+/* Responsive Sidebar para pantallas anchas */
+@media (min-width: 600px) {
+  #wii_sidebar {
+    align-items: flex-start;
+    padding: 2vh 0.4vw;
+  }
+  
+  .sidebar_brand {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    margin-bottom: 4vh;
+  }
+  
+  .brand_info {
+    display: flex;
+  }
+  
+  .sidebar_nav {
+    gap: 1vh;
+  }
+  
+  .nav_btn {
+    flex-direction: row;
+    padding: 1.2vh 1.5vh;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+  
+  .nav_btn span {
+    font-size: var(--fz_m1);
+  }
+}
+
+/* Área de Trabajo y Pestañas */
+.wii_main {
+  flex-grow: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-left: 1px solid var(--brd); /* separa del sidebar en todas las pestañas */
+}
+
+.tab_content {
+  display: none;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
+.tab_content.active {
+  display: flex;
+  flex-direction: column;
+  animation: tabFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Contenedores internos de cada módulo crecen para llenar tras el header */
+.tab_content > div,
+.tab_content > [id$="_container"] {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Los estilos de Limpieza Manual fueron extraídos a manual.css */
+
+/* Los estilos de Ajustes y Acerca de fueron extraídos a cuenta.css y acerca.css */
+
+/* Tarjeta interactiva de sugerencia en ChatWii */
+.listo_suggestion_card {
+  margin-top: 1.5vh;
+  background: var(--wb);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  padding: 1.8vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-left: 4px solid var(--mco);
+  width: 100%;
+}
+
+.listo_suggestion_title {
+  font-weight: 700;
+  font-size: var(--fz_m2);
+  color: var(--mco);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.listo_suggest_desc {
+  font-size: var(--fz_s4);
+  color: var(--tx2);
+}
+
+.listo_suggest_item {
+  border: 1px solid var(--brd);
+  border-radius: 0.8vh;
+  overflow: hidden;
+  background: var(--inp);
+}
+
+.listo_suggest_item_header {
+  padding: 1vh 1.5vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.listo_suggest_item_check {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.listo_suggest_item_title {
+  font-size: var(--fz_m);
+  font-weight: 500;
+  color: var(--tx1);
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.listo_suggest_item_toggle {
+  color: var(--tx3);
+  transition: transform var(--tr_f);
+}
+
+.listo_suggest_item_toggle.expanded {
+  transform: rotate(180deg);
+}
+
+.listo_suggest_diff_box {
+  display: none;
+  padding: 1.5vh;
+  border-top: 1px solid var(--brd);
+  background: var(--wb);
+  font-size: var(--fz_s4);
+  flex-direction: column;
+  gap: 1vh;
+}
+
+.listo_suggest_diff_box.show {
+  display: flex;
+}
+
+.listo_suggest_diff_section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.listo_suggest_diff_label {
+  color: var(--tx3);
+}
+
+.listo_suggest_diff_val_old {
+  color: var(--error);
+  font-weight: 500;
+}
+
+.listo_suggest_diff_val_new {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.listo_suggest_actions_row {
+  display: flex;
+  gap: 1.5vh;
+  margin-top: 1vh;
+}
+
+.listo_suggest_actions_row button {
+  flex-grow: 1;
+  padding: 1vh;
+  font-weight: 600;
+  border-radius: 0.6vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.listo_suggest_btn_apply_selected {
+  background: var(--mco);
+  color: var(--txa);
+}
+
+.listo_suggest_btn_cancel {
+  background: var(--brd);
+  color: var(--tx2);
+}
+
+/* Estilos de barra de progreso en burbujas */
+.clean_progress_bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  width: 100%;
+}
+
+.clean_progress_text {
+  font-size: var(--fz_s3);
+  color: var(--tx2);
+  font-weight: 500;
+}
+
+.clean_progress_bar_outer {
+  width: 100%;
+  height: 8px;
+  background: var(--brd);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.clean_progress_bar_inner {
+  height: 100%;
+  background: var(--mco);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Maquetación del Área de Trabajo y Altura 100% */
+#chat_app_container, 
+#manual_cleaner_container, 
+#settings_container, 
+#about_container {
+  width: 100%;
+  height: 100%;
+}
