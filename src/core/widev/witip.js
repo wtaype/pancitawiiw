@@ -1,10 +1,9 @@
-// src/lib/widev/witip.js
-// wiTip v11.2: Tooltip flotante optimizado para Astro ClientRouter con persistencia de CSS
+// src/core/widev/witip.js
+// wiTip v11.4: Tooltip flotante con eliminación instantánea al hacer clic, salir del área o cambiar de foco
 
 import { wiInit } from './wiinit.js';
 
 let activeTarget = null;
-let activeTip = null;
 let hideTimeout = null;
 
 export function wiTip(elmOrTxt, txt, tipo = 'top', tiempo = 1800) {
@@ -28,20 +27,46 @@ export function wiTip(elmOrTxt, txt, tipo = 'top', tiempo = 1800) {
         max-width: 25vh;
         box-shadow: 0 .4vh 1.2vh rgba(0,0,0,.2);
         opacity: 0;
-        transform: translateY(-.3vh);
-        transition: opacity 0.2s, transform 0.2s;
-        pointer-events: auto;
+        transform: scale(0.95);
+        transition: opacity 0.15s, transform 0.15s;
+        pointer-events: none;
         backdrop-filter: blur(.4vh);
+        white-space: nowrap;
       }
-      .wiTip.show { opacity: 1; transform: translateY(0); }
+      .wiTip.show { opacity: 1; transform: scale(1); }
       .wiTip::after {
         content: "";
         position: absolute;
+      }
+
+      /* Posicionamiento y flechas de wiTip */
+      .wiTip.tip-top::after {
         top: 100%;
         left: 50%;
         margin-left: -.6vh;
         border: .6vh solid transparent;
         border-top-color: inherit;
+      }
+      .wiTip.tip-bottom::after {
+        bottom: 100%;
+        left: 50%;
+        margin-left: -.6vh;
+        border: .6vh solid transparent;
+        border-bottom-color: inherit;
+      }
+      .wiTip.tip-left::after {
+        left: 100%;
+        top: 50%;
+        margin-top: -.6vh;
+        border: .6vh solid transparent;
+        border-left-color: inherit;
+      }
+      .wiTip.tip-right::after {
+        right: 100%;
+        top: 50%;
+        margin-top: -.6vh;
+        border: .6vh solid transparent;
+        border-right-color: inherit;
       }
 
       /* Estilos para Tooltips 100% CSS (Sin JS) */
@@ -89,7 +114,7 @@ export function wiTip(elmOrTxt, txt, tipo = 'top', tiempo = 1800) {
     `;
     document.head.appendChild(style);
 
-    // Delegar eventos una sola vez en document (persiste entre transiciones de Astro)
+    // Delegación limpia de eventos en document
     document.addEventListener('mouseover', (e) => {
       const target = e.target.closest?.('[data-witip]');
       if (target) {
@@ -102,20 +127,22 @@ export function wiTip(elmOrTxt, txt, tipo = 'top', tiempo = 1800) {
     });
 
     document.addEventListener('mouseout', (e) => {
-      const related = e.relatedTarget;
-      const isOverTip = related?.closest?.('.wiTip');
-      const isOverTarget = related && activeTarget && (activeTarget === related || activeTarget.contains(related));
-
-      const target = e.target.closest?.('[data-witip]');
-      if (target && !target.contains(related) && !isOverTip) {
-        hide();
-      }
-
-      const tip = e.target.closest?.('.wiTip');
-      if (tip && !tip.contains(related) && !isOverTarget) {
-        hide();
+      if (activeTarget) {
+        const related = e.relatedTarget;
+        if (!related || !activeTarget.contains(related)) {
+          hide();
+        }
       }
     });
+
+    // Ocultamiento inmediato al hacer clic en cualquier elemento de la pantalla
+    document.addEventListener('click', () => {
+      hide();
+    });
+
+    // Ocultamiento al desplazarse o perder el foco
+    window.addEventListener('scroll', () => hide(), { passive: true });
+    window.addEventListener('blur', () => hide());
   }
 
   if (!elmOrTxt) return;
@@ -128,23 +155,32 @@ export function wiTip(elmOrTxt, txt, tipo = 'top', tiempo = 1800) {
 const hide = () => {
   activeTarget = null;
   const tips = document.querySelectorAll('.wiTip');
-  tips.forEach(t => t.classList.remove('show'));
+  tips.forEach(t => {
+    t.classList.remove('show');
+    t.remove();
+  });
   clearTimeout(hideTimeout);
-  hideTimeout = setTimeout(() => tips.forEach(t => t.remove()), 200);
 };
+
+wiTip.ocultar = hide;
 
 wiTip.ver = (elm, txt, tipo, tiempo) => {
   const el = typeof elm === 'string' ? document.querySelector(elm) : elm;
   if (!el) return;
 
-  document.querySelectorAll('.wiTip').forEach(tip => tip.remove());
-  
+  hide();
+
+  // Esquema de colores intacto
   const colorTheme = { success: 'var(--success)', error: 'var(--error)', warning: 'var(--warning)', info: 'var(--info)' }[tipo] || 'var(--mco)';
+  
+  // Posicionamiento espacial (top, bottom, left, right)
+  const pos = ['top', 'bottom', 'left', 'right'].includes(tipo) ? tipo : 'top';
+
   const tip = document.createElement('div');
-  tip.className = 'wiTip';
+  tip.className = `wiTip tip-${pos}`;
   Object.assign(tip.style, {
     background: colorTheme,
-    borderTopColor: colorTheme
+    borderColor: colorTheme
   });
   tip.innerHTML = `<span>${txt}</span>`;
   document.body.appendChild(tip);
@@ -152,21 +188,39 @@ wiTip.ver = (elm, txt, tipo, tiempo) => {
   const rect = el.getBoundingClientRect();
   const tipW = tip.offsetWidth;
   const tipH = tip.offsetHeight;
+
+  let leftPos = rect.left + rect.width / 2 - tipW / 2;
+  let topPos = rect.top - tipH - 8;
+
+  if (pos === 'right') {
+    leftPos = rect.right + 10;
+    topPos = rect.top + rect.height / 2 - tipH / 2;
+  } else if (pos === 'bottom') {
+    leftPos = rect.left + rect.width / 2 - tipW / 2;
+    topPos = rect.bottom + 8;
+  } else if (pos === 'left') {
+    leftPos = rect.left - tipW - 10;
+    topPos = rect.top + rect.height / 2 - tipH / 2;
+  }
+
+  // Prevenir desbordamiento de pantalla
+  leftPos = Math.max(8, Math.min(leftPos, window.innerWidth - tipW - 8));
+  topPos = Math.max(8, Math.min(topPos, window.innerHeight - tipH - 8));
+
   Object.assign(tip.style, {
-    left: `${Math.max(8, Math.min(rect.left + rect.width / 2 - tipW / 2, window.innerWidth - tipW - 8))}px`,
-    top: `${rect.top - tipH - 8}px`
+    left: `${leftPos}px`,
+    top: `${topPos}px`
   });
 
   requestAnimationFrame(() => {
     tip.classList.add('show');
     if (tiempo > 0) {
-      setTimeout(() => {
-        tip.classList.remove('show');
-        setTimeout(() => tip.remove(), 200);
+      hideTimeout = setTimeout(() => {
+        hide();
       }, tiempo);
     }
   });
 };
 
-// Auto-inicialización via wiInit (elimina triple listener duplicado)
+// Auto-inicialización via wiInit
 wiInit(() => wiTip());
