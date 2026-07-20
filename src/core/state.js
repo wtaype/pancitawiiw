@@ -1,5 +1,5 @@
 // src/core/state.js
-// Estado reactivo global de la aplicación (Modo Layout y Tema Central)
+// Estado reactivo global de la aplicación (Tema Central y Comandos de Ventanas Nativas)
 
 import { witema } from '@widev';
 import wii from '../wii.js';
@@ -20,11 +20,21 @@ function obtenerTemaGuardado() {
   return wii.dtema || 'futuro';
 }
 
+function invokeTauri(comando, payload = {}) {
+  if (window.__TAURI__) {
+    const core = window.__TAURI__.core || window.__TAURI__.tauri;
+    if (core && typeof core.invoke === 'function') {
+      return core.invoke(comando, payload).catch(err => {
+        console.error(`[state.js] Error al ejecutar ${comando}:`, err);
+      });
+    }
+  }
+  return Promise.resolve();
+}
+
 class GlobalState {
   constructor() {
-    this.layout = 'principal'; // 'principal' | 'panel'
     this.tema = obtenerTemaGuardado();
-    this.subscriptoresLayout = [];
   }
 
   // Inicializar tema visual
@@ -49,27 +59,24 @@ class GlobalState {
     witema(nuevoTema);
   }
 
-  // Alternar entre Layout Principal y Layout Panel
-  toggleLayout() {
-    this.layout = this.layout === 'principal' ? 'panel' : 'principal';
-    this.notificarLayout();
+  // Alternar ventana nativa Panel
+  togglePanel() {
+    return invokeTauri('toggle_panel');
   }
 
-  // Cambiar layout explícitamente
-  setLayout(modo) {
-    if (this.layout !== modo) {
-      this.layout = modo;
-      this.notificarLayout();
-    }
+  // Alternar ventana nativa Smile
+  toggleSmile() {
+    return invokeTauri('toggle_smile');
   }
 
-  // Suscribirse a cambios de layout
-  subscribirLayout(fn) {
-    this.subscriptoresLayout.push(fn);
+  // Fijar sonrisa
+  fijarSonrisa(fijar = true) {
+    return invokeTauri('fijar_sonrisa', { fijar });
   }
 
-  notificarLayout() {
-    this.subscriptoresLayout.forEach(fn => fn(this.layout));
+  // Restablecer posiciones de ventanas nativas
+  restablecerPosiciones() {
+    return invokeTauri('restablecer_posiciones');
   }
 }
 

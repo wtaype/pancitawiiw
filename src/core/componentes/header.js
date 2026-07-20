@@ -60,7 +60,7 @@ export function bindHeaderEvents(container) {
   const toggleBtn = container.querySelector('#wii_toggle_panel');
   if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
-      state.toggleLayout();
+      state.togglePanel();
     });
   }
 }

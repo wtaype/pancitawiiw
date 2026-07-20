@@ -1,13 +1,12 @@
-// src/main.js
-// Punto de entrada principal SPA de pancitawii
+// src/app.js
+// Punto de entrada principal SPA de pancitawii (Ventana Principal)
 
 import state from './core/state.js';
 import { rutas } from './core/rutas.js';
 import { renderLayoutPrincipal } from './core/layouts/principal.js';
-import { renderLayoutPanel } from './core/layouts/panel.js';
 import wii from './wii.js';
 
-// Cache del objeto ventana de Tauri v2 para evitar búsquedas repetitivas en window
+// Cache del objeto ventana de Tauri v2
 let windowInstance = null;
 const getTauriWindow = () => {
   if (windowInstance) return windowInstance;
@@ -27,14 +26,7 @@ document.addEventListener('mousedown', (e) => {
   }
 });
 
-// 2. Control de doble clic para alternar layout
-document.addEventListener('dblclick', (e) => {
-  if (e.target.closest('[data-tauri-drag-region]') && !e.target.closest('button, input, textarea')) {
-    state.toggleLayout();
-  }
-});
-
-// 3. Manejo de Controles de Ventana (Minimizar, Maximizar, Cerrar)
+// 2. Manejo de Controles de Ventana (Minimizar, Maximizar, Cerrar)
 document.addEventListener('click', (e) => {
   const win = getTauriWindow();
   if (!win) return;
@@ -51,24 +43,14 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// 4. Inicialización al cargar la aplicación
+// 3. Inicialización al cargar la aplicación principal
 document.addEventListener('DOMContentLoaded', () => {
   document.title = wii.titulo;
-
   state.initTema();
 
-  const renderCurrentLayout = (modo) => {
-    const root = document.getElementById('appwii');
-    if (!root) return;
-
-    if (modo === 'panel') {
-      renderLayoutPanel(root);
-    } else {
-      renderLayoutPrincipal(root);
-      rutas.navegar(rutas.rutaActual);
-    }
-  };
-
-  state.subscribirLayout(renderCurrentLayout);
-  renderCurrentLayout(state.layout);
+  const root = document.getElementById('appwii');
+  if (root) {
+    renderLayoutPrincipal(root);
+    rutas.navegar(rutas.rutaActual);
+  }
 });

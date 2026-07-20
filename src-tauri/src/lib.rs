@@ -44,10 +44,11 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            // Enrutador de Ventana Nativa Sonrisa (Fase 1)
+            // Enrutador de Ventana Nativa Sonrisa y Panel
             nucleo::ventana::sonrisa::toggle_smile,
             nucleo::ventana::sonrisa::fijar_sonrisa,
             nucleo::ventana::sonrisa::restablecer_posiciones,
+            nucleo::ventana::panel::toggle_panel,
 
             // Enrutador de Asistente pancitawii (chatwii)
             funciones::chatwii::chat::completar_chat_comando,
