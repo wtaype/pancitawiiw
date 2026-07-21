@@ -14,20 +14,12 @@ pub fn run() {
             crate::nucleo::chatwii::prompt::inicializar_env_js();
 
             // Posicionar la ventana principal al 100% de la pantalla (Ancho y Alto) sin destellos
-            if let Some(window) = app.get_webview_window("main") {
-                if let Ok(Some(monitor)) = window.primary_monitor() {
-                    let scale_factor = window.scale_factor().unwrap_or(1.0);
-                    let monitor_logical_size = monitor.size().to_logical::<f64>(scale_factor);
-                    
-                    let window_width = monitor_logical_size.width;
-                    let window_height = monitor_logical_size.height;
-                    
-                    let x = 0.0;
-                    let y = 0.0;
-                    
-                    let _ = window.set_position(tauri::Position::Logical(tauri::LogicalPosition::new(x, y)));
-                    let _ = window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(window_width, window_height)));
-                    let _ = window.show();
+            if let Some(w) = app.get_webview_window("main") {
+                if let Ok(Some(m)) = w.primary_monitor() {
+                    let size = m.size().to_logical::<f64>(w.scale_factor().unwrap_or(1.0));
+                    let _ = w.set_position(tauri::Position::Logical(tauri::LogicalPosition::new(0.0, 0.0)));
+                    let _ = w.set_size(tauri::Size::Logical(tauri::LogicalSize::new(size.width, size.height)));
+                    let _ = w.show();
                 }
             }
 

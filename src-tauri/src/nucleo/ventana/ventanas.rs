@@ -11,14 +11,10 @@ const MARGEN_SMILE_Y: i32 = 20;
 
 // Helper para redimensionar la ventana principal al 100% de la pantalla sin usar maximize() del OS
 fn poner_pantalla_completa(main_window: &tauri::WebviewWindow) {
-    if let Ok(Some(monitor)) = main_window.primary_monitor() {
-        let scale_factor = main_window.scale_factor().unwrap_or(1.0);
-        let monitor_logical_size = monitor.size().to_logical::<f64>(scale_factor);
+    if let Ok(Some(m)) = main_window.primary_monitor() {
+        let size = m.size().to_logical::<f64>(main_window.scale_factor().unwrap_or(1.0));
         let _ = main_window.set_position(Position::Logical(tauri::LogicalPosition::new(0.0, 0.0)));
-        let _ = main_window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(
-            monitor_logical_size.width,
-            monitor_logical_size.height,
-        )));
+        let _ = main_window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(size.width, size.height)));
     }
 }
 
