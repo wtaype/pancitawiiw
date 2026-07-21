@@ -1,6 +1,19 @@
 /* src/features/musica/musica.css — Reproductor Premium Liquid Glass */
 
 /* ═══════════════════════════════════════════
+   GLOBAL: ELIMINAR TODOS LOS OUTLINES Y BORDES FOCADOS
+   ═══════════════════════════════════════════ */
+.musica_panel_card *,
+.musica_panel_card *:focus,
+.musica_panel_card *:focus-visible,
+.msc_modal_glass_wide *,
+.msc_modal_glass_wide *:focus,
+.msc_modal_glass_wide *:focus-visible {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ═══════════════════════════════════════════
    CONTENEDOR PRINCIPAL
    ═══════════════════════════════════════════ */
 .musica_panel_card {
@@ -216,7 +229,7 @@
 .msc_path_copy:hover { color: var(--mco); }
 
 /* ═══════════════════════════════════════════
-   2. FILTROS + BÚSQUEDA
+   2. FILTROS + BÚSQUEDA + ACCIONES SUPERIORES
    ═══════════════════════════════════════════ */
 .msc_search_bar {
   display: flex;
@@ -261,23 +274,6 @@
   border-color: var(--mco);
   color: var(--mco);
   box-shadow: 0 2px 10px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.2);
-}
-
-/* Contador de favoritos */
-.msc_fav_count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--mco);
-  color: var(--txa);
-  font-size: clamp(8px, 0.55vw, 9px);
-  font-weight: 700;
-  width: 1.6vh;
-  height: 1.6vh;
-  min-width: 14px;
-  min-height: 14px;
-  border-radius: 50%;
-  line-height: 1;
 }
 
 /* Buscador */
@@ -333,8 +329,57 @@
 
 .msc_sort_select:hover { border-color: var(--mco); }
 
+/* Botones de acción al costado de los filtros (+ , Refresh y Nav Paginación < >) */
+.msc_top_action_btns {
+  display: flex;
+  gap: 0.3vw;
+  flex-shrink: 0;
+}
+
+.msc_top_act_btn {
+  width: 3.2vh;
+  height: 3.2vh;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  color: var(--tx2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: clamp(10px, 0.7vw, 12px);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  box-shadow: 0 2px 6px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all var(--tr_m);
+}
+
+.msc_top_act_btn:hover:not(:disabled) {
+  color: var(--mco);
+  border-color: var(--mco);
+  transform: translateY(-1px);
+}
+
+.msc_top_act_btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.msc_top_act_btn.add_btn {
+  background: var(--mco);
+  border-color: var(--mco);
+  color: var(--txa);
+}
+
+.msc_top_act_btn.add_btn:hover {
+  transform: scale(1.08) translateY(0);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--mco) 45%, transparent);
+}
+
 /* ═══════════════════════════════════════════
-   3. LISTA DE CANCIONES
+   3. LISTA DE CANCIONES SCROLLABLE
    ═══════════════════════════════════════════ */
 .msc_track_list_scroll {
   flex: 1;
@@ -352,7 +397,7 @@
   border-radius: 99px;
 }
 
-/* Card de pista */
+/* Card de pista — Sin bordes/outlines molestos */
 .msc_track_card_item {
   background: var(--glass-bg);
   border: 1px solid var(--glass-brd);
@@ -377,7 +422,7 @@
 
 .msc_track_card_item.active {
   border-color: var(--mco);
-  background: color-mix(in srgb, var(--glass-bg) 80%, var(--bg4));
+  background: color-mix(in srgb, var(--glass-bg) 75%, var(--bg4));
   box-shadow: 0 4px 14px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
@@ -476,15 +521,10 @@
   transition: all var(--tr_f);
 }
 
-.msc_btn_play_mini:hover {
-  transform: scale(1.12);
-}
+.msc_btn_play_mini:hover { transform: scale(1.12); }
+.msc_btn_play_mini.pause_mini { background: var(--error); }
 
-.msc_btn_play_mini.pause_mini {
-  background: var(--error);
-}
-
-/* Estado vacío (sin favoritos) */
+/* Estado vacío */
 .msc_empty_state {
   flex: 1;
   display: flex;
@@ -504,449 +544,281 @@
 }
 
 /* ═══════════════════════════════════════════
-   4. FOOTER CARPETA
+   4. MODAL MÚSICA CON TABS (EXPANDIDO 720PX × 460PX)
    ═══════════════════════════════════════════ */
-.msc_folder_bar {
-  display: flex;
-  align-items: center;
-  gap: 0.35vw;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-brd);
-  border-radius: 1.1vh;
-  padding: 0.6vh 0.5vw;
-  flex-shrink: 0;
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
-  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.15);
-}
-
-.msc_folder_input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: var(--tx3);
-  font-size: clamp(8px, 0.58vw, 10px);
-  padding: 0;
-  outline: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.msc_btn_action {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-brd);
-  color: var(--mco);
-  font-size: clamp(8px, 0.6vw, 10px);
-  font-weight: 600;
-  padding: 0.5vh 0.6vw;
-  border-radius: 0.8vh;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.3));
-  box-shadow: 0 2px 6px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.15);
-  transition: all var(--tr_m);
-}
-
-.msc_btn_action:hover {
-  background: var(--mco);
-  color: var(--txa);
-  border-color: var(--mco);
-  transform: translateY(-1px);
-}
-
-.msc_btn_icon_only,
-.msc_btn_add {
-  width: 2.8vh;
-  height: 2.8vh;
-  min-width: 24px;
-  min-height: 24px;
-  border-radius: 50%;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-brd);
-  color: var(--tx2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: clamp(9px, 0.62vw, 11px);
-  box-shadow: 0 2px 6px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.15);
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.3));
-  transition: all var(--tr_m);
-}
-
-.msc_btn_icon_only:hover,
-.msc_btn_add:hover {
-  color: var(--mco);
-  border-color: var(--mco);
-  transform: translateY(-1px);
-}
-
-
-/* Tarjeta Música — Liquid Glass */
-.musica_panel_card {
-  height: 100%;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-brd);
-  border-radius: 1.8vh;
-  padding: 2vh 1vw;
+.msc_modal_glass_wide {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-brd) !important;
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.3)) !important;
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.3)) !important;
+  box-shadow: 0 24px 60px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+  border-radius: 1.8vh !important;
+  width: 720px !important;
+  height: 460px !important;
+  padding: 2.5vh 2vw !important;
   display: flex;
   flex-direction: column;
+  gap: 2vh;
   box-sizing: border-box;
-  overflow: hidden;
-  gap: 1.2vh;
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow:
-    0 10px 36px 0 var(--glass-shd),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-/* Sub-player — Liquid Glass interior */
-.msc_hero_player {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-brd);
-  border-radius: 1.2vh;
-  padding: 1.5vh 1vw;
-  display: flex;
-  flex-direction: column;
-  gap: 1vh;
-  box-sizing: border-box;
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  box-shadow: 0 4px 14px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.18);
-}
-
-.msc_now_playing_tag {
-  font-size: clamp(9px, 0.65vw, 11px);
-  font-weight: 700;
-  color: var(--mco);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.msc_track_title_now {
-  font-size: clamp(11px, 0.8vw, 14px);
-  font-weight: 700;
-  color: var(--tx);
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-}
-
-/* BARRA DE PROGRESO DE TIEMPO */
-.msc_timeline_wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.6vw;
-}
-
-.msc_time_text {
-  font-size: clamp(9px, 0.65vw, 11px);
-  font-weight: 600;
-  color: var(--tx2);
-  min-width: 30px;
-}
-
-.msc_progress_bar_container {
-  flex: 1;
-  height: 4px;
-  background: var(--bg5);
-  border-radius: 2px;
-  position: relative;
-  cursor: pointer;
-}
-
-.msc_progress_fill_cyan {
-  width: var(--msc-progress-pct, 0%);
-  height: 100%;
-  background: var(--mco);
-  border-radius: 2px;
-  position: relative;
-}
-
-.msc_progress_thumb {
-  position: absolute;
-  right: -4px;
-  top: -3px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--mco);
-  box-shadow: 0 0 8px var(--mco);
-}
-
-/* BOTONES DE CONTROL CON PLAY CIRCULAR CIAN */
-.msc_controls_row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2vw;
-  margin-top: 0.5vh;
-}
-
-.msc_ctrl_btn {
-  background: transparent;
-  border: none;
-  color: var(--tx2);
-  cursor: pointer;
-  font-size: clamp(12px, 0.85vw, 15px);
-  transition: all 0.2s ease;
-}
-
-.msc_ctrl_btn:hover {
-  color: var(--mco);
-}
-
-.msc_ctrl_btn.play_cyan_btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--mco);
-  color: var(--txa);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  box-shadow: 0 0 1.5vh var(--bg5);
-  transition: transform 0.2s ease;
-}
-
-.msc_ctrl_btn.play_cyan_btn:hover {
-  transform: scale(1.08);
-}
-
-/* DETALLES DE META PISTA */
-.msc_meta_bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: clamp(9px, 0.65vw, 11px);
-  color: var(--tx2);
-  border-top: 0.1vw solid var(--brd);
-  padding-top: 0.8vh;
-}
-
-/* 2. BARRA DE BÚSQUEDA Y FILTRO DE PISTAS */
-.msc_search_bar {
+/* Cabecera Pestañas Modal */
+.msc_modal_header_tabs {
   display: flex;
   gap: 0.6vw;
-  align-items: center;
+  border-bottom: 1px solid var(--glass-brd);
+  padding-bottom: 1.2vh;
 }
 
-.msc_search_input_wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: var(--inp);
-  border: 0.1vw solid var(--brd);
-  border-radius: 6px;
-  padding: 0 0.6vw;
-}
-
-.msc_search_input_wrap i {
-  font-size: 11px;
-  color: var(--tx2);
-  margin-right: 0.4vw;
-}
-
-.msc_search_input {
-  background: transparent;
-  border: none;
-  color: var(--tx);
-  font-size: clamp(10px, 0.75vw, 12px);
-  width: 100%;
-  padding: 6px 0;
-  outline: none;
-}
-
-.msc_search_input::placeholder {
-  color: var(--tx3);
-}
-
-.msc_sort_select {
-  background: var(--inp);
-  border: 0.1vw solid var(--brd);
-  color: var(--tx1);
-  font-size: clamp(10px, 0.75vw, 12px);
-  border-radius: 6px;
-  padding: 6px 0.6vw;
-  outline: none;
-  cursor: pointer;
-}
-
-/* 3. LISTA DE CANCIONES SCROLLABLE */
-.msc_track_list_scroll {
-  flex: 1;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.8vh;
-  padding-right: 0.2vw;
-}
-
-.msc_track_list_scroll::-webkit-scrollbar {
-  width: 4px;
-}
-.msc_track_list_scroll::-webkit-scrollbar-thumb {
-  background: var(--brd);
-  border-radius: 3px;
-}
-
-.msc_track_card_item {
-  background: var(--wb);
-  border: 0.1vw solid var(--brd);
-  border-radius: 8px;
-  padding: 1vh 0.6vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6vw;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.msc_track_card_item:hover {
-  border-color: var(--bg5);
-  background: var(--bg4);
-}
-
-.msc_track_card_item.active {
-  border-color: var(--mco);
-  background: var(--bg4);
-}
-
-.msc_track_item_left {
-  display: flex;
-  align-items: center;
-  gap: 0.6vw;
-  overflow: hidden;
-}
-
-.msc_track_idx {
-  font-size: clamp(9px, 0.65vw, 11px);
-  font-weight: 700;
-  color: var(--tx3);
-  min-width: 15px;
-}
-
-.msc_track_meta_mini {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.msc_track_name_mini {
-  font-size: clamp(10px, 0.75vw, 12px);
-  font-weight: 600;
-  color: var(--tx1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.msc_track_sub_mini {
-  font-size: clamp(8px, 0.6vw, 10px);
-  color: var(--tx3);
-}
-
-.msc_track_item_right {
-  display: flex;
-  align-items: center;
-  gap: 0.6vw;
-  flex-shrink: 0;
-}
-
-.msc_fav_icon_mini {
-  font-size: 10px;
-  color: var(--tx3);
-}
-
-.msc_btn_play_mini {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--mco);
-  color: var(--txa);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  cursor: pointer;
-}
-
-.msc_btn_play_mini.pause_mini {
-  background: var(--error);
-  color: var(--white);
-}
-
-/* 4. BARRA SELECTORA DE CARPETA (AL FINAL DE TODO) */
-.msc_folder_bar {
+.msc_modal_tab_btn {
   display: flex;
   align-items: center;
   gap: 0.4vw;
-  background: var(--bg);
-  border: 0.1vw solid var(--brd);
-  border-radius: 8px;
-  padding: 0.8vh 0.6vw;
-  margin-top: auto;
+  padding: 0.8vh 1vw;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1vh;
+  color: var(--tx2);
+  font-size: clamp(11px, 0.78vw, 13px);
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all var(--tr_m);
 }
 
-.msc_folder_input {
+.msc_modal_tab_btn:hover {
+  color: var(--mco);
+  border-color: var(--mco);
+  transform: translateY(-1px);
+}
+
+.msc_modal_tab_btn.active {
+  background: var(--bg4);
+  border-color: var(--mco);
+  color: var(--mco);
+  box-shadow: 0 2px 12px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.22);
+}
+
+.msc_badge_count {
+  background: var(--mco);
+  color: var(--txa);
+  font-size: clamp(8px, 0.55vw, 10px);
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 99px;
+  line-height: 1.2;
+}
+
+/* Contenidos de Pestañas */
+.msc_modal_tab_content {
+  display: none;
+  flex-direction: column;
+  gap: 1.5vh;
   flex: 1;
-  background: var(--inp);
-  border: 0.1vw solid var(--brd);
+  overflow-y: auto;
+}
+
+.msc_modal_tab_content.active {
+  display: flex;
+}
+
+/* Dropzone Instantáneo */
+.msc_dropzone_instant {
+  border: 2px dashed var(--glass-brd);
+  background: color-mix(in srgb, var(--glass-bg) 60%, transparent);
+  border-radius: 1.6vh;
+  padding: 4vh 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2vh;
+  cursor: pointer;
+  transition: all var(--tr_m);
+  flex: 1;
+}
+
+.msc_dropzone_instant:hover {
+  border-color: var(--mco);
+  background: color-mix(in srgb, var(--glass-bg) 80%, var(--bg4));
+  transform: translateY(-2px);
+}
+
+.msc_dropzone_icon {
+  font-size: clamp(32px, 3.5vh, 44px);
+  color: var(--mco);
+}
+
+.msc_dropzone_title {
+  font-size: clamp(13px, 0.9vw, 15px);
+  font-weight: 700;
+  color: var(--tx);
+  text-align: center;
+}
+
+.msc_dropzone_sub {
+  font-size: clamp(10px, 0.72vw, 12px);
   color: var(--tx2);
-  font-size: clamp(8px, 0.65vw, 11px);
-  padding: 6px 0.6vw;
-  border-radius: 5px;
-  outline: none;
+  text-align: center;
+}
+
+.msc_dropzone_formats {
+  font-size: clamp(9px, 0.6vw, 10px);
+  color: var(--tx3);
+}
+
+.msc_file_input_hidden {
+  display: none !important;
+}
+
+/* Pestaña 2: Mis Carpetas */
+.msc_folders_list {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding-right: 0.2vw;
+}
+
+.msc_folder_item_card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.2vh;
+  padding: 1.2vh 1vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1vw;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all var(--tr_m);
+}
+
+.msc_folder_item_card:hover {
+  border-color: var(--mco);
+  box-shadow: 0 4px 14px 0 var(--glass-shd);
+}
+
+.msc_folder_item_card.active {
+  border-color: var(--mco);
+  background: color-mix(in srgb, var(--glass-bg) 80%, var(--bg4));
+}
+
+.msc_folder_item_info {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  overflow: hidden;
+  flex: 1;
+}
+
+.msc_folder_icon_box {
+  width: 3.8vh;
+  height: 3.8vh;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  color: var(--mco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 0.85vw, 15px);
+}
+
+.msc_folder_details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2vh;
+  overflow: hidden;
+}
+
+.msc_folder_name_row {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+}
+
+.msc_folder_name {
+  font-size: clamp(11px, 0.78vw, 13px);
+  font-weight: 700;
+  color: var(--tx1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.msc_btn_action {
-  background: var(--bg4);
-  border: 0.1vw solid var(--bg5);
-  color: var(--mco);
+.msc_tag_active {
+  background: var(--mco);
+  color: var(--txa);
+  font-size: clamp(8px, 0.55vw, 9px);
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.msc_folder_sub {
+  font-size: clamp(9px, 0.6vw, 10px);
+  color: var(--tx3);
+}
+
+.msc_folder_actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+}
+
+.msc_folder_act_btn {
+  padding: 0.6vh 0.8vw;
+  border-radius: 0.8vh;
   font-size: clamp(9px, 0.65vw, 11px);
   font-weight: 600;
-  padding: 6px 0.8vw;
-  border-radius: 5px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  transition: all 0.2s ease;
+  gap: 0.3vw;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.3));
+  transition: all var(--tr_m);
 }
 
-.msc_btn_action:hover {
+.msc_folder_act_btn.activate {
   background: var(--mco);
+  border: 1px solid var(--mco);
   color: var(--txa);
 }
 
-.msc_btn_icon_only {
-  background: var(--bg4);
-  border: 0.1vw solid var(--brd);
-  color: var(--tx2);
-  width: 26px;
-  height: 26px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 10px;
+.msc_folder_act_btn.activate:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--mco) 40%, transparent);
 }
 
-.msc_btn_icon_only:hover {
-  background: var(--bg5);
-  color: var(--tx);
+.msc_folder_act_btn.delete {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  color: var(--tx3);
+}
+
+.msc_folder_act_btn.delete:hover {
+  color: var(--error);
+  border-color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+}
+
+.msc_empty_folders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1vh;
+  padding: 4vh 0;
+  color: var(--tx3);
+  font-size: clamp(11px, 0.75vw, 13px);
+}
+
+.msc_empty_folders i {
+  font-size: 32px;
+  color: var(--mco);
+  opacity: 0.6;
 }

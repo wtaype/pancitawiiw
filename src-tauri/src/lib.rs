@@ -62,7 +62,10 @@ pub fn run() {
             funciones::lab::lab::logs_escribir_comando,
             funciones::lab::lab::logs_leer_comando,
             funciones::lab::lab::logs_borrar_comando,
-            funciones::lab::lab::documento_leer_archivo_comando
+            funciones::lab::lab::documento_leer_archivo_comando,
+
+            // Enrutador de Música
+            funciones::musica::musica_lista::seleccionar_carpeta_musica_comando
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
