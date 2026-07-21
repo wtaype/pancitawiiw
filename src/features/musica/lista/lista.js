@@ -7,6 +7,7 @@ export const PLAYLIST_REALES = [
     titulo: 'ATC - Around The World (Slowed & Reverb)',
     archivo: 'ATC - Around The World (Slowed & Reverb) ｜ Wesker Edit.mp3',
     peso: '8.5 MB',
+    fecha: '21 jul 2026',
     url: new URL('./ATC - Around The World (Slowed & Reverb) ｜ Wesker Edit.mp3', import.meta.url).href
   },
   {
@@ -14,6 +15,7 @@ export const PLAYLIST_REALES = [
     titulo: 'Bazovyy Minimum (Базовый Минимум)',
     archivo: 'Bazovyy_Minimum.mp3',
     peso: '7.9 MB',
+    fecha: '21 jul 2026',
     url: new URL('./Bazovyy_Minimum.mp3', import.meta.url).href
   },
   {
@@ -21,6 +23,7 @@ export const PLAYLIST_REALES = [
     titulo: 'bye (Altare remix) - Ariana Grande',
     archivo: 'bye (Altare remix) - Ariana Grande (slowed + reverb).mp3',
     peso: '7.2 MB',
+    fecha: '21 jul 2026',
     url: new URL('./bye (Altare remix) - Ariana Grande (slowed + reverb).mp3', import.meta.url).href
   },
   {
@@ -28,6 +31,7 @@ export const PLAYLIST_REALES = [
     titulo: 'Cryon (sped up + extended), SR2X',
     archivo: 'Cryon (sped up + extended), SR2X.mp3',
     peso: '4.5 MB',
+    fecha: '21 jul 2026',
     url: new URL('./Cryon (sped up + extended), SR2X.mp3', import.meta.url).href
   },
   {
@@ -35,6 +39,7 @@ export const PLAYLIST_REALES = [
     titulo: 'LOYALTY (Slowed)',
     archivo: 'LOYALTY (Slowed).mp3',
     peso: '6.1 MB',
+    fecha: '21 jul 2026',
     url: new URL('./LOYALTY (Slowed).mp3', import.meta.url).href
   },
   {
@@ -42,6 +47,7 @@ export const PLAYLIST_REALES = [
     titulo: 'mike posner & seeb - i took a pill in ibiza',
     archivo: 'mike posner & seeb - i took a pill in ibiza ( slowed + reverb ).mp3',
     peso: '6.8 MB',
+    fecha: '21 jul 2026',
     url: new URL('./mike posner & seeb - i took a pill in ibiza ( slowed + reverb ).mp3', import.meta.url).href
   },
   {
@@ -49,6 +55,7 @@ export const PLAYLIST_REALES = [
     titulo: 'Montagem Celestial Esperanza (EXTENDED)',
     archivo: 'Montagem Celestial Esperanza (EXTENDED) — Super Slowed + Reverb ｜ Best Version.mp3',
     peso: '10.0 MB',
+    fecha: '21 jul 2026',
     url: new URL('./Montagem Celestial Esperanza (EXTENDED) — Super Slowed + Reverb ｜ Best Version.mp3', import.meta.url).href
   },
   {
@@ -56,6 +63,7 @@ export const PLAYLIST_REALES = [
     titulo: 'Sem Tempo (EXTENDED) — Ultra Slowed',
     archivo: 'Sem Tempo (EXTENDED) — Ultra Slowed + Reverb ｜ Best Version.mp3',
     peso: '11.0 MB',
+    fecha: '21 jul 2026',
     url: new URL('./Sem Tempo (EXTENDED) — Ultra Slowed + Reverb ｜ Best Version.mp3', import.meta.url).href
   }
 ];
