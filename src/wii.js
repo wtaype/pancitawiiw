@@ -24,4 +24,6 @@ git add . ; git commit -m "Actualizacion Principal v1.10.10" ; git push origin m
 // REEMPLAZAR TAG DE SEGURIDAD EXISTENTE [TAG REMPLAZO] (3)
 git tag -d v1 ; git tag v1 -m "Version v1 actualizada" ; git push origin v1 --force
 
+taskkill /f /im pancitawii.exe
+
  ACTUALIZACION TAG[END] */

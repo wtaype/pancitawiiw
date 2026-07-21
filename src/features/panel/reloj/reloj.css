@@ -62,7 +62,7 @@
   letter-spacing: 2px;
   color: var(--cielo, #0EBEFF);
   text-align: center;
-  font-family: 'Orbitron', var(--ff_O, 'Outfit'), sans-serif;
+  font-family: var(--ff_T, 'Outfit'), sans-serif;
   text-shadow: 0 0 28px rgba(14, 190, 255, 0.65);
   line-height: 1;
   white-space: nowrap;
