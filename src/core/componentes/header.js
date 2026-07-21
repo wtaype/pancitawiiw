@@ -1,8 +1,9 @@
 // src/core/componentes/header.js
 // Componente Header dinámico adaptado 100% a las clases de app.css (DoctorWii Style)
 
-import { getMeta, rutas } from '../rutas.js';
-import state from '../state.js';
+import { getMeta } from '@core/seo.js';
+import { rutas } from '@core/rutas.js';
+import state from '@core/state.js';
 
 export function renderHeader() {
   const meta = getMeta(rutas.rutaActual);
@@ -25,9 +26,6 @@ export function renderHeader() {
       <div class="nv_right">
         <button id="wii_pin_btn" class="win_btn pin" title="Fijar Sonrisa Flotante">
           <i class="fa-solid fa-thumbtack"></i>
-        </button>
-        <button id="wii_toggle_panel" class="win_btn" title="Alternar a Vista Panel Flotante">
-          <i class="fa-solid fa-expand"></i>
         </button>
         <button id="wii_minimizar" class="win_btn" title="Minimizar">
           <i class="fa-solid fa-minus"></i>
@@ -54,13 +52,6 @@ export function bindHeaderEvents(container) {
             .catch(err => console.error('Error al fijar sonrisa:', err));
         }
       }
-    });
-  }
-
-  const toggleBtn = container.querySelector('#wii_toggle_panel');
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      state.togglePanel();
     });
   }
 }

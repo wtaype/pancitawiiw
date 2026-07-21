@@ -1,12 +1,13 @@
 /* src/core/layouts/principal.css */
-/* Estilos del Layout Principal Shell (Vista Expandida de pancitawii) */
+/* Estilos del Layout Principal Shell (Vista de 2 Columnas Premium: Main y Sidebar) */
 
 .layout_principal_root {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   background: var(--bg);
-  color: var(--txa);
+  color: var(--tx);
+  font-family: var(--ff_P), 'Poppins', sans-serif;
 }
 
 .layout_principal_shell {
@@ -15,170 +16,196 @@
   height: 100%;
 }
 
-.layout_principal_content {
+.layout_columns_container {
   display: flex;
-  flex-direction: column;
   flex: 1;
-  height: 100%;
+  width: 100%;
+  height: calc(100vh - 7vh); /* Descontando la altura adaptativa de la cabecera */
   overflow: hidden;
 }
 
-/* Sidebar Lateral */
-#wii_sidebar {
-  width: 240px;
-  background: var(--wbs);
-  border-right: 1px solid var(--txe);
+/* ==================== PANEL CENTRAL PRINCIPAL (60%) ==================== */
+.wii_main {
+  width: 60%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 1rem;
-}
-
-.sidebar_brand {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--txe);
-  margin-bottom: 1.25rem;
-}
-
-.brand_logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-
-.brand_info {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand_title {
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: var(--txa);
-  letter-spacing: -0.3px;
-}
-
-.brand_subtitle {
-  font-size: 0.75rem;
-  color: var(--txc);
-  font-weight: 600;
-}
-
-.sidebar_nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.nav_btn {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.75rem 1rem;
-  border: none;
+  padding: 2.5vh 2vw;
+  box-sizing: border-box;
+  border-right: 0.1vw solid var(--brd);
+  overflow-y: auto;
   background: transparent;
-  color: var(--txb);
-  border-radius: 10px;
+}
+
+/* Navegación Horizontal Superior (Glassmorphism & Uniform) */
+.main_horizontal_nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6vw;
+  padding: 1vh 0.8vw;
+  background: var(--bg6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  margin-bottom: 2.5vh;
+  flex-shrink: 0;
+}
+
+.nav_horizontal_left,
+.nav_horizontal_right {
+  display: flex;
+  gap: 0.6vw;
+  align-items: center;
+}
+
+.nav_horizontal_btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 1vh 1.2vw;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--tx2);
+  font-family: var(--ff_P), sans-serif;
+  font-size: clamp(11px, 0.75vw, 13px);
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
-  font-weight: 500;
 }
 
-.nav_btn i {
-  font-size: 1.1rem;
-  width: 20px;
-  text-align: center;
+.nav_horizontal_btn i {
+  font-size: 12px; /* Iconos más pequeños y uniformes */
+  color: var(--tx3);
+  transition: all 0.2s ease;
 }
 
-.nav_btn:hover {
-  background: var(--wbh);
-  color: var(--txa);
+.nav_horizontal_btn:hover {
+  color: var(--tx1);
+  background: var(--bg1);
 }
 
-.nav_btn.active {
-  background: var(--wba);
-  color: var(--witema);
-  font-weight: 700;
+.nav_horizontal_btn:hover i {
+  color: var(--mco);
 }
 
-/* Header Superior */
-#wii_header {
-  height: 64px;
-  padding: 0 1.5rem;
+.nav_horizontal_btn.active {
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  color: var(--mco);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav_horizontal_btn.active i {
+  color: var(--mco);
+}
+
+/* Cabecera de Sub-pestañas (tabsComponent - Glassmorphic) */
+.tabs_bar_container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--txe);
-  background: var(--wbs);
+  padding: 1.2vh 1vw;
+  background: var(--bg6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--brd);
+  border-radius: 12px;
+  margin-bottom: 2.5vh;
+  flex-shrink: 0;
 }
 
-.header_meta {
+.tab_left_wrapper {
   display: flex;
-  flex-direction: column;
+  gap: 0.6vw;
 }
 
-.header_title_wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.header_icon {
-  font-size: 1.15rem;
-  color: var(--witema);
-}
-
-.header_title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--txa);
-  margin: 0;
-}
-
-.header_subtitle {
-  font-size: 0.78rem;
-  color: var(--txc);
-  margin-top: 2px;
-}
-
-.header_actions {
+.tab_left_item {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-}
-
-.win_ctrl_btn {
-  width: 32px;
-  height: 32px;
-  border: none;
+  gap: 0.4vw;
+  padding: 1vh 1vw;
   background: transparent;
-  color: var(--txb);
-  border-radius: 8px;
+  border: 0.1vw solid transparent;
+  border-radius: 0.8vh;
+  color: var(--tx2);
+  font-family: var(--ff_P), sans-serif;
+  font-size: clamp(10px, 0.75vw, 13px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab_left_item:hover {
+  color: var(--tx);
+  background: var(--bg1);
+}
+
+.tab_left_item.active {
+  color: var(--txe);
+  border-color: var(--txe);
+  background: var(--bg4);
+}
+
+.tab_right_wrapper {
+  display: flex;
+  gap: 0.4vw;
+}
+
+.tab_right_btn {
+  width: 4vh;
+  height: 4vh;
+  border-radius: 0.8vh;
+  border: 0.1vw solid var(--brd);
+  background: transparent;
+  color: var(--tx2);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: clamp(11px, 0.8vw, 14px);
   transition: all 0.2s ease;
 }
 
-.win_ctrl_btn:hover {
-  background: var(--wbh);
-  color: var(--txa);
+.tab_right_btn:hover {
+  border-color: var(--txe);
+  color: var(--txe);
+  background: var(--bg4);
 }
 
-.win_ctrl_close:hover {
-  background: #ef4444;
-  color: #ffffff;
-}
-
-/* Área de Trabajo Principal (#wimain) */
-.wii_main {
+/* Área de contenido del Módulo Activo */
+.wimain_content {
   flex: 1;
-  padding: 1.75rem;
+  width: 100%;
   overflow-y: auto;
-  background: var(--wb);
+  box-sizing: border-box;
+}
+
+/* ==================== COLUMNA DERECHA / SIDEBAR (40%) ==================== */
+.wii_right_sidebar {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  padding: 2.5vh 2vw;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background: transparent;
+}
+
+.sidebar_card_wrapper {
+  flex-shrink: 0;
+}
+
+#sidebar_reloj_wrapper {
+  height: 52%; /* Ajuste relativo a la altura de la pantalla */
+  min-height: 180px;
+}
+
+#sidebar_musica_wrapper {
+  height: 44%; /* Ajuste relativo a la altura de la pantalla */
+  min-height: 150px;
 }

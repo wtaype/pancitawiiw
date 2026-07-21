@@ -1,29 +1,23 @@
 // src/core/rutas.js
 // Enrutador SPA dinámico de pancitawii (Single Source of Truth de navegación)
 
-import { SEO, SEO_DEFAULT } from './seo.js';
+import { SEO, SEO_DEFAULT, getMeta } from '@core/seo.js';
+import { tabsComponent } from '@core/componentes/tabs.js';
+import { wiTip } from '@widev';
 
 // ============================================================
 // CONFIGURACIÓN REUTILIZABLE PARA NUEVOS PROYECTOS
 // ============================================================
 export const RUTA_INICIAL = '/inicio';
-export const CONTENEDOR_MAIN_ID = 'wimain';
+export const CONTENEDOR_MAIN_ID = 'wimain_content';
 
-// ============================================================
-// REGISTRO MÍNIMO DE RUTAS Y NAVEGACIÓN
-// nav: 'top' (menú superior) | 'bottom' (pie del sidebar) | false (ruta oculta)
-// ============================================================
-export const RUTAS = [
-  { href: '/inicio',  nav: 'top' },
-  { href: '/horario', nav: 'top' },
-  { href: '/reloj',   nav: 'top' },
-  { href: '/chat',    nav: 'top' },
-  { href: '/ajustes', nav: 'bottom' },
-  { href: '/acerca',  nav: 'bottom' }
-];
+// Derivar RUTAS de SEO dinámicamente
+export const RUTAS = Object.keys(SEO).map(href => ({
+  href,
+  position: SEO[href].position
+}));
 
-export const getNavRoutes = (posicion) => RUTAS.filter(r => r.nav === posicion);
-export const getMeta = (path) => SEO[path] ?? SEO_DEFAULT;
+export const getNavRoutes = (posicion) => RUTAS.filter(r => r.position === posicion);
 
 const AGENTES = RUTAS.map(r => r.href.replace('/', ''));
 
@@ -52,7 +46,17 @@ export const rutas = {
     this.cargando = true;
     this.rutaActual = fullPath;
 
-    // Actualización dinámica automática del Header desde seo.js
+    // 1. Sincronizar el botón activo de la navegación horizontal superior
+    const navBtns = document.querySelectorAll('.nav_horizontal_btn');
+    navBtns.forEach(btn => {
+      if (btn.getAttribute('data-path') === fullPath) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 2. Actualización dinámica automática del Header desde seo.js
     const meta = getMeta(fullPath);
     const headerTitle = document.querySelector('.wii_header_title');
     const headerSub = document.querySelector('.wii_header_sub');
@@ -74,6 +78,15 @@ export const rutas = {
     try {
       const folder = agente === 'chat' ? 'chatwii' : agente;
       const modulo = await import(`../features/${folder}/${agente}.js`);
+      
+      // 3. Renderizar y vincular sub-tabs desde las exportaciones del módulo cargado
+      const tabsWrapper = document.getElementById('wimain_tabs_wrapper');
+      if (tabsWrapper) {
+        tabsWrapper.innerHTML = tabsComponent.render(modulo.TABS || []);
+        tabsComponent.bindEvents(tabsWrapper);
+        wiTip();
+      }
+
       panel.innerHTML = '';
       if (modulo.arrancar) {
         modulo.arrancar(panel);
@@ -85,10 +98,11 @@ export const rutas = {
           <i class="fa-solid fa-circle-exclamation"></i>
           <p>Error al cargar el módulo ${agente}.</p>
         </div>`;
+      // Limpiar sub-tabs si hubo un fallo
+      const tabsWrapper = document.getElementById('wimain_tabs_wrapper');
+      if (tabsWrapper) tabsWrapper.innerHTML = '';
     } finally {
       this.cargando = false;
     }
   }
 };
-
-export default rutas;

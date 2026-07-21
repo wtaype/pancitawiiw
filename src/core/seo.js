@@ -1,5 +1,5 @@
 // src/core/seo.js
-// Diccionario centralizado de SEO, metadatos y configuración visual de rutas para pancitawii
+// Registro global de metadatos de primer nivel para la cabecera e indicadores de posición
 
 export const SEO = {
   '/inicio': {
@@ -7,51 +7,38 @@ export const SEO = {
     title: 'Panel Principal',
     subtitle: 'Bienvenido a pancitawii · Asistente Diario',
     icon: 'fa-house',
-    desc: 'Panel principal con bienvenida, fecha en vivo y accesos directos.'
-  },
-  '/reloj': {
-    tag: 'Reloj',
-    title: 'Reloj Digital & Cronómetro',
-    subtitle: 'Reloj Neón, Temporizador y Control de Horarios',
-    icon: 'fa-clock',
-    desc: 'Visualiza la hora actual en tiempo real, activa temporizadores y cronómetros.'
+    position: 'left'
   },
   '/horario': {
     tag: 'Horario',
     title: 'Horario Semanal',
     subtitle: 'Rutinas Diarias, Materias y Actividades',
     icon: 'fa-calendar-days',
-    desc: 'Gestión organizada del horario diario y semanal de actividades.'
+    position: 'left'
   },
   '/chat': {
     tag: 'ChatWii',
-    title: 'Pancita Asistente',
-    subtitle: 'Asistente Inteligente de Productividad y Respuestas',
+    title: 'Asistente ChatWii',
+    subtitle: 'Inteligencia Artificial pancitawii',
     icon: 'fa-robot',
-    desc: 'Tu compañero para organizar tu día, responder dudas y recordatorios.'
+    position: 'left'
   },
   '/ajustes': {
     tag: 'Ajustes',
-    title: 'Configuración y Ajustes',
-    subtitle: 'Anti-Suspensión, Temas Visuales y Sistema',
+    title: 'Ajustes del Sistema',
+    subtitle: 'Personalización y Preferencias',
     icon: 'fa-gear',
-    desc: 'Personaliza los temas de color y activa la pantalla siempre despierta.'
+    position: 'right'
   },
   '/acerca': {
     tag: 'Acerca',
-    title: 'Acerca de pancitawii',
-    subtitle: 'Información del Sistema y Créditos',
+    title: 'Sobre pancitawii',
+    subtitle: 'Créditos y Versión',
     icon: 'fa-info-circle',
-    desc: 'Información sobre la versión, tecnologías y desarrollador.'
+    position: 'right'
   }
 };
 
-export const SEO_DEFAULT = {
-  tag: 'App',
-  title: 'pancitawii',
-  subtitle: 'Horario, Reloj Digital y Asistente',
-  icon: 'fa-clock',
-  desc: 'Aplicativo modular de escritorio pancitawii'
-};
+export const SEO_DEFAULT = SEO['/inicio'];
 
-export default SEO;
+export const getMeta = (path) => SEO[path] ?? SEO_DEFAULT;

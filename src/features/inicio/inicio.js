@@ -3,7 +3,7 @@
 
 import { Saludar, fechaHoy, Capi } from '@widev';
 import state from '../../core/state.js';
-import rutas from '../../core/rutas.js';
+import { rutas } from '@core/rutas.js';
 import './inicio.css';
 
 // ⏱️ TIEMPO DE ROTACIÓN EN SEGUNDOS (Fácil de cambiar: 30, 60, etc.)

@@ -1,0 +1,360 @@
+/* src/features/musica/musica.css - Reproductor & Lista de Música compatible con witema.css */
+
+.musica_panel_card {
+  height: 100%;
+  background: var(--wb);
+  border: 0.1vw solid var(--brd);
+  border-left: 0.3vw solid var(--mco);
+  border-radius: 12px;
+  padding: 2vh 1vw;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: 1.2vh;
+}
+
+/* 1. REPRODUCTOR EN VIVO (HERO PLAYER CARD) */
+.msc_hero_player {
+  background: var(--bg);
+  border: 0.1vw solid var(--bg5);
+  border-radius: 10px;
+  padding: 1.5vh 1vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  box-sizing: border-box;
+}
+
+.msc_now_playing_tag {
+  font-size: clamp(9px, 0.65vw, 11px);
+  font-weight: 700;
+  color: var(--mco);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.msc_track_title_now {
+  font-size: clamp(11px, 0.8vw, 14px);
+  font-weight: 700;
+  color: var(--tx);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* BARRA DE PROGRESO DE TIEMPO */
+.msc_timeline_wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+}
+
+.msc_time_text {
+  font-size: clamp(9px, 0.65vw, 11px);
+  font-weight: 600;
+  color: var(--tx2);
+  min-width: 30px;
+}
+
+.msc_progress_bar_container {
+  flex: 1;
+  height: 4px;
+  background: var(--bg5);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+.msc_progress_fill_cyan {
+  width: var(--msc-progress-pct, 0%);
+  height: 100%;
+  background: var(--mco);
+  border-radius: 2px;
+  position: relative;
+}
+
+.msc_progress_thumb {
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mco);
+  box-shadow: 0 0 8px var(--mco);
+}
+
+/* BOTONES DE CONTROL CON PLAY CIRCULAR CIAN */
+.msc_controls_row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2vw;
+  margin-top: 0.5vh;
+}
+
+.msc_ctrl_btn {
+  background: transparent;
+  border: none;
+  color: var(--tx2);
+  cursor: pointer;
+  font-size: clamp(12px, 0.85vw, 15px);
+  transition: all 0.2s ease;
+}
+
+.msc_ctrl_btn:hover {
+  color: var(--mco);
+}
+
+.msc_ctrl_btn.play_cyan_btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--mco);
+  color: var(--txa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 0 1.5vh var(--bg5);
+  transition: transform 0.2s ease;
+}
+
+.msc_ctrl_btn.play_cyan_btn:hover {
+  transform: scale(1.08);
+}
+
+/* DETALLES DE META PISTA */
+.msc_meta_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: clamp(9px, 0.65vw, 11px);
+  color: var(--tx2);
+  border-top: 0.1vw solid var(--brd);
+  padding-top: 0.8vh;
+}
+
+/* 2. BARRA DE BÚSQUEDA Y FILTRO DE PISTAS */
+.msc_search_bar {
+  display: flex;
+  gap: 0.6vw;
+  align-items: center;
+}
+
+.msc_search_input_wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--inp);
+  border: 0.1vw solid var(--brd);
+  border-radius: 6px;
+  padding: 0 0.6vw;
+}
+
+.msc_search_input_wrap i {
+  font-size: 11px;
+  color: var(--tx2);
+  margin-right: 0.4vw;
+}
+
+.msc_search_input {
+  background: transparent;
+  border: none;
+  color: var(--tx);
+  font-size: clamp(10px, 0.75vw, 12px);
+  width: 100%;
+  padding: 6px 0;
+  outline: none;
+}
+
+.msc_search_input::placeholder {
+  color: var(--tx3);
+}
+
+.msc_sort_select {
+  background: var(--inp);
+  border: 0.1vw solid var(--brd);
+  color: var(--tx1);
+  font-size: clamp(10px, 0.75vw, 12px);
+  border-radius: 6px;
+  padding: 6px 0.6vw;
+  outline: none;
+  cursor: pointer;
+}
+
+/* 3. LISTA DE CANCIONES SCROLLABLE */
+.msc_track_list_scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8vh;
+  padding-right: 0.2vw;
+}
+
+.msc_track_list_scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.msc_track_list_scroll::-webkit-scrollbar-thumb {
+  background: var(--brd);
+  border-radius: 3px;
+}
+
+.msc_track_card_item {
+  background: var(--wb);
+  border: 0.1vw solid var(--brd);
+  border-radius: 8px;
+  padding: 1vh 0.6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6vw;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.msc_track_card_item:hover {
+  border-color: var(--bg5);
+  background: var(--bg4);
+}
+
+.msc_track_card_item.active {
+  border-color: var(--mco);
+  background: var(--bg4);
+}
+
+.msc_track_item_left {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  overflow: hidden;
+}
+
+.msc_track_idx {
+  font-size: clamp(9px, 0.65vw, 11px);
+  font-weight: 700;
+  color: var(--tx3);
+  min-width: 15px;
+}
+
+.msc_track_meta_mini {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.msc_track_name_mini {
+  font-size: clamp(10px, 0.75vw, 12px);
+  font-weight: 600;
+  color: var(--tx1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msc_track_sub_mini {
+  font-size: clamp(8px, 0.6vw, 10px);
+  color: var(--tx3);
+}
+
+.msc_track_item_right {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  flex-shrink: 0;
+}
+
+.msc_fav_icon_mini {
+  font-size: 10px;
+  color: var(--tx3);
+}
+
+.msc_btn_play_mini {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--mco);
+  color: var(--txa);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.msc_btn_play_mini.pause_mini {
+  background: var(--error);
+  color: var(--white);
+}
+
+/* 4. BARRA SELECTORA DE CARPETA (AL FINAL DE TODO) */
+.msc_folder_bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  background: var(--bg);
+  border: 0.1vw solid var(--brd);
+  border-radius: 8px;
+  padding: 0.8vh 0.6vw;
+  margin-top: auto;
+}
+
+.msc_folder_input {
+  flex: 1;
+  background: var(--inp);
+  border: 0.1vw solid var(--brd);
+  color: var(--tx2);
+  font-size: clamp(8px, 0.65vw, 11px);
+  padding: 6px 0.6vw;
+  border-radius: 5px;
+  outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msc_btn_action {
+  background: var(--bg4);
+  border: 0.1vw solid var(--bg5);
+  color: var(--mco);
+  font-size: clamp(9px, 0.65vw, 11px);
+  font-weight: 600;
+  padding: 6px 0.8vw;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.msc_btn_action:hover {
+  background: var(--mco);
+  color: var(--txa);
+}
+
+.msc_btn_icon_only {
+  background: var(--bg4);
+  border: 0.1vw solid var(--brd);
+  color: var(--tx2);
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.msc_btn_icon_only:hover {
+  background: var(--bg5);
+  color: var(--tx);
+}

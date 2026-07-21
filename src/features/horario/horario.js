@@ -42,8 +42,42 @@ function obtenerBloqueActual(horario) {
   return { titulo: 'Tiempo Libre / Planificación 🌟', horaInicio: '--:--', horaFin: '--:--', tiempoRestanteStr: 'Activo' };
 }
 
+export const TABS = [
+  { id: 'preview', label: 'Vista Previa', icon: 'fa-eye', position: 'left', active: true },
+  { id: 'editar', label: 'Editar', icon: 'fa-pen-to-square', position: 'left' },
+  { id: 'restaurar_horario', label: 'Restaurar', icon: 'fa-rotate-left', position: 'right', iconOnly: true }
+];
+
 export function arrancar(container) {
-  if (liveTimer) clearInterval(liveTimer);
+  // Limpiar listeners y timers previos si existen
+  if (container._cleanupHorario) {
+    container._cleanupHorario();
+  }
+
+  const handleSubtabChange = (e) => {
+    if (e.detail.subtabId === 'preview' || e.detail.subtabId === 'editar') {
+      tabActiva = e.detail.subtabId;
+      bloqueEditandoId = null;
+      render();
+    }
+  };
+
+  const handleSubtabAction = (e) => {
+    if (e.detail.actionId === 'restaurar_horario') {
+      horarioDB.restaurarPorDefecto();
+      bloqueEditandoId = null;
+      render();
+    }
+  };
+
+  document.addEventListener('wi_subtab_change', handleSubtabChange);
+  document.addEventListener('wi_subtab_action', handleSubtabAction);
+
+  container._cleanupHorario = () => {
+    if (liveTimer) clearInterval(liveTimer);
+    document.removeEventListener('wi_subtab_change', handleSubtabChange);
+    document.removeEventListener('wi_subtab_action', handleSubtabAction);
+  };
 
   const render = () => {
     const horario = horarioDB.obtenerHorario();
@@ -59,14 +93,6 @@ export function arrancar(container) {
               <h2>Bienvenidos a Horario, Pancita</h2>
               <p>Organización semanal inteligente de tus materias, trabajo y descansos.</p>
             </div>
-          </div>
-          <div class="horario_tabs">
-            <button class="tab_btn ${tabActiva === 'preview' ? 'active' : ''}" data-tab="preview" data-witip="Ver matriz semanal unificada">
-              <i class="fa-solid fa-eye"></i> Vista Previa
-            </button>
-            <button class="tab_btn ${tabActiva === 'editar' ? 'active' : ''}" data-tab="editar" data-witip="Editar o agregar bloques por día">
-              <i class="fa-solid fa-pen-to-square"></i> Editar
-            </button>
           </div>
         </div>
 
@@ -91,16 +117,7 @@ export function arrancar(container) {
     // 1. Activar Tooltips de wiTip
     wiTip();
 
-    // 2. Eventos de Pestañas
-    container.querySelectorAll('.tab_btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabActiva = btn.getAttribute('data-tab');
-        bloqueEditandoId = null;
-        render();
-      });
-    });
-
-    // 3. Eventos en Pestaña Editar
+    // 2. Eventos en Pestaña Editar
     if (tabActiva === 'editar') {
       // Si estamos en modo edición, rellenar el formulario con los datos del bloque seleccionado
       if (bloqueEditandoId) {
@@ -124,15 +141,6 @@ export function arrancar(container) {
           render();
         });
       });
-
-      const btnReset = container.querySelector('#btn_restaurar_rutina');
-      if (btnReset) {
-        btnReset.addEventListener('click', () => {
-          horarioDB.restaurarPorDefecto();
-          bloqueEditandoId = null;
-          render();
-        });
-      }
 
       const formAgregar = container.querySelector('#form_agregar_bloque');
       if (formAgregar) {
@@ -259,16 +267,13 @@ function renderVistaEditar(horario) {
 
   return `
     <div class="horario_editor_box">
-      <!-- Selector de Días y Botón Restaurar -->
+      <!-- Selector de Días -->
       <div class="editor_top_bar">
         <div class="editor_selector_dias">
           ${DIAS_SEMANA.map(d => `
             <button class="dia_pill ${d === diaActivoEdit ? 'active' : ''}" data-dia="${d}">${d}</button>
           `).join('')}
         </div>
-        <button class="btn_reset_rutina" id="btn_restaurar_rutina" data-witip="Reiniciar a la rutina por defecto">
-          <i class="fa-solid fa-rotate-left"></i> Restaurar Rutina Inicial
-        </button>
       </div>
 
       <!-- Formulario para Agregar / Editar Bloque -->
