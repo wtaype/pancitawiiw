@@ -37,3 +37,10 @@ pub fn obtener_gemini_key_default() -> String {
     }
     String::new()
 }
+
+pub fn inicializar_env_js() {
+    let js_path = Path::new(crate::rii::RUTA_ENV_JS);
+    if !js_path.exists() {
+        let _ = fs::write(js_path, "export const PUBLIC_GEMINI_KEY = \"\";\n");
+    }
+}

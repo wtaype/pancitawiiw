@@ -10,23 +10,20 @@ pub mod rii;
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
-            let js_path = std::path::Path::new(rii::RUTA_ENV_JS);
-            if !js_path.exists() {
-                let _ = std::fs::write(js_path, "export const PUBLIC_GEMINI_KEY = \"\";\n");
-            }
+            // Inicializar el archivo de entorno de Gemini modularmente
+            crate::nucleo::chatwii::prompt::inicializar_env_js();
 
-            // Posicionar la ventana principal respetando las dimensiones de rii.rs y el escalado DPI del sistema
+            // Posicionar la ventana principal al 100% de la pantalla (Ancho y Alto) sin destellos
             if let Some(window) = app.get_webview_window("main") {
                 if let Ok(Some(monitor)) = window.primary_monitor() {
                     let scale_factor = window.scale_factor().unwrap_or(1.0);
                     let monitor_logical_size = monitor.size().to_logical::<f64>(scale_factor);
                     
-                    let window_width = rii::VENTANA_ANCHO as f64;
-                    let window_height = rii::VENTANA_ALTO as f64;
-                    let margin = rii::VENTANA_MARGEN_PANTALLA as f64;
+                    let window_width = monitor_logical_size.width;
+                    let window_height = monitor_logical_size.height;
                     
-                    let x = (monitor_logical_size.width - window_width - margin).max(0.0);
-                    let y = ((monitor_logical_size.height - window_height) / 2.0).max(0.0);
+                    let x = 0.0;
+                    let y = 0.0;
                     
                     let _ = window.set_position(tauri::Position::Logical(tauri::LogicalPosition::new(x, y)));
                     let _ = window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(window_width, window_height)));
@@ -45,13 +42,13 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             // Enrutador de Ventana Nativa Sonrisa y Panel
-            nucleo::ventana::sonrisa::toggle_smile,
-            nucleo::ventana::sonrisa::fijar_sonrisa,
-            nucleo::ventana::sonrisa::restablecer_posiciones,
-            nucleo::ventana::panel::toggle_panel,
+            nucleo::ventana::ventanas::toggle_smile,
+            nucleo::ventana::ventanas::fijar_sonrisa,
+            nucleo::ventana::ventanas::restablecer_posiciones,
+            nucleo::ventana::ventanas::toggle_panel,
 
             // Enrutador de Asistente pancitawii (chatwii)
-            funciones::chatwii::chat::completar_chat_comando,
+            nucleo::chatwii::gemini::completar_chat_comando,
             
             // Enrutador de Ajustes, Cuenta y Energía
             funciones::ajustes::cuenta::cuenta_verificar_estado,

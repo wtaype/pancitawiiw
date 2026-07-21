@@ -7,7 +7,7 @@
 pub const VENTANA_ANCHO: u32 = 1100;
 
 // Alto inicial de la ventana de la aplicación por defecto (en píxeles)
-pub const VENTANA_ALTO: u32 = 900;
+pub const VENTANA_ALTO: u32 = 720;
 
 // Ancho mínimo permitido para la redimensión de la ventana
 pub const VENTANA_MIN_ANCHO: f64 = 320.0;
@@ -15,6 +15,9 @@ pub const VENTANA_MIN_ANCHO: f64 = 320.0;
 // Alto mínimo permitido para la redimensión de la ventana
 pub const VENTANA_MIN_ALTO: f64 = 450.0;
 
+// --- CONFIGURACIÓN DE VENTANA (SMILE WIDGET) ---
+pub const SMILE_ANCHO: i32 = 75;
+pub const SMILE_ALTO: i32 = 75;
 // Título de la aplicación en la barra de tareas y el sistema operativo
 pub const VENTANA_TITULO: &str = "pancitawii";
 

@@ -16,7 +16,7 @@
         "label": "main",
         "title": "pancitawii",
         "width": 1100,
-        "height": 900,
+        "height": 720,
         "minWidth": 320,
         "minHeight": 450,
         "resizable": true,
@@ -39,22 +39,6 @@
         "transparent": true,
         "shadow": false,
         "url": "src/features/smile/smile.html",
-        "dragDropEnabled": false
-      },
-      {
-        "label": "panel",
-        "title": "pancitawii Panel",
-        "width": 1080,
-        "height": 720,
-        "minWidth": 720,
-        "minHeight": 500,
-        "resizable": true,
-        "decorations": false,
-        "transparent": true,
-        "shadow": false,
-        "alwaysOnTop": false,
-        "visible": false,
-        "url": "src/features/panel/panel.html",
         "dragDropEnabled": false
       }
     ],
