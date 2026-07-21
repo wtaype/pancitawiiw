@@ -432,3 +432,37 @@
   color: #fff;
   border-color: #e11d48;
 }
+
+/* Clases Utilitarias Extraídas de Inline */
+.hr_icon_hero {
+  font-size: 1.6rem;
+  color: var(--mco);
+}
+
+.hr_dia_libre_text {
+  font-size: var(--fz_s2);
+  color: var(--tx3);
+  text-align: center;
+  margin-top: 1vh;
+}
+
+.form_field_wide {
+  flex: 2;
+}
+
+.hr_modal_subtitle {
+  font-size: var(--fz_s4);
+  color: var(--tx2);
+  margin: 0.5vh 0;
+  text-transform: uppercase;
+}
+
+.bloque_tipo_badge_spacing {
+  margin-left: 1vw;
+}
+
+.hr_empty_bloques_text {
+  font-size: var(--fz_s4);
+  color: var(--tx2);
+}
+

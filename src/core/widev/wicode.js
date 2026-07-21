@@ -61,7 +61,7 @@ export const wiCode = (sel) => {
     copyBtn.addEventListener('click', () => {
       const text = el.textContent || '';
       navigator.clipboard.writeText(text).then(() => {
-        copyBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #10b981;"></i>';
+        copyBtn.innerHTML = '<i class="fa-solid fa-check wicode_copy_success"></i>';
         setTimeout(() => {
           copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i>';
         }, 1500);

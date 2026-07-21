@@ -88,7 +88,7 @@ export function arrancar(container) {
         <!-- Cabecera Compacta sin Parpadeos -->
         <div class="horario_header">
           <div class="horario_header_title">
-            <i class="fa-solid fa-calendar-days" style="font-size: 1.6rem; color: var(--mco);"></i>
+            <i class="fa-solid fa-calendar-days hr_icon_hero"></i>
             <div>
               <h2>Bienvenidos a Horario, Pancita</h2>
               <p>Organización semanal inteligente de tus materias, trabajo y descansos.</p>
@@ -232,8 +232,8 @@ export function arrancar(container) {
     if (liveEl) {
       const horario = horarioDB.obtenerHorario();
       const bActual = obtenerBloqueActual(horario);
-      liveEl.querySelector('.live_status_left span').textContent = `AHORA MISMO: ${bActual.titulo} (${bActual.horaInicio} - ${bActual.horaFin})`;
-      liveEl.querySelector('.live_status_right strong').textContent = bActual.tiempoRestanteStr;
+      liveEl.querySelector('.live_status_title').textContent = `AHORA MISMO: ${bActual.titulo} (${bActual.horaInicio} - ${bActual.horaFin})`;
+      liveEl.querySelector('.live_status_time').textContent = `⏳ ${bActual.tiempoRestanteStr}`;
     }
   }, 30000);
 }
@@ -254,7 +254,7 @@ function renderVistaPrevia(horario) {
                   ${b.tipo === 'fijo' ? '<i class="fa-solid fa-lock"></i> FIJO' : '<i class="fa-solid fa-unlock"></i> FLEXIBLE'}
                 </div>
               </div>
-            `).join('') : '<p style="font-size: var(--fz_s2); color: var(--tx3); text-align: center; margin-top: 1vh;">Día Libre</p>'}
+            `).join('') : '<p class="hr_dia_libre_text">Día Libre</p>'}
           </div>
         `;
       }).join('')}
@@ -286,7 +286,7 @@ function renderVistaEditar(horario) {
           <label>Hora Fin</label>
           <input type="time" id="inp_hora_fin" required value="09:00" />
         </div>
-        <div class="form_field" style="flex: 2;">
+        <div class="form_field form_field_wide">
           <label>Actividad / Título</label>
           <input type="text" id="inp_titulo" placeholder="Ej: Clase de Matemáticas 📐" required />
         </div>
@@ -304,7 +304,7 @@ function renderVistaEditar(horario) {
 
       <!-- Lista de Bloques del Día Activo con Toggle de Editar y Eliminar -->
       <div class="editor_lista_bloques">
-        <h4 style="font-size: var(--fz_s4); color: var(--tx2); margin: 0.5vh 0; text-transform: uppercase;">
+        <h4 class="hr_modal_subtitle">
           Bloques configurados para el ${diaActivoEdit}:
         </h4>
         ${bloquesDia.length > 0 ? bloquesDia.map(b => {
@@ -314,7 +314,7 @@ function renderVistaEditar(horario) {
               <div class="bloque_editor_info">
                 <span class="bloque_editor_time"><i class="fa-regular fa-clock"></i> ${b.horaInicio} - ${b.horaFin}</span>
                 <span class="bloque_editor_title">${b.titulo}</span>
-                <span class="bloque_tipo_badge" style="margin-left: 1vw;">
+                <span class="bloque_tipo_badge bloque_tipo_badge_spacing">
                   ${b.tipo === 'fijo' ? '<i class="fa-solid fa-lock"></i> FIJO' : '<i class="fa-solid fa-unlock"></i> FLEXIBLE'}
                 </span>
               </div>
@@ -328,7 +328,7 @@ function renderVistaEditar(horario) {
               </div>
             </div>
           `;
-        }).join('') : '<p style="font-size: var(--fz_s4); color: var(--tx2);">No hay bloques asignados para este día.</p>'}
+        }).join('') : '<p class="hr_empty_bloques_text">No hay bloques asignados para este día.</p>'}
       </div>
     </div>
   `;

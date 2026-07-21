@@ -15,7 +15,7 @@ export const wiSpin = (btn, act = true, txt = '') => {
     }
     el.disabled = true;
     const loadingText = txt || 'Cargando...';
-    el.innerHTML = `${loadingText} <i class="fa-solid fa-spinner fa-spin" style="margin-left: 1vh;"></i>`;
+    el.innerHTML = `${loadingText} <i class="fa-solid fa-spinner fa-spin spin_icon_margin"></i>`;
   } else {
     el.disabled = false;
     // 2. Restaurar el HTML original resguardado

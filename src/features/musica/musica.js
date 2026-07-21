@@ -1,5 +1,5 @@
 // src/features/musica/musica.js
-// Motor Principal de Reproducción de Audio — Orquestador Modular (~70 líneas)
+// Motor Principal de Reproducción de Audio — Orquestador Modular con Persistencia Total de Likes ('musica_likes')
 
 import { obtenerListaPredeterminada } from '@features/musica/lista/lista.js';
 import { savels, getls } from '@core/widev/storage.js';
@@ -13,6 +13,7 @@ import '@features/musica/musica.css';
 const DEFAULT_PLAYLIST = obtenerListaPredeterminada();
 const STORAGE_KEY_LISTA = 'musica_lista';
 const STORAGE_KEY_CARPETAS = 'musica_carpetas';
+const STORAGE_KEY_LIKES = 'musica_likes';
 const TAMANO_PAGINA = 10;
 
 const DEFAULT_CARPETAS = [
@@ -51,6 +52,7 @@ export function resolverUrlPista(pista) {
 function cargarEstado() {
   const carpetasGuardadas = getls(STORAGE_KEY_CARPETAS) || DEFAULT_CARPETAS;
   const listaGuardada = getls(STORAGE_KEY_LISTA);
+  const likesGuardados = getls(STORAGE_KEY_LIKES) || [];
 
   let carpetaActiva = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
   const listRaw = carpetaActiva?.canciones || DEFAULT_PLAYLIST;
@@ -59,7 +61,7 @@ function cargarEstado() {
     carpetas:   carpetasGuardadas,
     playlist:   listRaw,
     trackIndex: listaGuardada?.trackIndex ?? 0,
-    likes:      listaGuardada?.likes      ?? [],
+    likes:      Array.isArray(likesGuardados) ? likesGuardados : [],
     filtro:     'todos',
     carpetaId:  carpetaActiva.id,
     carpetaNom: carpetaActiva.nombre
@@ -68,10 +70,10 @@ function cargarEstado() {
 
 function guardarEstado() {
   savels(STORAGE_KEY_CARPETAS, carpetasGuardadas, 8760);
+  savels(STORAGE_KEY_LIKES, likes, 8760);
   savels(STORAGE_KEY_LISTA, {
     playlist:   playlistActual,
     trackIndex: currentTrackIndex,
-    likes:      likes,
     carpetaId:  carpetaActivaId,
     carpetaNom: carpetaActual
   }, 8760);
@@ -93,17 +95,33 @@ let isPlaying         = false;
 
 const audio = new Audio();
 
-function tienelike(id) { return likes.includes(id); }
+function tienelike(pistaOrId) {
+  if (!pistaOrId) return false;
+  const key = typeof pistaOrId === 'object' ? pistaOrId.titulo : pistaOrId;
+  return likes.includes(key) || likes.includes(pistaOrId.id);
+}
 
-function toggleLike(id) {
-  if (tienelike(id)) likes = likes.filter(l => l !== id);
-  else likes.push(id);
+function toggleLike(pistaOrId) {
+  const track = typeof pistaOrId === 'object'
+    ? pistaOrId
+    : playlistActual.find(p => p.id === pistaOrId || p.titulo === pistaOrId);
+
+  if (!track) return;
+  const key = track.titulo;
+
+  if (likes.includes(key)) {
+    likes = likes.filter(l => l !== key && l !== track.id);
+  } else {
+    likes.push(key);
+  }
+
+  savels(STORAGE_KEY_LIKES, likes, 8760);
   guardarEstado();
 }
 
 function playlistFiltrada() {
   let lista = playlistActual;
-  if (filtroActivo === 'favoritos') lista = lista.filter(t => tienelike(t.id));
+  if (filtroActivo === 'favoritos') lista = lista.filter(t => tienelike(t));
   if (searchQuery) lista = lista.filter(t => t.titulo.toLowerCase().includes(searchQuery.toLowerCase()));
   if (sortOrder === 'az') lista = [...lista].sort((a, b) => a.titulo.localeCompare(b.titulo));
   return lista;
@@ -117,7 +135,7 @@ export function renderMusica() {
 
   return `
     <div class="musica_panel_card">
-      ${renderHero(actual, isPlaying, tienelike(actual.id), carpetaActual)}
+      ${renderHero(actual, isPlaying, tienelike(actual), carpetaActual)}
       ${renderFiltros(filtroActivo, playlistActual.length, likes.length, paginaActual, totalPaginas)}
       <div class="msc_track_list_scroll" id="msc_track_list">
         ${renderListaItems(filtradas, paginaActual, TAMANO_PAGINA, playlistActual, actual.id, tienelike, isPlaying)}
@@ -132,12 +150,28 @@ export function bindMusicaEvents(container) {
 
   const trackListContainer = container.querySelector('#msc_track_list');
 
-  function actualizarListaDOM() {
+  function refrescarUICompleta() {
+    const actual = playlistActual[currentTrackIndex] || playlistActual[0];
+    const likedActual = tienelike(actual);
+
+    // 1. Refrescar Botón Favoritos del Hero Player
+    const favBtn = container.querySelector('#msc_btn_fav');
+    if (favBtn) {
+      favBtn.className = `msc_ctrl_btn ${likedActual ? 'liked' : ''}`;
+      favBtn.setAttribute('data-witip', likedActual ? 'Quitar favorito' : 'Agregar a favoritos');
+      favBtn.innerHTML = `<i class="fa-${likedActual ? 'solid' : 'regular'} fa-heart"></i>`;
+    }
+
+    // 2. Refrescar Pestaña de Favoritos (xx)
+    const favTab = container.querySelector('[data-filter="favoritos"]');
+    if (favTab) {
+      favTab.innerHTML = `<i class="fa-solid fa-heart"></i> Favoritos (${likes.length})`;
+    }
+
+    // 3. Refrescar Lista de Canciones
     const filtradas = playlistFiltrada();
     const totalPaginas = Math.ceil(filtradas.length / TAMANO_PAGINA) || 1;
     if (paginaActual > totalPaginas) paginaActual = totalPaginas;
-
-    const actual = playlistActual[currentTrackIndex] || playlistActual[0];
 
     if (trackListContainer) {
       trackListContainer.innerHTML = renderListaItems(filtradas, paginaActual, TAMANO_PAGINA, playlistActual, actual?.id, tienelike, isPlaying);
@@ -150,9 +184,12 @@ export function bindMusicaEvents(container) {
           if (idx === currentTrackIndex) togglePlayPause();
           else cargarYReproducir(idx, true);
         },
-        onToggleFavMini: (trackId, btn) => {
-          toggleLike(trackId);
-          actualizarListaDOM();
+        onToggleFavMini: (trackId) => {
+          const track = playlistActual.find(p => p.id === trackId);
+          if (track) {
+            toggleLike(track);
+            refrescarUICompleta();
+          }
         }
       });
     }
@@ -189,7 +226,7 @@ export function bindMusicaEvents(container) {
         if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-pause';
       }).catch(err => console.warn('AutoPlay:', err));
     }
-    actualizarListaDOM();
+    refrescarUICompleta();
   }
 
   function togglePlayPause() {
@@ -197,6 +234,7 @@ export function bindMusicaEvents(container) {
     if (isPlaying) {
       audio.pause();
       isPlaying = false;
+      if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-pause';
       if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-play';
     } else {
       const track = playlistActual[currentTrackIndex];
@@ -210,7 +248,7 @@ export function bindMusicaEvents(container) {
         if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-pause';
       }).catch(err => console.warn('Play error:', err));
     }
-    actualizarListaDOM();
+    refrescarUICompleta();
   }
 
   function activarCarpetaPorId(folderId) {
@@ -226,7 +264,7 @@ export function bindMusicaEvents(container) {
 
     guardarEstado();
     cargarYReproducir(0, true);
-    actualizarListaDOM();
+    refrescarUICompleta();
   }
 
   function eliminarCarpetaPorId(folderId) {
@@ -249,14 +287,17 @@ export function bindMusicaEvents(container) {
     if (badgeCount) badgeCount.textContent = carpetasGuardadas.length;
   }
 
-  // Bind Hero
+  // Bind Hero Player
   bindHeroEvents(container, {
     onTogglePlay: togglePlayPause,
     onPrev: () => cargarYReproducir(currentTrackIndex - 1, true),
     onNext: () => cargarYReproducir(currentTrackIndex + 1, true),
     onToggleFav: () => {
       const track = playlistActual[currentTrackIndex];
-      if (track) { toggleLike(track.id); actualizarListaDOM(); }
+      if (track) {
+        toggleLike(track);
+        refrescarUICompleta();
+      }
     },
     onSeek: (pct) => {
       if (audio.duration) audio.currentTime = pct * audio.duration;
@@ -265,15 +306,15 @@ export function bindMusicaEvents(container) {
 
   // Bind Filtros & Acciones
   bindFiltrosEvents(container, {
-    onFilterChange: (filtro) => { filtroActivo = filtro; paginaActual = 1; actualizarListaDOM(); },
-    onSearch: (q) => { searchQuery = q; paginaActual = 1; actualizarListaDOM(); },
-    onSort: (order) => { sortOrder = order; paginaActual = 1; actualizarListaDOM(); },
-    onPrevPage: () => { if (paginaActual > 1) { paginaActual--; actualizarListaDOM(); } },
+    onFilterChange: (filtro) => { filtroActivo = filtro; paginaActual = 1; refrescarUICompleta(); },
+    onSearch: (q) => { searchQuery = q; paginaActual = 1; refrescarUICompleta(); },
+    onSort: (order) => { sortOrder = order; paginaActual = 1; refrescarUICompleta(); },
+    onPrevPage: () => { if (paginaActual > 1) { paginaActual--; refrescarUICompleta(); } },
     onNextPage: () => {
       const totalPaginas = Math.ceil(playlistFiltrada().length / TAMANO_PAGINA) || 1;
-      if (paginaActual < totalPaginas) { paginaActual++; actualizarListaDOM(); }
+      if (paginaActual < totalPaginas) { paginaActual++; refrescarUICompleta(); }
     },
-    onRefresh: (btn) => { actualizarListaDOM(); wiTip(btn, 'Lista actualizada', 'top', 1500); },
+    onRefresh: (btn) => { refrescarUICompleta(); wiTip(btn, 'Lista actualizada', 'top', 1500); },
     onAdd: () => {
       abrirModalMusica(carpetasGuardadas, carpetaActivaId, {
         onSeleccionarNuevaCarpeta: (nuevasCanciones, nombreCarpeta) => {
@@ -309,5 +350,5 @@ export function bindMusicaEvents(container) {
 
   audio.onended = () => cargarYReproducir(currentTrackIndex + 1, true);
 
-  actualizarListaDOM();
+  refrescarUICompleta();
 }
