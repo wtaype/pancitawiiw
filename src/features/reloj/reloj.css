@@ -57,7 +57,7 @@
 }
 
 .reloj_hero_clock {
-  font-size: clamp(2rem, 4.8vh, 3.8rem);
+  font-size: clamp(2rem, 10vh, 5rem);
   font-weight: 800;
   letter-spacing: 2px;
   color: var(--mco);
