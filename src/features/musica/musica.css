@@ -1,29 +1,36 @@
 /* src/features/musica/musica.css - Reproductor & Lista de Música compatible con witema.css */
 
+/* Tarjeta Música — Liquid Glass */
 .musica_panel_card {
   height: 100%;
-  background: var(--wb);
-  border: 0.1vw solid var(--brd);
-  border-left: 0.3vw solid var(--mco);
-  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.8vh;
   padding: 2vh 1vw;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
   gap: 1.2vh;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow:
+    0 10px 36px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-/* 1. REPRODUCTOR EN VIVO (HERO PLAYER CARD) */
+/* Sub-player — Liquid Glass interior */
 .msc_hero_player {
-  background: var(--bg);
-  border: 0.1vw solid var(--bg5);
-  border-radius: 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.2vh;
   padding: 1.5vh 1vw;
   display: flex;
   flex-direction: column;
   gap: 1vh;
   box-sizing: border-box;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  box-shadow: 0 4px 14px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 .msc_now_playing_tag {

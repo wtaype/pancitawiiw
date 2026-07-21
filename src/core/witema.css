@@ -66,6 +66,11 @@
 --bg7: #FFF;
 --bg8: #FFF;
 --bt: #1978d7;
+/* Liquid Glass — Cielo */
+--glass-bg:   rgba(229, 247, 255, 0.52);
+--glass-brd:  rgba(255, 255, 255, 0.72);
+--glass-shd:  rgba(25, 120, 215, 0.08);
+--glass-blur: 20px;
 }
 
 :root[data-theme="dulce"] {
@@ -92,6 +97,11 @@
 --bg7: #FFF;
 --bg8: #FFF;
 --bt: #ff3849;
+/* Liquid Glass — Dulce */
+--glass-bg:   rgba(255, 235, 237, 0.52);
+--glass-brd:  rgba(255, 255, 255, 0.72);
+--glass-shd:  rgba(255, 56, 73, 0.08);
+--glass-blur: 20px;
 }
 
 :root[data-theme="paz"] {
@@ -118,6 +128,11 @@
 --bg7: #FFF;
 --bg8: #FFF;
 --bt: #25b62a;
+/* Liquid Glass — Paz */
+--glass-bg:   rgba(235, 255, 235, 0.52);
+--glass-brd:  rgba(255, 255, 255, 0.72);
+--glass-shd:  rgba(37, 182, 42, 0.08);
+--glass-blur: 20px;
 }
 
 :root[data-theme="oro"] {
@@ -144,6 +159,11 @@
 --bg7: #FFF;
 --bg8: #FFF;
 --bt: #FFDA34;
+/* Liquid Glass — Oro */
+--glass-bg:   rgba(255, 253, 232, 0.52);
+--glass-brd:  rgba(255, 255, 255, 0.72);
+--glass-shd:  rgba(255, 218, 52, 0.08);
+--glass-blur: 20px;
 }
 
 :root[data-theme="mora"] {
@@ -170,6 +190,11 @@
 --bg7: #FFF;
 --bg8: #FFF;
 --bt: #6a00f5;
+/* Liquid Glass — Mora */
+--glass-bg:   rgba(244, 235, 255, 0.52);
+--glass-brd:  rgba(255, 255, 255, 0.72);
+--glass-shd:  rgba(106, 0, 245, 0.08);
+--glass-blur: 20px;
 }
 
 :root[data-theme="futuro"] {
@@ -196,6 +221,11 @@
 --bg7: #00f3ff;
 --bg8: #1a2235;
 --bt: #00f3ff;
+/* Liquid Glass — Futuro (oscuro, borde cian NO blanco) */
+--glass-bg:   rgba(21, 27, 46, 0.60);
+--glass-brd:  rgba(0, 243, 255, 0.18);
+--glass-shd:  rgba(0, 0, 0, 0.35);
+--glass-blur: 24px;
 }
 
 *,
@@ -216,6 +246,27 @@ scrollbar-color: var(--mco) var(--bg)
 
 a {
 text-decoration: none
+}
+
+/* =============================================
+   Liquid Glass — Clase Utilitaria Global
+   3 capas: tinte + filo especular + borde refractivo
+   ============================================= */
+.wii_glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow:
+    0 8px 32px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: box-shadow var(--tr_m), transform var(--tr_m), background var(--tr_m);
+}
+.wii_glass:hover {
+  box-shadow:
+    0 12px 40px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
 }
 
 

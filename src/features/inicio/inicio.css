@@ -38,30 +38,23 @@
   box-sizing: border-box;
 }
 
-/* Banner Superior Hero de Bienvenida */
+/* Banner Hero — Liquid Glass grande */
 .welcome_banner {
-  background: var(--wb);
-  border: 1px solid var(--brd);
-  border-radius: 1.5vh;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.8vh;
   padding: 2.5vh 2.5vw;
   display: flex;
   flex-direction: column;
   gap: 1vh;
-  box-shadow: var(--bs_l);
+  box-shadow:
+    0 10px 40px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(12px);
-}
-
-.welcome_banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0.4vw;
-  min-width: 4px;
-  height: 100%;
-  background: var(--mco);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  transition: box-shadow var(--tr_m), transform var(--tr_m);
 }
 
 /* Fila Superior: Tag Saludar() + Icono Sol/Luna */
@@ -83,19 +76,22 @@
   gap: 0.5vw;
 }
 
+/* Ícono burbuja glass */
 .welcome_icon_box {
   width: 4.5vh;
   height: 4.5vh;
   min-width: 40px;
   min-height: 40px;
   border-radius: 50%;
-  background: var(--bg4);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--mco);
   font-size: var(--fz_m4);
-  border: 1px solid var(--brd);
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.25);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
 }
 
 /* RELOJ DIGITAL IMPRESIONANTE GIGANTE (Escalado en vh) */
@@ -180,23 +176,30 @@
   width: 100%;
 }
 
+/* Cards — Liquid Glass flotante */
 .card_item {
-  background: var(--bg3);
-  border: 1px solid var(--brd);
-  border-radius: 1.2vh;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.6vh;
   padding: 2.2vh 1.8vw;
   display: flex;
   flex-direction: column;
   gap: 1.5vh;
-  transition: transform var(--tr_m), border-color var(--tr_m), box-shadow var(--tr_m);
+  box-shadow:
+    0 8px 28px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  transition: box-shadow var(--tr_m), transform var(--tr_m);
   position: relative;
   overflow: hidden;
 }
 
 .card_item:hover {
-  transform: translateY(-0.3vh);
-  border-color: var(--mco);
-  box-shadow: var(--bs_l);
+  box-shadow:
+    0 14px 40px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-0.4vh);
 }
 
 .card_header {
@@ -205,18 +208,22 @@
   gap: 1vw;
 }
 
+/* Badge icono — burbuja glass circular */
 .card_icon_badge {
   width: 3.8vh;
   height: 3.8vh;
   min-width: 36px;
   min-height: 36px;
-  border-radius: 0.8vh;
-  background: var(--bg4);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
   color: var(--mco);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--fz_m4);
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.25);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
 }
 
 .card_title {
@@ -233,12 +240,13 @@
   flex: 1;
 }
 
+/* Botón acción — glass con hover sólido */
 .card_action_btn {
-  background: var(--bg4);
+  background: var(--glass-bg);
   color: var(--mco);
-  border: 1px solid var(--brd);
+  border: 1px solid var(--glass-brd);
   padding: 1vh 1.2vw;
-  border-radius: 0.8vh;
+  border-radius: 1vh;
   font-size: var(--fz_s4);
   font-weight: 600;
   cursor: pointer;
@@ -246,12 +254,17 @@
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
-  transition: all var(--tr_f);
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.2);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  transition: all var(--tr_m);
 }
 
 .card_action_btn:hover {
   background: var(--mco);
   color: var(--txa);
+  border-color: var(--mco);
+  box-shadow: 0 4px 16px 0 var(--glass-shd);
+  transform: translateY(-1px);
 }
 
 /* Selector de temas visuales dentro de la Card */

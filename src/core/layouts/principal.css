@@ -37,18 +37,21 @@
   background: transparent;
 }
 
-/* Navegación Horizontal Superior (Glassmorphism & Uniform) */
+/* Nav Principal — Liquid Glass (blur completo, nivel 1) */
 .main_horizontal_nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.6vw;
-  padding: 1vh 0.8vw;
-  background: var(--bg6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--brd);
-  border-radius: 12px;
+  padding: 1vh 1vw;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: 1.5vh;
+  box-shadow:
+    0 8px 32px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
   margin-bottom: 2.5vh;
   flex-shrink: 0;
 }
@@ -56,7 +59,7 @@
 .nav_horizontal_left,
 .nav_horizontal_right {
   display: flex;
-  gap: 0.6vw;
+  gap: 0.5vw;
   align-items: center;
 }
 
@@ -64,89 +67,95 @@
   display: flex;
   align-items: center;
   gap: 0.5vw;
-  padding: 1vh 1.2vw;
+  padding: 0.9vh 1.1vw;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 1vh;
   color: var(--tx2);
   font-family: var(--ff_P), sans-serif;
   font-size: clamp(11px, 0.75vw, 13px);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--tr_m);
 }
 
 .nav_horizontal_btn i {
-  font-size: 12px; /* Iconos más pequeños y uniformes */
+  font-size: 12px;
   color: var(--tx3);
-  transition: all 0.2s ease;
+  transition: color var(--tr_m);
 }
 
 .nav_horizontal_btn:hover {
   color: var(--tx1);
-  background: var(--bg1);
+  background: var(--glass-bg);
+  border-color: var(--glass-brd);
 }
 
-.nav_horizontal_btn:hover i {
-  color: var(--mco);
-}
+.nav_horizontal_btn:hover i { color: var(--mco); }
 
+/* Activo: pastilla glass con tinte del tema */
 .nav_horizontal_btn.active {
   background: var(--bg4);
-  border: 1px solid var(--brd);
+  border: 1px solid var(--glass-brd);
   color: var(--mco);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 2px 12px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-.nav_horizontal_btn.active i {
-  color: var(--mco);
-}
+.nav_horizontal_btn.active i { color: var(--mco); }
 
-/* Cabecera de Sub-pestañas (tabsComponent - Glassmorphic) */
+/* Sub-tabs — Liquid Glass (blur 60%, nivel 2) */
 .tabs_bar_container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.2vh 1vw;
-  background: var(--bg6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--brd);
-  border-radius: 12px;
+  padding: 0.9vh 0.9vw;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.6));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.6));
+  border-radius: 1.2vh;
+  box-shadow:
+    0 4px 16px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   margin-bottom: 2.5vh;
   flex-shrink: 0;
 }
 
 .tab_left_wrapper {
   display: flex;
-  gap: 0.6vw;
+  gap: 0.5vw;
 }
 
 .tab_left_item {
   display: flex;
   align-items: center;
   gap: 0.4vw;
-  padding: 1vh 1vw;
+  padding: 0.8vh 0.9vw;
   background: transparent;
-  border: 0.1vw solid transparent;
-  border-radius: 0.8vh;
+  border: 1px solid transparent;
+  border-radius: 0.9vh;
   color: var(--tx2);
   font-family: var(--ff_P), sans-serif;
   font-size: clamp(10px, 0.75vw, 13px);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--tr_m);
 }
 
 .tab_left_item:hover {
-  color: var(--tx);
-  background: var(--bg1);
+  color: var(--tx1);
+  background: var(--glass-bg);
+  border-color: var(--glass-brd);
 }
 
+/* Activa: pastilla glass con acento del tema */
 .tab_left_item.active {
-  color: var(--txe);
-  border-color: var(--txe);
+  color: var(--mco);
   background: var(--bg4);
+  border-color: var(--glass-brd);
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .tab_right_wrapper {
@@ -154,25 +163,31 @@
   gap: 0.4vw;
 }
 
+/* Botones acción derecha: burbujas glass circulares */
 .tab_right_btn {
-  width: 4vh;
-  height: 4vh;
-  border-radius: 0.8vh;
-  border: 0.1vw solid var(--brd);
-  background: transparent;
+  width: 3.6vh;
+  height: 3.6vh;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
   color: var(--tx2);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(11px, 0.8vw, 14px);
-  transition: all 0.2s ease;
+  font-size: clamp(11px, 0.75vw, 13px);
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.2);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  transition: all var(--tr_m);
 }
 
 .tab_right_btn:hover {
-  border-color: var(--txe);
-  color: var(--txe);
-  background: var(--bg4);
+  color: var(--mco);
+  border-color: var(--mco);
+  box-shadow: 0 4px 14px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.3);
+  transform: translateY(-1px);
 }
 
 /* Área de contenido del Módulo Activo */
