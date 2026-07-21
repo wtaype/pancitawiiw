@@ -45,7 +45,6 @@ pub fn run() {
             nucleo::ventana::ventanas::toggle_smile,
             nucleo::ventana::ventanas::fijar_sonrisa,
             nucleo::ventana::ventanas::restablecer_posiciones,
-            nucleo::ventana::ventanas::toggle_panel,
 
             // Enrutador de Asistente pancitawii (chatwii)
             nucleo::chatwii::gemini::completar_chat_comando,

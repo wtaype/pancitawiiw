@@ -9,6 +9,19 @@ static FIJAR_SONRISA: Mutex<bool> = Mutex::new(false);
 const MARGEN_SMILE_X: i32 = 20;
 const MARGEN_SMILE_Y: i32 = 20;
 
+// Helper para redimensionar la ventana principal al 100% de la pantalla sin usar maximize() del OS
+fn poner_pantalla_completa(main_window: &tauri::WebviewWindow) {
+    if let Ok(Some(monitor)) = main_window.primary_monitor() {
+        let scale_factor = main_window.scale_factor().unwrap_or(1.0);
+        let monitor_logical_size = monitor.size().to_logical::<f64>(scale_factor);
+        let _ = main_window.set_position(Position::Logical(tauri::LogicalPosition::new(0.0, 0.0)));
+        let _ = main_window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(
+            monitor_logical_size.width,
+            monitor_logical_size.height,
+        )));
+    }
+}
+
 #[tauri::command]
 pub fn toggle_smile(app_handle: tauri::AppHandle) -> Result<(), String> {
     let main_window = app_handle.get_webview_window("main")
@@ -24,36 +37,9 @@ pub fn toggle_smile(app_handle: tauri::AppHandle) -> Result<(), String> {
         smile_window.unminimize().map_err(|e| e.to_string())?;
         smile_window.set_focus().map_err(|e| e.to_string())?;
     } else {
-        let smile_pos = smile_window.outer_position().map_err(|e| e.to_string())?;
-        let smile_size = smile_window.outer_size().map_err(|e| e.to_string())?;
-        let main_size = main_window.outer_size().map_err(|e| e.to_string())?;
-
-        let main_w = main_size.width as i32;
-        let smile_w = smile_size.width as i32;
-
-        let mut x = smile_pos.x + smile_w + 10;
-        let y = smile_pos.y;
-
-        if let Ok(Some(monitor)) = smile_window.current_monitor() {
-            let screen_w = monitor.size().width as i32;
-            let screen_h = monitor.size().height as i32;
-            let main_h = main_size.height as i32;
-
-            if smile_pos.x > (screen_w / 2) {
-                x = smile_pos.x - main_w - 10;
-            }
-
-            let mut final_y = y;
-            if final_y + main_h > screen_h {
-                final_y = (screen_h - main_h - MARGEN_SMILE_Y).max(0);
-            }
-
-            let _ = main_window.set_position(Position::Physical(PhysicalPosition { x, y: final_y }));
-        } else {
-            let _ = main_window.set_position(Position::Physical(PhysicalPosition { x, y }));
-        }
-
-        let _ = main_window.maximize();
+        // Forzar 100% de ancho y alto de forma directa
+        poner_pantalla_completa(&main_window);
+        
         main_window.show().map_err(|e| e.to_string())?;
         main_window.unminimize().map_err(|e| e.to_string())?;
         main_window.set_focus().map_err(|e| e.to_string())?;
@@ -88,7 +74,7 @@ pub fn fijar_sonrisa(app_handle: tauri::AppHandle, fijar: bool) -> Result<bool, 
         main_window.hide().map_err(|e| e.to_string())?;
     } else {
         smile_window.hide().map_err(|e| e.to_string())?;
-        let _ = main_window.maximize();
+        poner_pantalla_completa(&main_window);
         main_window.show().map_err(|e| e.to_string())?;
         main_window.unminimize().map_err(|e| e.to_string())?;
         main_window.set_focus().map_err(|e| e.to_string())?;
@@ -107,7 +93,7 @@ pub fn restablecer_posiciones(app_handle: tauri::AppHandle) -> Result<(), String
     if let Ok(Some(monitor)) = main_window.primary_monitor() {
         let screen_size = monitor.size();
         
-        let _ = main_window.maximize();
+        poner_pantalla_completa(&main_window);
 
         let smile_w = crate::rii::SMILE_ANCHO;
         let smile_h = crate::rii::SMILE_ALTO;
@@ -119,5 +105,3 @@ pub fn restablecer_posiciones(app_handle: tauri::AppHandle) -> Result<(), String
 
     Ok(())
 }
-
-

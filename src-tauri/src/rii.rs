@@ -24,9 +24,6 @@ pub const VENTANA_TITULO: &str = "pancitawii";
 // Nombre del archivo ejecutable binario de salida (.exe)
 pub const NOMBRE_APP_EXE: &str = "pancitawii.exe";
 
-// Margen de separación (en píxeles) de la ventana respecto al borde derecho de la pantalla
-pub const VENTANA_MARGEN_PANTALLA: i32 = 20;
-
 
 // --- RUTAS DE ARCHIVOS DEL SISTEMA ---
 // Ruta al archivo local de registro de logs del backend
