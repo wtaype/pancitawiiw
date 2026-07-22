@@ -123,101 +123,104 @@
   color: var(--tx2);
 }
 
-/* ==================== VISTA PREVIA (Matriz Semanal Unificada Estilo Tabla Premium) ==================== */
-.horario_preview_grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0;
+/* ==================== VISTA PREVIA (Planilla de Horarios Excel Premium) ==================== */
+.horario_table_planilla {
   width: 100%;
+  border-collapse: collapse;
   border: 1px solid var(--brd);
-  border-radius: 1.2vh;
+  border-radius: 1vh;
   overflow: hidden;
   box-shadow: var(--bs_l);
   background: var(--bg3);
 }
 
-.horario_dia_column {
-  background: var(--bg3);
-  padding: 1.2vh 0.5vw;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6vh;
-  border-right: 1px solid var(--brd);
+.horario_table_planilla th {
+  background: var(--bg4);
+  color: var(--tx1);
+  font-size: var(--fz_s3);
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1.2vh 0.6vw;
+  border: 1px solid var(--brd);
+  text-align: center;
+}
+
+.horario_table_planilla td {
+  border: 1px solid var(--brd);
+  padding: 0.6vh 0.4vw;
+  font-size: var(--fz_s4);
+  color: var(--tx2);
+  text-align: center;
+  position: relative;
+  vertical-align: middle;
+  height: 6vh;
   box-sizing: border-box;
 }
 
-.horario_dia_column:last-child {
-  border-right: none;
+/* Columna de Condición */
+.horario_th_cond,
+.horario_td_cond {
+  width: 80px;
+  min-width: 60px;
 }
 
-/* Bordes redondeados unificados en esquinas de la tabla */
-.horario_dia_column:first-child {
-  border-top-left-radius: 1.2vh;
-  border-bottom-left-radius: 1.2vh;
+.horario_badge_fijo {
+  font-size: 10px;
+  font-weight: 800;
+  color: #000;
+  background: var(--oro);
+  padding: 0.4vh 0.6vw;
+  border-radius: 0.4vh;
 }
 
-.horario_dia_column:last-child {
-  border-top-right-radius: 1.2vh;
-  border-bottom-right-radius: 1.2vh;
-}
-
-.horario_dia_column_header {
-  font-size: var(--fz_s4);
+/* Columna de Hora */
+.horario_th_hora,
+.horario_td_hora {
+  width: 90px;
+  min-width: 80px;
   font-weight: 700;
   color: var(--mco);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-align: center;
-  padding-bottom: 0.6vh;
-  border-bottom: 1px solid var(--brd);
 }
 
-.horario_bloque_card_preview {
-  background: var(--bg4);
-  border: 1px solid var(--brd);
-  border-radius: 0.6vh;
-  padding: 0.8vh 0.5vw;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3vh;
-  position: relative;
-  overflow: hidden;
-  transition: border-color var(--tr_f);
-}
-
-.horario_bloque_card_preview::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0.25vw;
-  min-width: 3px;
-  height: 100%;
-  background: var(--bloque-color, var(--mco));
-}
-
-.horario_bloque_card_preview:hover {
-  border-color: var(--mco);
-}
-
-.horario_bloque_hora {
-  font-size: var(--fz_s5);
-  font-weight: 700;
-  color: var(--tx3);
-}
-
-.horario_bloque_titulo {
-  font-size: var(--fz_s4);
-  font-weight: 600;
-  color: var(--tx1);
-  word-break: break-word;
-}
-
-.horario_bloque_tipo_badge {
+.horario_time_start {
   font-size: var(--fz_s3);
-  font-weight: 700;
-  color: var(--mco);
-  margin-top: 0.4vh;
+}
+
+.horario_time_end {
+  font-size: var(--fz_s5);
+  color: var(--tx3);
+  margin-top: 0.2vh;
+}
+
+/* Celda de Actividad */
+.horario_td_actividad {
+  background-color: var(--bloque-color) !important;
+  color: var(--txa) !important;
+  font-weight: 600;
+  transition: all var(--tr_f);
+}
+
+/* Si la actividad tiene fondo amarillo (oro), asegurar texto oscuro legible */
+.horario_td_actividad[style*="--bloque-color: var(--oro)"] {
+  color: #000 !important;
+}
+
+.horario_actividad_titulo {
+  font-size: var(--fz_s4);
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+.horario_actividad_subbadge {
+  font-size: 9px;
+  opacity: 0.75;
+  text-transform: uppercase;
+  margin-top: 0.2vh;
+}
+
+/* Celda Vacía */
+.horario_td_vacio {
+  background: var(--bg3);
 }
 
 /* ==================== VISTA EDICIÓN ==================== */
@@ -486,17 +489,15 @@
 }
 
 /* ==================== FASE 3: HIGHLIGHTS EN VIVO & HOY ==================== */
-.horario_dia_column.horario_dia_hoy {
-  background: rgba(100, 110, 255, 0.04) !important;
-  border-left: 1px dashed var(--mco) !important;
-  border-right: 1px dashed var(--mco) !important;
-  box-shadow: inset 0 0 12px rgba(100, 110, 255, 0.06);
+.horario_th_dia.horario_th_hoy {
+  background: var(--mco) !important;
+  color: var(--txa) !important;
   position: relative;
 }
 
 .horario_hoy_badge {
-  background: var(--mco);
-  color: var(--txa);
+  background: var(--wb);
+  color: var(--mco);
   font-size: var(--fz_s3) !important;
   font-weight: 800;
   padding: 0.1vh 0.6vw;
@@ -504,27 +505,27 @@
   margin-left: 0.5vw;
   display: inline-block;
   vertical-align: middle;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.horario_bloque_card_preview.horario_bloque_activo {
-  border-color: var(--mco) !important;
-  box-shadow: 0 0 15px var(--mco) !important;
+.horario_col_hoy_vacio {
+  background: rgba(100, 110, 255, 0.03) !important;
+}
+
+.horario_td_actividad.horario_bloque_activo {
+  outline: 2px solid var(--success) !important;
+  outline-offset: -2px;
   animation: horario_activo_pulse 2s infinite ease-in-out;
 }
 
 @keyframes horario_activo_pulse {
   0% {
-    box-shadow: 0 0 6px rgba(100, 110, 255, 0.15);
-    border-color: var(--brd);
+    outline-color: rgba(100, 110, 255, 0.2);
   }
   50% {
-    box-shadow: 0 0 16px var(--mco);
-    border-color: var(--mco);
+    outline-color: var(--success);
   }
   100% {
-    box-shadow: 0 0 6px rgba(100, 110, 255, 0.15);
-    border-color: var(--brd);
+    outline-color: rgba(100, 110, 255, 0.2);
   }
 }
 

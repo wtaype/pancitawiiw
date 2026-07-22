@@ -366,34 +366,67 @@ function renderVistaPrevia(horario) {
   const diasInglesEsp = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
   const nombreHoy = diasInglesEsp[new Date().getDay()];
 
+  // 1. Extraer y ordenar dinámicamente todos los intervalos de tiempo únicos
+  const slotsMap = new Map();
+  horario.forEach(b => {
+    const key = `${b.horaInicio}-${b.horaFin}`;
+    if (!slotsMap.has(key)) {
+      slotsMap.set(key, { inicio: b.horaInicio, fin: b.horaFin });
+    }
+  });
+  const slots = Array.from(slotsMap.values());
+  slots.sort((a, b) => horaAMinutos(a.inicio) - horaAMinutos(b.inicio));
+
   return `
-    <div class="horario_preview_grid">
-      ${DIAS_SEMANA.map(dia => {
-        const esHoy = dia === nombreHoy;
-        const bloquesDia = horario.filter(b => b.dia === dia);
-        return `
-          <div class="horario_dia_column ${esHoy ? 'horario_dia_hoy' : ''}">
-            <div class="horario_dia_column_header">
-              ${dia}
-              ${esHoy ? '<span class="horario_hoy_badge">HOY</span>' : ''}
-            </div>
-            ${bloquesDia.length > 0 ? bloquesDia.map(b => {
-              const esActivo = b.id && bloqueActual && b.id === bloqueActual.id;
-              return `
-                <div class="horario_bloque_card_preview ${esActivo ? 'horario_bloque_activo' : ''}" style="--bloque-color: ${b.color || 'var(--mco)'}" data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin})">
-                  ${esActivo ? '<span class="horario_live_dot"></span>' : ''}
-                  <div class="horario_bloque_hora">${b.horaInicio} - ${b.horaFin}</div>
-                  <div class="horario_bloque_titulo">${b.titulo}</div>
-                  <div class="horario_bloque_tipo_badge">
-                    ${b.tipo === 'fijo' ? '<i class="fa-solid fa-lock"></i> FIJO' : '<i class="fa-solid fa-unlock"></i> FLEXIBLE'}
-                  </div>
-                </div>
-              `;
-            }).join('') : '<p class="hr_dia_libre_text">Día Libre</p>'}
-          </div>
-        `;
-      }).join('')}
-    </div>
+    <table class="horario_table_planilla">
+      <thead>
+        <tr>
+          <th class="horario_th_cond">Cond.</th>
+          <th class="horario_th_hora">Hour</th>
+          ${DIAS_SEMANA.map(d => `
+            <th class="horario_th_dia ${d === nombreHoy ? 'horario_th_hoy' : ''}">
+              ${d}
+              ${d === nombreHoy ? '<span class="horario_hoy_badge">HOY</span>' : ''}
+            </th>
+          `).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${slots.map(slot => {
+          // Filtrar bloques en este slot específico
+          const bloquesEnSlot = horario.filter(b => b.horaInicio === slot.inicio && b.horaFin === slot.fin);
+          const esFijo = bloquesEnSlot.some(b => b.tipo === 'fijo');
+
+          return `
+            <tr>
+              <td class="horario_td_cond">
+                ${esFijo ? '<span class="horario_badge_fijo">FIJO</span>' : ''}
+              </td>
+              <td class="horario_td_hora">
+                <div class="horario_time_start">${slot.inicio}</div>
+                <div class="horario_time_end">${slot.fin}</div>
+              </td>
+              ${DIAS_SEMANA.map(dia => {
+                const b = bloquesEnSlot.find(item => item.dia === dia);
+                const esActivo = b && b.id && bloqueActual && b.id === bloqueActual.id;
+
+                if (b) {
+                  return `
+                    <td class="horario_td_actividad ${esActivo ? 'horario_bloque_activo' : ''}" style="--bloque-color: ${b.color || 'var(--mco)'}" data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin})">
+                      ${esActivo ? '<span class="horario_live_dot"></span>' : ''}
+                      <div class="horario_actividad_titulo">${b.titulo}</div>
+                      <div class="horario_actividad_subbadge">${b.tipo.toUpperCase()}</div>
+                    </td>
+                  `;
+                } else {
+                  return `<td class="horario_td_vacio ${dia === nombreHoy ? 'horario_col_hoy_vacio' : ''}"></td>`;
+                }
+              }).join('')}
+            </tr>
+          `;
+        }).join('')}
+      </tbody>
+    </table>
   `;
 }
 
