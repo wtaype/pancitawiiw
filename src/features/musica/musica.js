@@ -4,6 +4,7 @@
 import { obtenerListaPredeterminada } from '@features/musica/lista/lista.js';
 import { savels, getls } from '@core/widev/storage.js';
 import { wiTip } from '@core/widev/witip.js';
+import { wiAtajo } from '@core/widev/atajos.js';
 import { renderHero, bindHeroEvents } from '@features/musica/componentes/hero.js';
 import { renderFiltros, bindFiltrosEvents } from '@features/musica/componentes/filtros.js';
 import { renderListaItems, bindListaItemsEvents } from '@features/musica/componentes/lista_items.js';
@@ -48,11 +49,19 @@ export function resolverUrlPista(pista) {
   return match?.url || DEFAULT_PLAYLIST[0]?.url || '';
 }
 
+const STORAGE_KEY_CONFIG = 'musica_config';
+
 // ── Carga y Persistencia de Estado ───────────────────────────────────────────
 function cargarEstado() {
   const carpetasGuardadas = getls(STORAGE_KEY_CARPETAS) || DEFAULT_CARPETAS;
   const listaGuardada = getls(STORAGE_KEY_LISTA);
   const likesGuardados = getls(STORAGE_KEY_LIKES) || [];
+  const configGuardada = getls(STORAGE_KEY_CONFIG) || {
+    volume: 1.0,
+    isMuted: false,
+    repeatMode: 'off',
+    shuffleActive: false
+  };
 
   let carpetaActiva = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
   const listRaw = carpetaActiva?.canciones || DEFAULT_PLAYLIST;
@@ -64,13 +73,20 @@ function cargarEstado() {
     likes:      Array.isArray(likesGuardados) ? likesGuardados : [],
     filtro:     'todos',
     carpetaId:  carpetaActiva.id,
-    carpetaNom: carpetaActiva.nombre
+    carpetaNom: carpetaActiva.nombre,
+    config:     configGuardada
   };
 }
 
 function guardarEstado() {
   savels(STORAGE_KEY_CARPETAS, carpetasGuardadas, 8760);
   savels(STORAGE_KEY_LIKES, likes, 8760);
+  savels(STORAGE_KEY_CONFIG, {
+    volume,
+    isMuted,
+    repeatMode,
+    shuffleActive
+  }, 8760);
   savels(STORAGE_KEY_LISTA, {
     playlist:   playlistActual,
     trackIndex: currentTrackIndex,
@@ -93,7 +109,43 @@ let searchQuery       = '';
 let sortOrder         = 'id';
 let isPlaying         = false;
 
+// Estado de volumen, mute, repeat y shuffle
+let volume            = estado.config?.volume ?? 1.0;
+let isMuted           = estado.config?.isMuted ?? false;
+let repeatMode        = estado.config?.repeatMode ?? 'off';
+let shuffleActive     = estado.config?.shuffleActive ?? false;
+
 const audio = new Audio();
+audio.volume = isMuted ? 0 : volume;
+
+function aplicarVolumen() {
+  audio.volume = isMuted ? 0 : volume;
+}
+
+let atajosLimpieza = [];
+function limpiarAtajos() {
+  atajosLimpieza.forEach(fn => {
+    if (typeof fn === 'function') fn();
+  });
+  atajosLimpieza = [];
+}
+
+function obtenerSiguienteIndex(avanzar = true) {
+  if (playlistActual.length === 0) return 0;
+  if (repeatMode === 'one' && avanzar) return currentTrackIndex;
+  if (shuffleActive) {
+    if (playlistActual.length <= 1) return 0;
+    let nextIdx;
+    let attempts = 0;
+    do {
+      nextIdx = Math.floor(Math.random() * playlistActual.length);
+      attempts++;
+    } while (nextIdx === currentTrackIndex && attempts < 10);
+    return nextIdx;
+  }
+  let nextIdx = avanzar ? currentTrackIndex + 1 : currentTrackIndex - 1;
+  return nextIdx;
+}
 
 function tienelike(pistaOrId) {
   if (!pistaOrId) return false;
@@ -150,6 +202,39 @@ export function bindMusicaEvents(container) {
 
   const trackListContainer = container.querySelector('#msc_track_list');
 
+  limpiarAtajos();
+  const atajos = [
+    wiAtajo('arrowright', (e) => {
+      if (e.target.closest('input, textarea, select')) return;
+      cargarYReproducir(obtenerSiguienteIndex(true), true);
+    }),
+    wiAtajo('arrowleft', (e) => {
+      if (e.target.closest('input, textarea, select')) return;
+      cargarYReproducir(obtenerSiguienteIndex(false), true);
+    }),
+    wiAtajo(' ', (e) => {
+      if (e.target.closest('input, textarea, select')) return;
+      togglePlayPause();
+    }),
+    wiAtajo('arrowup', (e) => {
+      if (e.target.closest('input, textarea, select')) return;
+      volume = Math.min(volume + 0.1, 1.0);
+      if (volume > 0) isMuted = false;
+      aplicarVolumen();
+      guardarEstado();
+      refrescarUICompleta();
+    }),
+    wiAtajo('arrowdown', (e) => {
+      if (e.target.closest('input, textarea, select')) return;
+      volume = Math.max(volume - 0.1, 0.0);
+      if (volume === 0) isMuted = true;
+      aplicarVolumen();
+      guardarEstado();
+      refrescarUICompleta();
+    })
+  ];
+  atajosLimpieza.push(...atajos);
+
   function refrescarUICompleta() {
     const actual = playlistActual[currentTrackIndex] || playlistActual[0];
     const likedActual = tienelike(actual);
@@ -160,6 +245,55 @@ export function bindMusicaEvents(container) {
       favBtn.className = `msc_ctrl_btn ${likedActual ? 'liked' : ''}`;
       favBtn.setAttribute('data-witip', likedActual ? 'Quitar favorito' : 'Agregar a favoritos');
       favBtn.innerHTML = `<i class="fa-${likedActual ? 'solid' : 'regular'} fa-heart"></i>`;
+    }
+
+    // 1.1 Refrescar Botón de Shuffle
+    const shuffleBtn = container.querySelector('#msc_btn_shuffle');
+    if (shuffleBtn) {
+      shuffleBtn.className = `msc_ctrl_btn ${shuffleActive ? 'active' : ''}`;
+      shuffleBtn.setAttribute('data-witip', shuffleActive ? 'Desactivar modo aleatorio' : 'Activar modo aleatorio');
+    }
+
+    // 1.2 Refrescar Botón de Repeat
+    const repeatBtn = container.querySelector('#msc_btn_repeat');
+    if (repeatBtn) {
+      let iconClass = 'fa-repeat';
+      let tooltip = 'Activar repetición';
+      if (repeatMode === 'all') {
+        repeatBtn.className = 'msc_ctrl_btn active';
+        tooltip = 'Repetir lista completa';
+      } else if (repeatMode === 'one') {
+        repeatBtn.className = 'msc_ctrl_btn active';
+        iconClass = 'fa-arrows-spin';
+        tooltip = 'Repetir canción actual';
+      } else {
+        repeatBtn.className = 'msc_ctrl_btn';
+        tooltip = 'Repetir: Apagado';
+      }
+      repeatBtn.setAttribute('data-witip', tooltip);
+      const repeatIcon = repeatBtn.querySelector('i');
+      if (repeatIcon) {
+        repeatIcon.className = `fa-solid ${iconClass}`;
+      }
+    }
+
+    // 1.3 Refrescar Volumen y Mute en la UI
+    const volumeSlider = container.querySelector('#msc_volume_slider');
+    if (volumeSlider) {
+      volumeSlider.value = isMuted ? 0 : volume;
+    }
+    const volumeBtn = container.querySelector('#msc_btn_volume');
+    if (volumeBtn) {
+      volumeBtn.className = `msc_vol_btn ${isMuted ? 'muted' : ''}`;
+      volumeBtn.setAttribute('data-witip', isMuted ? 'Activar sonido' : 'Silenciar');
+      volumeBtn.innerHTML = `<i class="fa-solid ${isMuted || volume === 0 ? 'fa-volume-xmark' : volume < 0.5 ? 'fa-volume-low' : 'fa-volume-high'}"></i>`;
+    }
+
+    // 1.4 Refrescar Botón Principal de Reproducción (Play/Pause)
+    const mainPlayBtn = container.querySelector('#msc_main_play_btn');
+    if (mainPlayBtn) {
+      mainPlayBtn.setAttribute('data-witip', isPlaying ? 'Pausar' : 'Reproducir');
+      mainPlayBtn.innerHTML = `<i class="fa-solid ${isPlaying ? 'fa-pause' : 'fa-play'}"></i>`;
     }
 
     // 2. Refrescar Pestaña de Favoritos (xx)
@@ -217,11 +351,11 @@ export function bindMusicaEvents(container) {
       if (audio.src !== srcSeguro) audio.src = srcSeguro;
     }
 
+    aplicarVolumen();
     guardarEstado();
 
     const titleNowEl = container.querySelector('#msc_now_title');
     const metaTextEl = container.querySelector('#msc_meta_text');
-    const mainPlayBtn = container.querySelector('#msc_main_play_btn');
 
     if (titleNowEl && track) titleNowEl.textContent = track.titulo;
     if (metaTextEl && track) metaTextEl.textContent = `MP3 · ${track.peso} · Modificado: ${track.fecha}`;
@@ -229,19 +363,23 @@ export function bindMusicaEvents(container) {
     if (autoPlay && track) {
       audio.play().then(() => {
         isPlaying = true;
-        if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-pause';
-      }).catch(err => console.warn('AutoPlay:', err));
+        refrescarUICompleta();
+      }).catch(err => {
+        console.warn('AutoPlay:', err);
+        isPlaying = false;
+        refrescarUICompleta();
+      });
+    } else {
+      isPlaying = false;
+      refrescarUICompleta();
     }
-    refrescarUICompleta();
   }
 
   function togglePlayPause() {
-    const mainPlayBtn = container.querySelector('#msc_main_play_btn');
     if (isPlaying) {
       audio.pause();
       isPlaying = false;
-      if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-pause';
-      if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-play';
+      refrescarUICompleta();
     } else {
       const track = playlistActual[currentTrackIndex];
       const srcSeguro = resolverUrlPista(track);
@@ -249,12 +387,16 @@ export function bindMusicaEvents(container) {
         cargarYReproducir(currentTrackIndex, true);
         return;
       }
+      aplicarVolumen();
       audio.play().then(() => {
         isPlaying = true;
-        if (mainPlayBtn) mainPlayBtn.querySelector('i').className = 'fa-solid fa-pause';
-      }).catch(err => console.warn('Play error:', err));
+        refrescarUICompleta();
+      }).catch(err => {
+        console.warn('Play error:', err);
+        isPlaying = false;
+        refrescarUICompleta();
+      });
     }
-    refrescarUICompleta();
   }
 
   function activarCarpetaPorId(folderId) {
@@ -296,8 +438,8 @@ export function bindMusicaEvents(container) {
   // Bind Hero Player
   bindHeroEvents(container, {
     onTogglePlay: togglePlayPause,
-    onPrev: () => cargarYReproducir(currentTrackIndex - 1, true),
-    onNext: () => cargarYReproducir(currentTrackIndex + 1, true),
+    onPrev: () => cargarYReproducir(obtenerSiguienteIndex(false), true),
+    onNext: () => cargarYReproducir(obtenerSiguienteIndex(true), true),
     onToggleFav: () => {
       const track = playlistActual[currentTrackIndex];
       if (track) {
@@ -307,6 +449,35 @@ export function bindMusicaEvents(container) {
     },
     onSeek: (pct) => {
       if (audio.duration) audio.currentTime = pct * audio.duration;
+    },
+    onToggleShuffle: () => {
+      shuffleActive = !shuffleActive;
+      guardarEstado();
+      refrescarUICompleta();
+    },
+    onToggleRepeat: () => {
+      if (repeatMode === 'off') {
+        repeatMode = 'all';
+      } else if (repeatMode === 'all') {
+        repeatMode = 'one';
+      } else {
+        repeatMode = 'off';
+      }
+      guardarEstado();
+      refrescarUICompleta();
+    },
+    onVolumeChange: (val) => {
+      volume = val;
+      if (volume > 0) isMuted = false;
+      aplicarVolumen();
+      guardarEstado();
+      refrescarUICompleta();
+    },
+    onToggleMute: () => {
+      isMuted = !isMuted;
+      aplicarVolumen();
+      guardarEstado();
+      refrescarUICompleta();
     }
   });
 
@@ -361,7 +532,25 @@ export function bindMusicaEvents(container) {
     if (total) total.textContent = `${Math.floor(audio.duration / 60)}:${String(Math.floor(audio.duration % 60)).padStart(2, '0')}`;
   };
 
-  audio.onended = () => cargarYReproducir(currentTrackIndex + 1, true);
+  audio.onended = () => {
+    if (repeatMode === 'one') {
+      cargarYReproducir(currentTrackIndex, true);
+      return;
+    }
+    const nextIdx = obtenerSiguienteIndex(true);
+    if (nextIdx >= playlistActual.length) {
+      if (repeatMode === 'all') {
+        cargarYReproducir(0, true);
+      } else {
+        // repeatMode === 'off'
+        isPlaying = false;
+        audio.currentTime = 0;
+        refrescarUICompleta();
+      }
+    } else {
+      cargarYReproducir(nextIdx, true);
+    }
+  };
 
   // Cargar origen de audio inicial sin reproducir para obtener duración
   const trackInicial = playlistActual[currentTrackIndex] || playlistActual[0];

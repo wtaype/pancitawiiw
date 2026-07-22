@@ -1,5 +1,5 @@
-// src/features/musica/componentes/musica_hero.js
-// Subcomponente: Hero Player (Reproductor Principal, Barra de Progreso y Controles)
+// src/features/musica/componentes/hero.js
+// Subcomponente: Hero Player (Reproductor Principal, Barra de Progreso, Volumen y Controles)
 
 export function renderHero(track, isPlaying, liked, carpeta) {
   const actual = track || { titulo: 'Sin canción', peso: '0 MB', fecha: '-' };
@@ -22,8 +22,8 @@ export function renderHero(track, isPlaying, liked, carpeta) {
 
       <!-- Controles principales -->
       <div class="msc_controls_row">
-        <button class="msc_ctrl_btn" id="msc_btn_repeat" data-witip="Repetir" data-wtipo="top">
-          <i class="fa-solid fa-rotate-right"></i>
+        <button class="msc_ctrl_btn" id="msc_btn_shuffle" data-witip="Reproducción aleatoria" data-wtipo="top">
+          <i class="fa-solid fa-shuffle"></i>
         </button>
         <button class="msc_ctrl_btn" id="msc_btn_prev" data-witip="Anterior" data-wtipo="top">
           <i class="fa-solid fa-backward-step"></i>
@@ -34,10 +34,21 @@ export function renderHero(track, isPlaying, liked, carpeta) {
         <button class="msc_ctrl_btn" id="msc_btn_next" data-witip="Siguiente" data-wtipo="top">
           <i class="fa-solid fa-forward-step"></i>
         </button>
+        <button class="msc_ctrl_btn" id="msc_btn_repeat" data-witip="Repetir" data-wtipo="top">
+          <i class="fa-solid fa-repeat"></i>
+        </button>
         <button class="msc_ctrl_btn ${liked ? 'liked' : ''}" id="msc_btn_fav"
           data-witip="${liked ? 'Quitar favorito' : 'Agregar a favoritos'}" data-wtipo="top">
           <i class="fa-${liked ? 'solid' : 'regular'} fa-heart"></i>
         </button>
+
+        <!-- Control de volumen compacto -->
+        <div class="msc_vol_control">
+          <button class="msc_vol_btn" id="msc_btn_volume" data-witip="Silenciar" data-wtipo="top">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+          <input type="range" class="msc_volume_slider" id="msc_volume_slider" min="0" max="1" step="0.05" value="1.0" />
+        </div>
       </div>
 
       <!-- Meta info -->
@@ -51,17 +62,41 @@ export function renderHero(track, isPlaying, liked, carpeta) {
   `;
 }
 
-export function bindHeroEvents(container, { onTogglePlay, onPrev, onNext, onToggleFav, onSeek }) {
-  const mainPlayBtn = container.querySelector('#msc_main_play_btn');
-  const prevBtn     = container.querySelector('#msc_btn_prev');
-  const nextBtn     = container.querySelector('#msc_btn_next');
-  const favBtn      = container.querySelector('#msc_btn_fav');
-  const progressBar = container.querySelector('#msc_progress_bar');
+export function bindHeroEvents(container, {
+  onTogglePlay,
+  onPrev,
+  onNext,
+  onToggleFav,
+  onSeek,
+  onToggleShuffle,
+  onToggleRepeat,
+  onVolumeChange,
+  onToggleMute
+}) {
+  const mainPlayBtn  = container.querySelector('#msc_main_play_btn');
+  const prevBtn      = container.querySelector('#msc_btn_prev');
+  const nextBtn      = container.querySelector('#msc_btn_next');
+  const favBtn       = container.querySelector('#msc_btn_fav');
+  const shuffleBtn   = container.querySelector('#msc_btn_shuffle');
+  const repeatBtn    = container.querySelector('#msc_btn_repeat');
+  const volumeSlider = container.querySelector('#msc_volume_slider');
+  const volumeBtn    = container.querySelector('#msc_btn_volume');
+  const progressBar  = container.querySelector('#msc_progress_bar');
 
   if (mainPlayBtn) mainPlayBtn.onclick = () => onTogglePlay();
   if (prevBtn)     prevBtn.onclick     = () => onPrev();
   if (nextBtn)     nextBtn.onclick     = () => onNext();
   if (favBtn)      favBtn.onclick      = () => onToggleFav();
+  if (shuffleBtn)  shuffleBtn.onclick  = () => onToggleShuffle();
+  if (repeatBtn)   repeatBtn.onclick   = () => onToggleRepeat();
+
+  if (volumeSlider && typeof onVolumeChange === 'function') {
+    volumeSlider.oninput = (e) => onVolumeChange(parseFloat(e.target.value));
+  }
+
+  if (volumeBtn && typeof onToggleMute === 'function') {
+    volumeBtn.onclick = () => onToggleMute();
+  }
 
   if (progressBar && typeof onSeek === 'function') {
     progressBar.onclick = (e) => {

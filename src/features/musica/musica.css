@@ -209,6 +209,94 @@
   border-color: var(--error);
 }
 
+/* Botones de control activos (Shuffle/Repeat) */
+.msc_ctrl_btn.active {
+  color: var(--mco);
+  border-color: var(--mco);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--mco) 30%, transparent);
+  background: color-mix(in srgb, var(--mco) 10%, transparent);
+}
+
+/* ─── Control de Volumen Compacto ─── */
+.msc_vol_control {
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  margin-left: 0.6vw;
+}
+
+.msc_vol_btn {
+  width: 3.2vh;
+  height: 3.2vh;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  color: var(--tx2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(10px, 0.72vw, 12px);
+  box-shadow: 0 2px 8px 0 var(--glass-shd), inset 0 1px 0 rgba(255,255,255,0.2);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  transition: all var(--tr_m);
+}
+
+.msc_vol_btn:hover {
+  color: var(--mco);
+  border-color: var(--mco);
+  transform: translateY(-1px);
+}
+
+.msc_vol_btn.muted {
+  color: var(--error);
+  border-color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--error) 30%, transparent);
+}
+
+.msc_volume_slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 99px;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--tr_m);
+}
+
+.msc_volume_slider:hover {
+  height: 6px;
+  border-color: var(--mco);
+}
+
+.msc_volume_slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.msc_volume_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mco);
+  box-shadow: 0 0 6px var(--mco);
+  margin-top: -3px;
+  transition: transform 0.1s ease;
+}
+
+.msc_volume_slider:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
 /* ─── Meta bar ─── */
 .msc_meta_bar {
   display: flex;
