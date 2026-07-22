@@ -160,3 +160,19 @@
   margin: 0;
   flex: none;
 }
+
+/* Responsividad para laptops HD / pantallas medianas */
+@media (max-width: 1440px) {
+  .reloj_hero_card {
+    min-height: 130px;
+    padding: 1.5vh 1vw;
+  }
+  .reloj_hero_clock {
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    letter-spacing: 1px;
+  }
+  .reloj_hero_card.sidebar_only_clock {
+    min-height: 100px;
+    padding: 1.5vh 1vw;
+  }
+}

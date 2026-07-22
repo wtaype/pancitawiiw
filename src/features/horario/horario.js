@@ -118,13 +118,26 @@ export function arrancar(container) {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'F5') {
+      e.preventDefault();
+      render();
+      const btnActualizar = document.querySelector('[data-action-id="actualizar_horario"]');
+      if (btnActualizar) {
+        wiTip(btnActualizar, 'Horario actualizado', 'top', 1500);
+      }
+    }
+  };
+
   document.addEventListener('wi_subtab_change', handleSubtabChange);
   document.addEventListener('wi_subtab_action', handleSubtabAction);
+  document.addEventListener('keydown', handleKeyDown);
 
   container._cleanupHorario = () => {
     if (liveTimer) clearInterval(liveTimer);
     document.removeEventListener('wi_subtab_change', handleSubtabChange);
     document.removeEventListener('wi_subtab_action', handleSubtabAction);
+    document.removeEventListener('keydown', handleKeyDown);
     if (typeSelectControl) {
       typeSelectControl.destroy();
       typeSelectControl = null;
@@ -177,54 +190,9 @@ export function arrancar(container) {
       </div>
     `;
 
-    // ── CONFIGURACIÓN DE VISTA PREVIA ─────────────────────────────────────
+    // ── CONFIGURACIÓN DE VISTA PREVIA (MODO LECTURA) ──────────────────────
     if (tabActiva === 'preview') {
-      // Evento clic en celdas de actividades de la tabla para editar
-      container.querySelectorAll('.horario_table_planilla .horario_td_actividad').forEach(td => {
-        td.addEventListener('click', () => {
-          const id = td.getAttribute('data-id');
-          const dia = td.getAttribute('data-dia');
-          if (id) {
-            bloqueEditandoId = id;
-            diaActivoEdit = dia;
-            // Forzar actualización visual de pestañas en el header de Pancitawii
-            document.dispatchEvent(new CustomEvent('wi_subtab_change', {
-              detail: { subtabId: 'editar', keepId: true }
-            }));
-          }
-        });
-      });
-
-      // Evento clic en celdas vacías para crear una nueva actividad pre-rellenada
-      container.querySelectorAll('.horario_table_planilla .horario_td_vacio').forEach(td => {
-        td.addEventListener('click', () => {
-          const dia = td.getAttribute('data-dia');
-          const inicio = td.getAttribute('data-inicio');
-          const fin = td.getAttribute('data-fin');
-
-          bloqueEditandoId = null;
-          diaActivoEdit = dia;
-
-          document.dispatchEvent(new CustomEvent('wi_subtab_change', {
-            detail: { subtabId: 'editar', keepId: true }
-          }));
-
-          // Rellenar las horas de inicio y fin en el editor recién pintado
-          const inpStart = container.querySelector('#horario_inp_hora_inicio');
-          const inpEnd = container.querySelector('#horario_inp_hora_fin');
-          if (inpStart) inpStart.value = inicio;
-          if (inpEnd) inpEnd.value = fin;
-
-          // Actualizar el indicador visual de duración
-          const durEl = container.querySelector('#horario_lbl_duracion');
-          if (durEl) {
-            const sMin = horaAMinutos(inicio);
-            let eMin = horaAMinutos(fin);
-            if (eMin < sMin) eMin += 24 * 60;
-            durEl.textContent = `(${formatearDuracion(eMin - sMin)})`;
-          }
-        });
-      });
+      // La vista previa ahora es estrictamente de lectura. No se vinculan clics para editar.
     }
 
     // ── CONFIGURACIÓN DE VISTA EDICIÓN ────────────────────────────────────
@@ -523,7 +491,7 @@ function renderVistaPrevia(horario, bloqueActual) {
                         style="--bloque-color: ${b.color || 'var(--mco)'}" 
                         data-id="${b.id}"
                         data-dia="${dia}"
-                        data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin}) (Haz clic para editar)">
+                        data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin})">
                       ${esActivo ? '<span class="horario_live_dot"></span>' : ''}
                       <div class="horario_actividad_titulo">${b.titulo}</div>
                       <div class="horario_actividad_subbadge">${b.tipo.toUpperCase()}</div>
@@ -535,7 +503,7 @@ function renderVistaPrevia(horario, bloqueActual) {
                         data-dia="${dia}"
                         data-inicio="${slot.inicio}"
                         data-fin="${slot.fin}"
-                        data-witip="Libre: ${dia} (${slot.inicio} - ${slot.fin}) (Haz clic para agregar bloque)">
+                        data-witip="Libre: ${dia} (${slot.inicio} - ${slot.fin})">
                     </td>
                   `;
                 }

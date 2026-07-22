@@ -203,7 +203,13 @@
 }
 
 /* Celda de Actividad */
-.horario_td_actividad,
+.horario_td_actividad {
+  background-color: var(--bloque-color) !important;
+  color: var(--txa) !important;
+  font-weight: 600;
+  transition: all var(--tr_f);
+}
+
 .horario_td_actividad_ed {
   background-color: var(--bloque-color) !important;
   color: var(--txa) !important;
@@ -212,7 +218,6 @@
   transition: all var(--tr_f);
 }
 
-.horario_td_actividad:hover,
 .horario_td_actividad_ed:hover {
   opacity: 0.9;
   filter: brightness(1.1);
@@ -245,14 +250,17 @@
 }
 
 /* Celda Vacía */
-.horario_td_vacio,
+.horario_td_vacio {
+  background: var(--bg3);
+  transition: background var(--tr_f);
+}
+
 .horario_td_vacio_ed {
   background: var(--bg3);
   cursor: pointer;
   transition: background var(--tr_f);
 }
 
-.horario_td_vacio:hover,
 .horario_td_vacio_ed:hover {
   background: rgba(100, 110, 255, 0.08) !important;
 }
