@@ -20,7 +20,7 @@ export { setMeta } from './seometa.js';
 export { wiSpin } from './spin.js';
 export { savels, getls, removels, gosave, getsave, gosaves, getsaves } from './storage.js';
 export { superFun } from './superfun.js';
-export { witema, witemas } from './tema.js';
+export { witema, witemas, setTema } from './tema.js';
 export { Mayu, Capi, mis10, minus } from './texto.js';
 export { wiCode } from './wicode.js';
 export { wiIp } from './wiip.js';

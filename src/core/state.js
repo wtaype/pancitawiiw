@@ -1,15 +1,12 @@
 // src/core/state.js
 // Estado reactivo global de la aplicación (Tema Central y Comandos de Ventanas Nativas)
 
-import { witema, getls, savels } from '@widev';
+import { witema, setTema, getls, savels } from '@widev';
 import wii from '../wii.js';
 
 function obtenerTemaGuardado() {
   try {
-    let t = getls('wiTema') || getls('witema');
-    if (!t && typeof localStorage !== 'undefined') {
-      t = localStorage.getItem('wiTema') || localStorage.getItem('witema');
-    }
+    const t = getls('wiTema');
     if (t) return t;
     const perfil = getls('wiSmile');
     if (perfil && perfil.tema) return perfil.tema;
@@ -46,9 +43,6 @@ class GlobalState {
   setTema(nuevoTema) {
     this.tema = nuevoTema;
     try {
-      savels('wiTema', nuevoTema, null);
-      savels('witema', nuevoTema, null);
-
       // Sincronizar el tema dentro del perfil wiSmile si existe
       const perfil = getls('wiSmile');
       if (perfil) {
@@ -57,10 +51,8 @@ class GlobalState {
       }
     } catch (e) {}
 
-    if (document?.documentElement) {
-      document.documentElement.dataset.theme = nuevoTema;
-    }
-    witema(nuevoTema);
+    // Delegar todo el control de DOM y almacenamiento a la librería
+    setTema(nuevoTema);
   }
 
   // Alternar ventana nativa Panel

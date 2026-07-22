@@ -6,7 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!bubble) return;
 
   // Cargar tema y fuente guardados para que coincida con el app principal
-  const temaGuardado = localStorage.getItem('wiTema') || 'futuro';
+  let temaGuardado = 'futuro';
+  try {
+    const rawTema = localStorage.getItem('wiTema');
+    if (rawTema) {
+      const parsed = JSON.parse(rawTema);
+      temaGuardado = parsed?.value || rawTema;
+    }
+  } catch (_) {
+    temaGuardado = localStorage.getItem('wiTema') || 'futuro';
+  }
+
   const fuenteGuardada = localStorage.getItem('wiFont') || 'outfit';
   document.documentElement.setAttribute('data-theme', temaGuardado);
   document.documentElement.setAttribute('data-font', fuenteGuardada);
@@ -49,8 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.addEventListener('storage', (e) => {
-    if ((e.key === 'wiTema' || e.key === 'witema') && e.newValue) {
-      document.documentElement.setAttribute('data-theme', e.newValue);
+    if (e.key === 'wiTema' && e.newValue) {
+      let temaVal = e.newValue;
+      try {
+        const parsed = JSON.parse(e.newValue);
+        temaVal = parsed?.value || e.newValue;
+      } catch (_) {}
+      document.documentElement.setAttribute('data-theme', temaVal);
     }
     if (e.key === 'wiFont' && e.newValue) {
       document.documentElement.setAttribute('data-font', e.newValue);
