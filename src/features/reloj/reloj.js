@@ -107,6 +107,17 @@ export function initRelojTimer(container) {
     }
   }
 
+  // Sincronización Reactiva Event-Driven en Barra Lateral (Reloj)
+  const handleHorarioUpdate = () => {
+    const nuevosAvisos = obtenerAvisosHorarioEnVivo();
+    if (rolesContainer) {
+      rolesContainer.innerHTML = renderAvisosHTML(nuevosAvisos);
+    }
+    roleIdx = 0; // Reiniciar rotación al primer mensaje inmediatamente
+  };
+
+  window.addEventListener('mihorario_update', handleHorarioUpdate);
+
   actualizarReloj();
   const clockTimerId = setInterval(actualizarReloj, 1000);
   const rolesTimerId = setInterval(rotarMensajes, 5000);
@@ -114,5 +125,6 @@ export function initRelojTimer(container) {
   return () => {
     clearInterval(clockTimerId);
     clearInterval(rolesTimerId);
+    window.removeEventListener('mihorario_update', handleHorarioUpdate);
   };
 }

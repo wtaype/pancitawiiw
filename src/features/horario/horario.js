@@ -381,7 +381,7 @@ function renderVistaPrevia(horario) {
               const esActivo = b.id && bloqueActual && b.id === bloqueActual.id;
               return `
                 <div class="horario_bloque_card_preview ${esActivo ? 'horario_bloque_activo' : ''}" style="--bloque-color: ${b.color || 'var(--mco)'}" data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin})">
-                  ${esActivo ? '<span class="horario_live_badge"><span class="horario_live_dot"></span>EN VIVO</span>' : ''}
+                  ${esActivo ? '<span class="horario_live_dot"></span>' : ''}
                   <div class="horario_bloque_hora">${b.horaInicio} - ${b.horaFin}</div>
                   <div class="horario_bloque_titulo">${b.titulo}</div>
                   <div class="horario_bloque_tipo_badge">
