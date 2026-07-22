@@ -23,6 +23,13 @@ export const SEO = {
     icon: 'fa-robot',
     position: 'left'
   },
+  '/cuenta': {
+    tag: 'Cuenta',
+    title: 'Mi Cuenta',
+    subtitle: 'Gestión de Perfil y Preferencias',
+    icon: 'fa-user-gear',
+    position: 'right'
+  },
   '/ajustes': {
     tag: 'Ajustes',
     title: 'Ajustes del Sistema',

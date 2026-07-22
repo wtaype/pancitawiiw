@@ -106,25 +106,6 @@ export function arrancar(container) {
             Hablar con Pancita <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
-
-        <!-- Card 4: Personalización Visual -->
-        <div class="card_item hwi_item">
-          <div class="card_header">
-            <div class="card_icon_badge"><i class="fa-solid fa-palette"></i></div>
-            <h3 class="card_title">Tema de la Interfaz</h3>
-          </div>
-          <div class="card_body">
-            Cambia el esquema de colores de la aplicación al instante:
-            <div class="theme_grid">
-              <button class="theme_pill ${temaActual === 'futuro' ? 'active' : ''}" data-theme="futuro">Futuro</button>
-              <button class="theme_pill ${temaActual === 'cielo' ? 'active' : ''}" data-theme="cielo">Cielo</button>
-              <button class="theme_pill ${temaActual === 'dulce' ? 'active' : ''}" data-theme="dulce">Dulce</button>
-              <button class="theme_pill ${temaActual === 'paz' ? 'active' : ''}" data-theme="paz">Paz</button>
-              <button class="theme_pill ${temaActual === 'oro' ? 'active' : ''}" data-theme="oro">Oro</button>
-              <button class="theme_pill ${temaActual === 'mora' ? 'active' : ''}" data-theme="mora">Mora</button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   `;
@@ -158,15 +139,4 @@ export function arrancar(container) {
     });
   });
 
-  // 4. Eventos de cambio de Tema Visual
-  container.querySelectorAll('.theme_pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const nombreTema = btn.getAttribute('data-theme');
-      if (nombreTema) {
-        container.querySelectorAll('.theme_pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.setTema(nombreTema);
-      }
-    });
-  });
 }

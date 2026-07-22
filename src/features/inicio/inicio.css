@@ -267,34 +267,4 @@
   transform: translateY(-1px);
 }
 
-/* Selector de temas visuales dentro de la Card */
-.theme_grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.8vh;
-  margin-top: 1vh;
-}
 
-.theme_pill {
-  background: var(--inp);
-  border: 1px solid var(--brd);
-  color: var(--tx2);
-  padding: 0.8vh 0.5vw;
-  border-radius: 0.6vh;
-  font-size: var(--fz_s2);
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  transition: all var(--tr_f);
-}
-
-.theme_pill:hover {
-  border-color: var(--mco);
-  color: var(--mco);
-}
-
-.theme_pill.active {
-  background: var(--mco);
-  color: var(--txa);
-  border-color: var(--mco);
-}

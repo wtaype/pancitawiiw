@@ -1,0 +1,497 @@
+/* src/features/cuenta/cuenta.css */
+/* Estilos premium para el feature de Cuenta adaptado a witema.css de Pancitawii */
+
+/* Contenedor principal de la pestaña */
+.cuenta_container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.5vh 0;
+  box-sizing: border-box;
+  
+  /* Ocultar barra de desplazamiento visualmente, manteniendo el desplazamiento */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.cuenta_container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* ==================== WRAP ==================== */
+.cuenta_wrap {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  width: 100%;
+  animation: cuenta_fade_up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes cuenta_fade_up {
+  from {
+    opacity: 0;
+    transform: translateY(2vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== CARD & HERO ==================== */
+.cuenta_card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.8vh;
+  padding: 3vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px 0 var(--glass-shd);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.cuenta_hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vh;
+  padding: 3vh 3.5vh;
+}
+
+.cuenta_hero_main_row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2vh;
+}
+
+/* Columna que ocupa el 45% y centra el avatar de forma perfecta */
+.cuenta_av_col {
+  width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Contenedor que tiene exactamente las dimensiones del avatar */
+.cuenta_av_wrap {
+  position: relative;
+  width: 9.5vh;
+  height: 9.5vh;
+  min-width: 70px;
+  min-height: 70px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cuenta_av {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--mco);
+  display: block;
+}
+
+/* Anillo animado concéntrico perfecto sin deformación de órbita */
+.cuenta_av_ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px dashed var(--mco);
+  opacity: .4;
+  animation: cuenta_spin 15s linear infinite;
+}
+
+@keyframes cuenta_spin { 
+  to { transform: rotate(360deg); } 
+}
+
+.cuenta_hero_info {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.cuenta_fullname {
+  font-size: var(--fz_m5);
+  font-weight: 700;
+  color: var(--tx1);
+  margin-bottom: 0.2vh;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.cuenta_username {
+  font-size: var(--fz_m);
+  color: var(--tx3);
+  margin-bottom: 0.2vh;
+  display: flex;
+  align-items: center;
+  gap: 0.5vh;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.cuenta_username i {
+  color: var(--mco);
+}
+
+.cuenta_rol_chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5vh;
+  padding: 0.4vh 1.2vh;
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 5vh;
+  font-size: var(--fz_s4);
+  font-weight: 600;
+  color: var(--mco);
+}
+
+.cuenta_hero_plan_wrap {
+  margin-bottom: 0.5vh;
+}
+
+/* ==================== GRID ==================== */
+.cuenta_grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2vh;
+}
+
+.cuenta_left {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+}
+
+.cuenta_right {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+}
+
+.cuenta_card_tit {
+  font-size: var(--fz_m4);
+  font-weight: 700;
+  color: var(--tx1);
+  margin-bottom: 2.5vh;
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  border-bottom: 1px solid var(--bg4);
+  padding-bottom: 1.2vh;
+}
+
+.cuenta_card_tit i {
+  color: var(--mco);
+}
+
+/* ==================== FORM ==================== */
+.cuenta_form_2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5vw;
+}
+
+.cuenta_form_grp {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2vh;
+}
+
+.cuenta_card label {
+  font-size: var(--fz_m1);
+  color: var(--tx1);
+  font-weight: 600;
+  margin-bottom: 0.6vh;
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+}
+
+.cuenta_card label i {
+  color: var(--mco);
+  width: 1.8vh;
+  text-align: center;
+}
+
+.cuenta_card input,
+.cuenta_card select,
+.cuenta_card textarea {
+  width: 100%;
+  padding: 1.2vh 1.5vh;
+  border: 2px solid var(--brd);
+  border-radius: 1vh;
+  background: var(--inp);
+  color: var(--tx);
+  font-family: var(--ff_P);
+  font-size: var(--fz_m1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cuenta_card input:focus,
+.cuenta_card select:focus,
+.cuenta_card textarea:focus {
+  border-color: var(--mco);
+  outline: none;
+  background: var(--wb);
+  box-shadow: 0 0 8px var(--bg4);
+}
+
+/* Personalización del icono del selector de fecha (type="date") */
+.cuenta_card input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: var(--theme-calendar-invert, invert(0));
+}
+
+/* Invertir el icono en el tema oscuro futuro para mayor legibilidad */
+:root[data-theme="futuro"] .cuenta_card input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* ==================== BOTONES ==================== */
+.cuenta_btn {
+  margin-top: 1.5vh;
+  padding: 1.4vh 2vh;
+  background: var(--mco);
+  color: var(--txa);
+  border: none;
+  border-radius: 1vh;
+  font-size: var(--fz_m2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--tr_m);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8vh;
+  box-shadow: 0 4px 14px var(--bg4);
+}
+
+.cuenta_btn:hover {
+  transform: translateY(-0.2vh);
+  filter: brightness(1.08);
+  box-shadow: 0 6px 20px var(--bg5);
+}
+
+.cuenta_btn:active {
+  transform: translateY(0);
+}
+
+.cuenta_btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ==================== TEMAS DE CÍRCULOS (BOLITAS) ==================== */
+.cuenta_theme_grid {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5vh;
+  padding-top: 1.5vh;
+  border-top: 1px solid var(--bg4);
+  flex-wrap: nowrap; /* Fuerza a que queden en una sola fila */
+}
+
+.cuenta_theme_ball {
+  width: 3.5vh;
+  height: 3.5vh;
+  min-width: 26px;
+  min-height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--tr_m);
+  border: 2.5px solid var(--brd);
+  position: relative;
+  box-shadow: none !important; /* Absolutamente sin sombra */
+}
+
+.cuenta_theme_ball:hover {
+  transform: scale(1.15);
+  box-shadow: none !important;
+}
+
+/* Bolita activa: se le cambia el color del borde a blanco con escala y grosor sin usar outline ni box-shadow */
+.cuenta_theme_ball.active {
+  border-color: var(--white) !important;
+  transform: scale(1.25);
+  border-width: 3.5px;
+  box-shadow: none !important;
+}
+
+/* Identificadores cromáticos para cada tema */
+.cuenta_theme_ball[data-ths="cielo"] { background: #0EBEFF; }
+.cuenta_theme_ball[data-ths="dulce"] { background: #FF5C69; }
+.cuenta_theme_ball[data-ths="paz"] { background: #29C72E; }
+.cuenta_theme_ball[data-ths="oro"] { background: #FFDA34; }
+.cuenta_theme_ball[data-ths="mora"] { background: #7000FF; }
+.cuenta_theme_ball[data-ths="futuro"] { background: #21273B; }
+
+/* Controles de Contraseñas */
+.cuenta_pass_wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.cuenta_pass_wrap input {
+  padding-right: 5vh;
+}
+
+.cuenta_pass_eye {
+  position: absolute;
+  right: 1.5vh;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--tx3);
+  font-size: var(--fz_m2);
+  cursor: pointer;
+  padding: 0.5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--tr_f);
+  z-index: 5;
+}
+
+.cuenta_pass_eye:hover {
+  color: var(--mco);
+}
+
+/* ==================== INFO ROWS ==================== */
+.cuenta_row {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  padding: 1.5vh 0;
+  border-bottom: 1px solid var(--bg4);
+}
+
+.cuenta_row:last-child {
+  border-bottom: none;
+}
+
+.cuenta_lbl {
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  font-size: var(--fz_m1);
+  color: var(--tx3);
+  min-width: 12vh;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.cuenta_lbl i {
+  color: var(--mco);
+  width: 1.8vh;
+  text-align: center;
+}
+
+.cuenta_val {
+  font-size: var(--fz_m1);
+  color: var(--tx);
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.cuenta_val.em {
+  text-transform: none;
+  font-size: var(--fz_s3);
+  font-weight: 500;
+}
+
+.cuenta_val_plan {
+  color: var(--mco);
+  text-transform: uppercase;
+}
+
+.cuenta_val_success {
+  color: var(--success);
+  font-weight: bold;
+}
+
+.cuenta_val_capitalize {
+  text-transform: capitalize;
+}
+
+/* Ocultar secciones inactivas del SPA tab */
+.cuenta_section_content {
+  display: none;
+}
+
+.cuenta_section_content.active {
+  display: block;
+  animation: cuentaTabFadeIn 0.3s ease forwards;
+}
+
+@keyframes cuentaTabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .cuenta_grid {
+    grid-template-columns: 1fr;
+  }
+  .cuenta_form_2col {
+    grid-template-columns: 1fr;
+  }
+  .cuenta_hero {
+    padding: 2.5vh;
+  }
+  .cuenta_hero_main_row {
+    flex-direction: column;
+    text-align: center;
+  }
+  .cuenta_av_col {
+    width: 100%;
+  }
+  .cuenta_av_wrap {
+    width: 9.5vh;
+    height: 9.5vh;
+  }
+  .cuenta_hero_info {
+    width: 100%;
+    align-items: center;
+  }
+  .cuenta_theme_grid {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

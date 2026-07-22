@@ -119,7 +119,7 @@
   box-shadow:
     0 4px 16px 0 var(--glass-shd),
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  margin-bottom: 2.5vh;
+  margin-bottom: .1vh;
   flex-shrink: 0;
 }
 
