@@ -1,6 +1,78 @@
 /* src/features/ajustes/secciones/privacidad.css */
+/* Estilos premium para la política de privacidad */
+
 .privacidad_section_wrap {
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 2.5vh;
+}
+
+.privacidad_card {
+  gap: 2.5vh;
+}
+
+.privacidad_title {
+  font-size: var(--fz_m3);
+  font-weight: 700;
+  color: var(--mco);
+  border-bottom: 1px solid var(--brd);
+  padding-bottom: 1.2vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+
+.privacidad_intro {
+  font-size: var(--fz_m);
+  color: var(--tx2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.privacidad_points {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  margin-top: 1vh;
+}
+
+.privacidad_point_row {
+  display: flex;
+  gap: 2.2vh;
+  align-items: flex-start;
+}
+
+.privacidad_point_icon {
+  width: 4.8vh;
+  height: 4.8vh;
+  border-radius: 1vh;
+  background: var(--bg4);
+  color: var(--mco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2vh;
+  flex-shrink: 0;
+  border: 1px solid var(--brd);
+}
+
+.privacidad_point_content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh;
+}
+
+.privacidad_point_content h4 {
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  color: var(--tx1);
+  margin: 0;
+}
+
+.privacidad_point_content p {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  line-height: 1.5;
+  margin: 0;
 }

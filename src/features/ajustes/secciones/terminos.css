@@ -1,6 +1,59 @@
 /* src/features/ajustes/secciones/terminos.css */
+/* Estilos premium para los términos y condiciones */
+
 .terminos_section_wrap {
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 2.5vh;
+}
+
+.terminos_card {
+  gap: 2.5vh;
+}
+
+.terminos_title {
+  font-size: var(--fz_m3);
+  font-weight: 700;
+  color: var(--mco);
+  border-bottom: 1px solid var(--brd);
+  padding-bottom: 1.2vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+
+.terminos_intro {
+  font-size: var(--fz_m);
+  color: var(--tx2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.terminos_rules {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+}
+
+.terminos_rule_block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8vh;
+  padding-left: 1.5vh;
+  border-left: 2px solid var(--mco);
+}
+
+.terminos_rule_block h4 {
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  color: var(--tx1);
+  margin: 0;
+}
+
+.terminos_rule_block p {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  line-height: 1.5;
+  margin: 0;
 }

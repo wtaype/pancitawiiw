@@ -1,6 +1,152 @@
 /* src/features/ajustes/secciones/versiones.css */
+/* Estilos premium para el historial de versiones */
+
 .versiones_section_wrap {
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 2.5vh;
+}
+
+.versiones_card {
+  gap: 2.5vh;
+}
+
+.versiones_title {
+  font-size: var(--fz_m3);
+  font-weight: 700;
+  color: var(--mco);
+  border-bottom: 1px solid var(--brd);
+  padding-bottom: 1.2vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+
+.versiones_intro {
+  font-size: var(--fz_m);
+  color: var(--tx2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.versiones_timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5vh;
+  position: relative;
+  padding-left: 3vh;
+  margin-top: 1.5vh;
+}
+
+.versiones_timeline::before {
+  content: "";
+  position: absolute;
+  top: 0.5vh;
+  bottom: 0.5vh;
+  left: 1.4vh;
+  width: 2px;
+  background: var(--brd);
+}
+
+.timeline_item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline_badge {
+  position: absolute;
+  left: -3.8vh;
+  top: 0.2vh;
+  width: 3.2vh;
+  height: 3.2vh;
+  border-radius: 50%;
+  background: var(--wb);
+  border: 2px solid var(--brd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tx3);
+  font-size: 1.4vh;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.timeline_item.active_version .timeline_badge {
+  background: var(--mco);
+  border-color: var(--mco);
+  color: var(--txa);
+  box-shadow: 0 0 10px var(--bg5);
+}
+
+.timeline_content {
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 1.5vh;
+  padding: 2.2vh 2.5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  transition: all 0.3s ease;
+}
+
+.timeline_item.active_version .timeline_content {
+  border-color: var(--mco);
+  box-shadow: 0 4px 15px var(--glass-shd);
+}
+
+.timeline_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1vh;
+}
+
+.timeline_version {
+  font-size: var(--fz_m1);
+  font-weight: 800;
+  color: var(--tx1);
+  background: var(--bg4);
+  padding: 0.4vh 1.2vh;
+  border-radius: 0.8vh;
+  border: 1px solid var(--brd);
+}
+
+.timeline_item.active_version .timeline_version {
+  color: var(--mco);
+  border-color: var(--mco);
+  background: var(--bg5);
+}
+
+.timeline_date {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  font-weight: 500;
+}
+
+.timeline_content h4 {
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  color: var(--tx1);
+  margin: 0;
+}
+
+.timeline_features {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding-left: 3vh;
+  margin: 0;
+}
+
+.timeline_features li {
+  font-size: var(--fz_s3);
+  color: var(--tx2);
+  line-height: 1.5;
+}
+
+.timeline_features li strong {
+  color: var(--tx1);
 }

@@ -1,6 +1,182 @@
 /* src/features/ajustes/secciones/acerca.css */
+/* Estilos premium para Acerca de Pancitawii */
+
 .acerca_section_wrap {
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 3vh;
+}
+
+.acerca_brand_card {
+  align-items: center;
+  text-align: center;
+  padding: 4.5vh 3.5vh;
+}
+
+.acerca_logo_area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5vh;
+  margin-bottom: 2.5vh;
+}
+
+.acerca_logo_circle {
+  width: 9vh;
+  height: 9vh;
+  border-radius: 50%;
+  background: var(--bg4);
+  border: 2px solid var(--mco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px var(--bg5);
+  animation: pulseLogo 3s infinite ease-in-out;
+}
+
+.acerca_logo_circle i {
+  font-size: 4vh;
+  color: var(--mco);
+}
+
+@keyframes pulseLogo {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px var(--bg5);
+  }
+}
+
+.acerca_app_name {
+  font-size: var(--fz_l1);
+  font-weight: 800;
+  color: var(--tx1);
+  font-family: var(--ff_O);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.acerca_app_version {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  background: var(--bg4);
+  padding: 0.5vh 1.5vh;
+  border-radius: 1vh;
+  font-weight: 600;
+}
+
+.acerca_app_desc {
+  font-size: var(--fz_m);
+  color: var(--tx2);
+  line-height: 1.6;
+  max-width: 550px;
+  margin: 0 auto 3vh auto;
+}
+
+.acerca_meta_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5vh;
+  width: 100%;
+  border-top: 1px solid var(--brd);
+  padding-top: 3vh;
+}
+
+.acerca_meta_item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh;
+}
+
+.acerca_meta_lbl {
+  font-size: var(--fz_s4);
+  color: var(--tx3);
+  font-weight: 500;
+}
+
+.acerca_meta_val {
+  font-size: var(--fz_m1);
+  color: var(--tx1);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.acerca_meta_val.link_me:hover,
+.acerca_meta_val.link_web:hover {
+  color: var(--mco);
+}
+
+.acerca_credits_card {
+  gap: 2.2vh;
+}
+
+.acerca_credits_title {
+  font-size: var(--fz_m3);
+  font-weight: 700;
+  color: var(--tx1);
+  display: flex;
+  align-items: center;
+  gap: 1.2vh;
+  margin: 0;
+}
+
+.acerca_tech_tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2vh;
+}
+
+.tech_tag {
+  font-size: var(--fz_s3);
+  font-weight: 600;
+  padding: 0.6vh 1.6vh;
+  border-radius: 1vh;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8vh;
+  background: var(--bg4);
+  color: var(--tx2);
+  border: 1px solid var(--brd);
+}
+
+.tech_tag i {
+  font-size: 1.4vh;
+}
+
+.tech_tag.rust {
+  color: #f74c00;
+}
+
+.tech_tag.js {
+  color: #f0db4f;
+  background: rgba(240, 219, 79, 0.05);
+}
+
+.tech_tag.css {
+  color: #2965f1;
+}
+
+.tech_tag.tauri {
+  color: #24c8db;
+}
+
+.tech_tag.gemini {
+  color: #1a73e8;
+}
+
+.acerca_credits_desc {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .acerca_meta_grid {
+    grid-template-columns: 1fr;
+    gap: 1.8vh;
+  }
 }
