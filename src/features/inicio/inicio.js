@@ -1,7 +1,7 @@
 // src/features/inicio/inicio.js
 // Módulo de Inicio Asistente & Dashboard de Productividad (Con mensajes dinámicos inteligentes y barra de progreso)
 
-import { Saludar, fechaHoy, Capi } from '@widev';
+import { saludoSmile, Saludar, fechaHoy, Capi } from '@widev';
 import state from '../../core/state.js';
 import { rutas } from '@core/rutas.js';
 import { horarioDB } from '../horario/lib/horario_db.js';
@@ -20,8 +20,7 @@ export function arrancar(container) {
 
   const hrs = new Date().getHours();
   const iconoSolLuna = hrs >= 6 && hrs < 18 ? 'fa-cloud-sun' : 'fa-moon';
-  const saludoLimpioTag = Saludar().trim().replace(/,$/, '');
-  const saludoTag = `${saludoLimpioTag.toUpperCase()}  PANCITA!`;
+  const saludoTag = `${saludoSmile().toUpperCase()}!`;
   const fechaTexto = fechaHoy();
 
   // Obtener bloque de actividad actual y mensajes dinámicos
@@ -140,11 +139,10 @@ export function arrancar(container) {
     </div>
   `;
 
-  // 1. Cargar saludo personalizado libre de doble coma
-  const nombre = localStorage.getItem('chatwii_usuario_nombre') || 'Pancita';
+  // 1. Cargar saludo personalizado libre de doble coma e inteligente
   const greetingEl = container.querySelector('#welcome_user_greeting');
   if (greetingEl) {
-    greetingEl.innerHTML = `¡${saludoLimpioTag}, <span class="cuenta_val_capitalize">${nombre.trim()}</span>! 👋`;
+    greetingEl.innerHTML = `¡${saludoSmile()}! 👋`;
   }
 
   // 2. Frase motivacional rotativa del día

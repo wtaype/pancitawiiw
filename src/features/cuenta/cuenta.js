@@ -309,9 +309,14 @@ export function arrancar(container) {
       return;
     }
 
+    const pNombre = nombre.trim().split(/\s+/)[0]?.toLowerCase() || '';
+    const pApellido = apellidos.trim().split(/\s+/)[0]?.toLowerCase() || '';
+    const usuario = pNombre && pApellido ? `${pNombre}${pApellido}` : (pNombre || 'pancita');
+
     const updates = {
       nombre,
       apellidos,
+      usuario,
       avatar: inputAvatarVal?.value.trim() || '/smile.avif',
       fechaNacimiento: inputNacimiento?.value || '',
       genero: selectGenero?.value || '',
@@ -330,6 +335,9 @@ export function arrancar(container) {
     const fullnameEl = container.querySelector('#cuenta_hero_fullname');
     if (fullnameEl) fullnameEl.textContent = `${perfilGuardado.nombre} ${perfilGuardado.apellidos}`;
     
+    const usernameEl = container.querySelector('#cuenta_hero_username');
+    if (usernameEl) usernameEl.textContent = perfilGuardado.usuario;
+
     const avImgHero = container.querySelector('#cuenta_hero_av');
     if (avImgHero) avImgHero.src = perfilGuardado.avatar || '/smile.avif';
 
