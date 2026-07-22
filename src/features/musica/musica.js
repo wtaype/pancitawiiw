@@ -203,6 +203,63 @@ export function renderMusica() {
 export function bindMusicaEvents(container) {
   wiTip();
 
+  // Exponer API global del reproductor de música para ChatWii
+  window.wiMusica = {
+    play: () => {
+      const track = playlistActual[currentTrackIndex];
+      const srcSeguro = resolverUrlPista(track);
+      if (!audio.src || audio.src !== srcSeguro) {
+        cargarYReproducir(currentTrackIndex, true);
+        return;
+      }
+      aplicarVolumen();
+      audio.play().then(() => {
+        isPlaying = true;
+        refrescarUICompleta();
+      }).catch(err => {
+        console.warn('Play error:', err);
+      });
+    },
+    pause: () => {
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+        refrescarUICompleta();
+      }
+    },
+    next: () => {
+      cargarYReproducir(obtenerSiguienteIndex(true), true);
+    },
+    prev: () => {
+      cargarYReproducir(obtenerSiguienteIndex(false), true);
+    },
+    playTrack: (indexOrTitle) => {
+      if (playlistActual.length === 0) return;
+      let idx = -1;
+      const num = parseInt(indexOrTitle, 10);
+      if (!isNaN(num)) {
+        idx = playlistActual.findIndex(p => p.id === num);
+      }
+      if (idx === -1) {
+        idx = playlistActual.findIndex(p => p.titulo.toLowerCase().includes(indexOrTitle.toString().toLowerCase()));
+      }
+      if (idx !== -1) {
+        cargarYReproducir(idx, true);
+      } else {
+        console.warn('window.wiMusica: Canción no encontrada para', indexOrTitle);
+      }
+    },
+    buscar: (query) => {
+      const searchInput = container.querySelector('#msc_search_input');
+      if (searchInput) {
+        searchInput.value = query;
+      }
+      searchQuery = query;
+      paginaActual = 1;
+      refrescarUICompleta();
+    }
+  };
+
   const trackListContainer = container.querySelector('#msc_track_list');
 
   limpiarAtajos();

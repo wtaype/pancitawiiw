@@ -1,9 +1,11 @@
-// src/features/chatwii/chat/brain.js
+// src/features/chatwii/brain.js
 // Motor lógico de ChatWii — Conexión nativa con Rust, Canal IPC de Tauri v2 y Almacenamiento JSON
 import { coachPersona } from './personalidad.js';
-import { horarioDB } from '../../horario/lib/horario_db.js';
-import { obtenerBloqueActual } from '../../horario/lib/horario_dev.js';
-import { wiRateLimit, Notificacion } from '@widev';
+import { horarioDB } from '../horario/lib/horario_db.js';
+import { obtenerBloqueActual } from '../horario/lib/horario_dev.js';
+import { wiRateLimit, Notificacion, getls, savels } from '@widev';
+import { obtenerPlaylistConMetadatos, obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
+import { obtenerContextoHorario } from './skills/leer_horario.js';
 
 let _historial = [];
 
@@ -18,8 +20,8 @@ export const initCoach = async () => {
     }
   } else {
     try {
-      const saved = localStorage.getItem('chatwii_history_pancita');
-      _historial = saved ? JSON.parse(saved) : [];
+      const saved = getls('chatwii_history_pancita');
+      _historial = Array.isArray(saved) ? saved : [];
     } catch (_) {
       _historial = [];
     }
@@ -38,7 +40,7 @@ export const guardarHistorial = async () => {
     }
   } else {
     try {
-      localStorage.setItem('chatwii_history_pancita', JSON.stringify(_historial));
+      savels('chatwii_history_pancita', _historial, null);
     } catch (_) {}
   }
 };
@@ -80,26 +82,52 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
   _historial.push({ role: 'user', parts });
   await guardarHistorial();
 
-  // Obtener clave API y modelo personalizados desde Cuenta/Centro APIs
-  const apiCustomKey = localStorage.getItem('gemini_api_key') || null;
-  const selectModelVal = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
+  // Obtener clave API y modelo personalizados desde Cuenta/Centro APIs con getls
+  const apiCustomKey = getls('gemini_api_key') || null;
+  const selectModelVal = getls('gemini_model') || 'gemini-2.5-flash';
 
-  // Obtener contexto de productividad del Horario en Vivo
+  // Obtener datos del perfil wiSmile
+  const perfil = getls('wiSmile');
+  const nombreUsuario = perfil ? `${perfil.nombre} ${perfil.apellidos}` : 'Usuario';
+  const primerNombre = perfil ? (perfil.nombre.trim().split(/\s+/)[0] || 'Usuario') : 'Usuario';
+
+  // Obtener contexto de productividad del Horario en Vivo y Semanal
   const listaHorario = horarioDB.obtenerHorario();
   const bloqueActual = obtenerBloqueActual(listaHorario);
   const infoHorario = bloqueActual 
-    ? `CONTEXTO HORARIO DEL USUARIO HOY:\n- Actividad en ejecución ahora: "${bloqueActual.titulo}" (${bloqueActual.horaInicio} a ${bloqueActual.horaFin}).`
-    : `CONTEXTO HORARIO DEL USUARIO HOY:\n- El usuario está en tiempo libre y no tiene actividades programadas en este momento.`;
+    ? `CONTEXTO HORARIO EN CURSO AHORA:\n- Actividad: "${bloqueActual.titulo}" (${bloqueActual.horaInicio} a ${bloqueActual.horaFin}).`
+    : `CONTEXTO HORARIO EN CURSO AHORA:\n- El usuario está en tiempo libre y no tiene actividades programadas en este momento.`;
+
+  const infoHorarioCompleto = obtenerContextoHorario();
+
+  // Obtener playlist enriquecida con metadatos y formateada de forma inteligente para más de 300 canciones
+  const infoPlaylist = obtenerContextoPlaylistParaIA();
 
   // Construir la actitud o system instructions dinámicas
   const systemInstruction = `
 ${coachPersona.actitud.trim()}
 
+INFORMACIÓN DEL USUARIO:
+- Nombre Completo: ${nombreUsuario}
+- Nombre de Pila (háblale de tú a tú usando este nombre): ${primerNombre}
+
 ${infoHorario}
 
-INSTRUCCIONES EXTRA:
-1. Sé consciente del horario en vivo del usuario provisto arriba. Si te preguntan qué deben estar haciendo, guíalos usando esta información de forma natural y motivadora.
-2. Utiliza emojis alegres y de soporte (como 💡, 🌟, 🎒, 📘, 🌙, 😊, 🙌, 🚀) para sonar como un amigo cercano.
+${infoHorarioCompleto}
+
+${infoPlaylist}
+
+INSTRUCCIONES ADICIONALES:
+1. Dirígete al usuario por su nombre de pila ("${primerNombre}") de tú a tú de manera empática, positiva, objetiva y atenta.
+2. Si te pide reproducir, pausar, cambiar o filtrar música, responde de forma amigable e inyecta la etiqueta correspondiente al final de tu mensaje en una línea nueva.
+   Formatos de comando permitidos:
+   - Reanudar/Play general: [MUSIC:PLAY]
+   - Pausar: [MUSIC:PAUSE]
+   - Siguiente: [MUSIC:NEXT]
+   - Anterior: [MUSIC:PREV]
+   - Reproducir ID o Título: [MUSIC:PLAY:Nombre o ID] (Ej: [MUSIC:PLAY:6] o [MUSIC:PLAY:Bazovyy Minimum])
+   - Buscar/Filtrar por término: [MUSIC:SEARCH:término] (Ej: [MUSIC:SEARCH:triste] o [MUSIC:SEARCH:phonk])
+3. Si el usuario te envía un mensaje corto como "pausa", "continúa" o "siguiente" después de haber hablado de música, mantén la coherencia de la conversación y genera el comando correspondiente de forma silenciosa.
 `.trim();
 
   // Si no está corriendo bajo Tauri
@@ -119,6 +147,7 @@ INSTRUCCIONES EXTRA:
   // Si está corriendo bajo Tauri v2
   const Channel = window.__TAURI__.core.Channel;
   if (!Channel) {
+    // Fallback a Tauri v1
     throw new Error('Tauri IPC Channel no disponible');
   }
 

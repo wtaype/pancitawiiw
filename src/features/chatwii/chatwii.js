@@ -5,8 +5,9 @@ import {
   enviarMensaje,
   obtenerHistorial,
   limpiarHistorial,
-  obtenerSaludo
-} from '@features/chatwii/chat/brain.js';
+  obtenerSaludo,
+  agregarMensajeLocalAlHistorial
+} from './brain.js';
 import { Mensaje, abrirModal, cerrarModal, getls, savels, wicopy } from '@widev';
 import { contieneCodigoProhibido, estaBloqueadoTemporalmente, registrarIntentoBloqueo, obtenerTiempoBloqueoRestante } from '@features/chatwii/lib/seguridad.js';
 import { mdToHtml as parseMd, procesarHtml } from '@features/chatwii/lib/escribirmd.js';
@@ -401,7 +402,6 @@ const procesarEnvioMensaje = async () => {
     agregarBurbuja('user', [{ text: texto }], true);
     agregarBurbuja('model', `¡Claro, amigo! He ejecutado la acción de música: **${respuestaComandoLocal}**`, true);
     
-    const { agregarMensajeLocalAlHistorial } = await import('./chat/brain.js');
     agregarMensajeLocalAlHistorial(texto, `¡Claro, amigo! He ejecutado la acción de música: **${respuestaComandoLocal}**`);
     
     textarea.value = '';
@@ -507,7 +507,7 @@ const procesarEnvioMensaje = async () => {
       }
 
       streamText += chunk;
-      const cleanText = streamText.replace(/\[MUSIC:(PLAY|PAUSE|NEXT|PREV|LOOP)(?::([^\]]+))?\]/gi, '').trim();
+      const cleanText = streamText.replace(/\[MUSIC:(PLAY|PAUSE|NEXT|PREV|LOOP|SEARCH)(?::([^\]]+))?\]/gi, '').trim();
       const txtDiv = streamingContainer.querySelector('.cr_chat_texto');
       if (txtDiv) {
         txtDiv.innerHTML = mdToHtml(cleanText);
@@ -522,11 +522,40 @@ const procesarEnvioMensaje = async () => {
     });
 
     // Limpieza final de etiquetas en la burbuja
-    const finalCleanText = streamText.replace(/\[MUSIC:(PLAY|PAUSE|NEXT|PREV|LOOP)(?::([^\]]+))?\]/gi, '').trim();
+    const finalCleanText = streamText.replace(/\[MUSIC:(PLAY|PAUSE|NEXT|PREV|LOOP|SEARCH)(?::([^\]]+))?\]/gi, '').trim();
     if (streamingContainer) {
       const txtDiv = streamingContainer.querySelector('.cr_chat_texto');
       if (txtDiv) {
         txtDiv.innerHTML = mdToHtml(finalCleanText);
+      }
+
+      // --- EJECUCIÓN DE COMANDOS DE MÚSICA EN CALIENTE ---
+      try {
+        const matches = [...streamText.matchAll(/\[MUSIC:(PLAY|PAUSE|NEXT|PREV|LOOP|SEARCH)(?::([^\]]+))?\]/gi)];
+        matches.forEach(m => {
+          const cmd = m[1].toUpperCase();
+          const arg = m[2];
+          
+          if (window.wiMusica) {
+            if (cmd === 'PLAY') {
+              if (arg) {
+                window.wiMusica.playTrack(arg);
+              } else {
+                window.wiMusica.play();
+              }
+            } else if (cmd === 'PAUSE') {
+              window.wiMusica.pause();
+            } else if (cmd === 'NEXT') {
+              window.wiMusica.next();
+            } else if (cmd === 'PREV') {
+              window.wiMusica.prev();
+            } else if (cmd === 'SEARCH' && arg) {
+              window.wiMusica.buscar(arg);
+            }
+          }
+        });
+      } catch (cmdErr) {
+        console.error('Error al ejecutar comando de música desde ChatWii:', cmdErr);
       }
     } else {
       if (bubbleStreaming && bubbleStreaming.parentNode) {
@@ -729,7 +758,7 @@ export async function iniciarVisualChat(containerId, persona) {
 }
 
 // Punto de arranque para Pancitawii router
-import { coachPersona } from './chat/personalidad.js';
+import { coachPersona } from './personalidad.js';
 
 export function arrancar(container) {
   if (container._cleanupChatWii) {
