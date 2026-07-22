@@ -1,0 +1,89 @@
+/* src/features/cuenta/secciones/apis.css */
+/* Estilos premium para la sección Centro APIs y panel de Métricas */
+
+.cuenta_apis_wrapper {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2.5vh;
+  align-items: start;
+}
+
+/* Filas de métricas */
+.cuenta_metric_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6vh 0;
+  border-bottom: 1px solid var(--bg4);
+  box-sizing: border-box;
+}
+
+.cuenta_metric_row:last-child {
+  border-bottom: none;
+}
+
+.cuenta_metric_lbl {
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  font-size: var(--fz_m1);
+  color: var(--tx3);
+  font-weight: 500;
+}
+
+.cuenta_metric_lbl i {
+  color: var(--mco);
+  width: 1.8vh;
+  text-align: center;
+}
+
+.cuenta_metric_val {
+  font-size: var(--fz_m1);
+  color: var(--tx1);
+  font-weight: 600;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+/* Badges y chips de métricas */
+.cuenta_metric_badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4vh 1vh;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cuenta_metric_badge.success {
+  background: var(--bg5);
+  color: var(--success);
+}
+
+.cuenta_metric_badge.danger {
+  background: var(--bg4);
+  color: var(--dulce);
+}
+
+.cuenta_model_chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  color: var(--mco);
+  padding: 0.4vh 1vh;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s3);
+  font-weight: 600;
+}
+
+/* Responsividad para pantallas móviles o estrechas */
+@media (max-width: 900px) {
+  .cuenta_apis_wrapper {
+    grid-template-columns: 1fr;
+  }
+}

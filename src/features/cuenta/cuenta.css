@@ -1,5 +1,5 @@
 /* src/features/cuenta/cuenta.css */
-/* Estilos premium para el feature de Cuenta adaptado a witema.css de Pancitawii */
+/* Estilos premium compartidos del layout general de Cuenta */
 
 /* Contenedor principal de la pestaña */
 .cuenta_container {
@@ -168,11 +168,20 @@
   margin-bottom: 0.5vh;
 }
 
-/* ==================== GRID ==================== */
+/* ==================== GRID PRINCIPAL ==================== */
 .cuenta_grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1.25fr 0.75fr;
   gap: 2vh;
+  transition: grid-template-columns var(--tr_m);
+}
+
+.cuenta_grid.full_width {
+  grid-template-columns: 1fr;
+}
+
+.cuenta_grid.full_width .cuenta_right {
+  display: none;
 }
 
 .cuenta_left {
@@ -203,7 +212,7 @@
   color: var(--mco);
 }
 
-/* ==================== FORM ==================== */
+/* ==================== CONFIGURACIÓN DE FORMULARIOS COMPARTIDOS ==================== */
 .cuenta_form_2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -255,13 +264,11 @@
   box-shadow: 0 0 8px var(--bg4);
 }
 
-/* Personalización del icono del selector de fecha (type="date") */
 .cuenta_card input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   filter: var(--theme-calendar-invert, invert(0));
 }
 
-/* Invertir el icono en el tema oscuro futuro para mayor legibilidad */
 :root[data-theme="futuro"] .cuenta_card input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
@@ -311,7 +318,7 @@
   gap: 1.5vh;
   padding-top: 1.5vh;
   border-top: 1px solid var(--bg4);
-  flex-wrap: nowrap; /* Fuerza a que queden en una sola fila */
+  flex-wrap: nowrap;
 }
 
 .cuenta_theme_ball {
@@ -324,7 +331,7 @@
   transition: all var(--tr_m);
   border: 2.5px solid var(--brd);
   position: relative;
-  box-shadow: none !important; /* Absolutamente sin sombra */
+  box-shadow: none !important;
 }
 
 .cuenta_theme_ball:hover {
@@ -332,7 +339,6 @@
   box-shadow: none !important;
 }
 
-/* Bolita activa: se le cambia el color del borde a blanco con escala y grosor sin usar outline ni box-shadow */
 .cuenta_theme_ball.active {
   border-color: var(--white) !important;
   transform: scale(1.25);
@@ -340,7 +346,6 @@
   box-shadow: none !important;
 }
 
-/* Identificadores cromáticos para cada tema */
 .cuenta_theme_ball[data-ths="cielo"] { background: #0EBEFF; }
 .cuenta_theme_ball[data-ths="dulce"] { background: #FF5C69; }
 .cuenta_theme_ball[data-ths="paz"] { background: #29C72E; }
@@ -348,7 +353,7 @@
 .cuenta_theme_ball[data-ths="mora"] { background: #7000FF; }
 .cuenta_theme_ball[data-ths="futuro"] { background: #21273B; }
 
-/* Controles de Contraseñas */
+/* Controles de Ojo de Contraseña */
 .cuenta_pass_wrap {
   position: relative;
   display: flex;
@@ -382,7 +387,7 @@
   color: var(--mco);
 }
 
-/* ==================== INFO ROWS ==================== */
+/* ==================== FILAS INFORMATIVAS ==================== */
 .cuenta_row {
   display: flex;
   align-items: center;
@@ -443,7 +448,7 @@
   text-transform: capitalize;
 }
 
-/* Ocultar secciones inactivas del SPA tab */
+/* Contenedores del Tab Router SPA */
 .cuenta_section_content {
   display: none;
 }
@@ -464,11 +469,6 @@
   }
 }
 
-/* ==================== CENTRO APIS ==================== */
-#cuenta_section_apis .cuenta_card {
-  gap: 2.2vh;
-}
-
 .cuenta_form_tip {
   font-size: var(--fz_s3);
   color: var(--tx3);
@@ -476,20 +476,26 @@
   line-height: 1.4;
 }
 
-/* Custom styling for API selects */
-.cuenta_card select.cuenta_form_select {
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1.5vh center;
-  background-size: 1.8vh;
-  padding-right: 4.5vh;
+.cuenta_form_tip a {
+  color: var(--mco);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity var(--tr_f);
 }
 
-.cuenta_card select.cuenta_form_select::-ms-expand {
-  display: none;
+.cuenta_form_tip a:hover {
+  opacity: 0.85;
+}
+
+/* Loading spinner */
+.cuenta_loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--tx3);
+  font-size: var(--fz_m2);
+  padding: 5vh;
 }
 
 /* ==================== RESPONSIVE ==================== */

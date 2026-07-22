@@ -146,6 +146,7 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     }
     _historial.push({ role: 'model', parts: [{ text: responseSim }] });
     await guardarHistorial();
+    rate.fail();
     return responseSim;
   }
 
@@ -175,6 +176,7 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
 
     _historial.push({ role: 'model', parts: [{ text: respuestaCompleta }] });
     await guardarHistorial();
+    rate.fail();
     return respuestaCompleta;
   } catch (err) {
     // Revertir último mensaje si falló
