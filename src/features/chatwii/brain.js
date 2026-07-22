@@ -1,11 +1,13 @@
 // src/features/chatwii/brain.js
 // Motor lógico de ChatWii — Conexión nativa con Rust, Canal IPC de Tauri v2 y Almacenamiento JSON
-import { coachPersona } from './personalidad.js';
+
+import { coachPersona, obtenerSystemInstruction } from './personalidad.js';
 import { horarioDB } from '../horario/lib/horario_db.js';
 import { obtenerBloqueActual } from '../horario/lib/horario_dev.js';
 import { wiRateLimit, Notificacion, getls, savels } from '@widev';
-import { obtenerPlaylistConMetadatos, obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
+import { obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
 import { obtenerContextoHorario } from './skills/leer_horario.js';
+import { obtenerContextoTiempoReal, obtenerActividadesHoyYManana, obtenerSaludoInteligente } from './lib/chatdev.js';
 
 let _historial = [];
 
@@ -103,32 +105,16 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
   // Obtener playlist enriquecida con metadatos y formateada de forma inteligente para más de 300 canciones
   const infoPlaylist = obtenerContextoPlaylistParaIA();
 
-  // Construir la actitud o system instructions dinámicas
-  const systemInstruction = `
-${coachPersona.actitud.trim()}
-
-INFORMACIÓN DEL USUARIO:
-- Nombre Completo: ${nombreUsuario}
-- Nombre de Pila (háblale de tú a tú usando este nombre): ${primerNombre}
-
-${infoHorario}
-
-${infoHorarioCompleto}
-
-${infoPlaylist}
-
-INSTRUCCIONES ADICIONALES:
-1. Dirígete al usuario por su nombre de pila ("${primerNombre}") de tú a tú de manera empática, positiva, objetiva y atenta.
-2. Si te pide reproducir, pausar, cambiar o filtrar música, responde de forma amigable e inyecta la etiqueta correspondiente al final de tu mensaje en una línea nueva.
-   Formatos de comando permitidos:
-   - Reanudar/Play general: [MUSIC:PLAY]
-   - Pausar: [MUSIC:PAUSE]
-   - Siguiente: [MUSIC:NEXT]
-   - Anterior: [MUSIC:PREV]
-   - Reproducir ID o Título: [MUSIC:PLAY:Nombre o ID] (Ej: [MUSIC:PLAY:6] o [MUSIC:PLAY:Bazovyy Minimum])
-   - Buscar/Filtrar por término: [MUSIC:SEARCH:término] (Ej: [MUSIC:SEARCH:triste] o [MUSIC:SEARCH:phonk])
-3. Si el usuario te envía un mensaje corto como "pausa", "continúa" o "siguiente" después de haber hablado de música, mantén la coherencia de la conversación y genera el comando correspondiente de forma silenciosa.
-`.trim();
+  // Construir la actitud o system instructions dinámicas sin duplicación
+  const systemInstruction = obtenerSystemInstruction(
+    primerNombre,
+    nombreUsuario,
+    infoHorario,
+    infoHorarioCompleto,
+    infoPlaylist,
+    obtenerContextoTiempoReal(),
+    obtenerActividadesHoyYManana()
+  );
 
   // Si no está corriendo bajo Tauri
   if (!window.__TAURI__) {
@@ -180,9 +166,7 @@ INSTRUCCIONES ADICIONALES:
 };
 
 export const obtenerSaludo = () => {
-  const defaultSaludos = coachPersona.saludos.es;
-  const randIdx = Math.floor(Math.random() * defaultSaludos.length);
-  return defaultSaludos[randIdx];
+  return obtenerSaludoInteligente();
 };
 
 export function agregarMensajeLocalAlHistorial(userText, modelText) {
