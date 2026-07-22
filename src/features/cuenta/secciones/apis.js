@@ -112,9 +112,9 @@ export function arrancar(panel) {
     const estadoEl = panel.querySelector('#cuenta_metric_estado');
     if (estadoEl) {
       if (keyVal) {
-        estadoEl.innerHTML = '<span class="cuenta_metric_badge success">Activo 🟢</span>';
+        estadoEl.innerHTML = '<span class="cuenta_metric_badge success"><i class="fa-solid fa-circle-check"></i> Activo</span>';
       } else {
-        estadoEl.innerHTML = '<span class="cuenta_metric_badge danger">Inactivo 🔴</span>';
+        estadoEl.innerHTML = '<span class="cuenta_metric_badge danger"><i class="fa-solid fa-circle-xmark"></i> Inactivo</span>';
       }
     }
 

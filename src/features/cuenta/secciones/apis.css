@@ -52,6 +52,7 @@
 .cuenta_metric_badge {
   display: inline-flex;
   align-items: center;
+  gap: 0.6vh;
   padding: 0.4vh 1vh;
   border-radius: 0.6vh;
   font-size: var(--fz_s4);
