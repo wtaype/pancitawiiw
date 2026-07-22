@@ -30,13 +30,6 @@ export const SEO = {
     icon: 'fa-gear',
     position: 'right'
   },
-  '/acerca': {
-    tag: 'Acerca',
-    title: 'Sobre pancitawii',
-    subtitle: 'Créditos y Versión',
-    icon: 'fa-info-circle',
-    position: 'right'
-  },
   '/cuenta': {
     tag: 'Cuenta',
     title: 'Mi Cuenta',
