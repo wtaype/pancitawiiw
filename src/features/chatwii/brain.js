@@ -9,6 +9,9 @@ import { obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
 import { obtenerContextoHorario } from './skills/leer_horario.js';
 import { obtenerContextoTiempoReal, obtenerActividadesHoyYManana, obtenerSaludoInteligente } from './lib/chatdev.js';
 
+// Configuración de límites y optimizaciones del asistente
+export const RECORDAR_MAX_MENSAJES = 10;
+
 let _historial = [];
 
 export const initCoach = async () => {
@@ -80,9 +83,13 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     });
   }
 
-  // Añadir al historial
+  // Añadir al historial persistente local
   _historial.push({ role: 'user', parts });
   await guardarHistorial();
+
+  // Clasificador de intención dinámico para recortar el tamaño de tokens del prompt
+  const quiereMusica = /musica|música|cancion|canción|reproducir|play|escuchar|playlist|sonar|reproductor|temas|phonk|lofi|rock|pop|género/i.test(textoUsuario);
+  const quiereAgenda = /horario|rutina|agenda|semana|calendario|hacer|tarea|actividad|mañana|hoy|lunes|martes|miércoles|jueves|viernes|sábado|domingo|pendiente/i.test(textoUsuario);
 
   // Obtener clave API y modelo personalizados desde Cuenta/Centro APIs con getls
   const apiCustomKey = getls('gemini_api_key') || null;
@@ -100,10 +107,19 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     ? `CONTEXTO HORARIO EN CURSO AHORA:\n- Actividad: "${bloqueActual.titulo}" (${bloqueActual.horaInicio} a ${bloqueActual.horaFin}).`
     : `CONTEXTO HORARIO EN CURSO AHORA:\n- El usuario está en tiempo libre y no tiene actividades programadas en este momento.`;
 
-  const infoHorarioCompleto = obtenerContextoHorario();
+  // Carga condicional y ligera de la base de datos de rutina
+  const infoHorarioCompleto = quiereAgenda
+    ? obtenerContextoHorario()
+    : '[Horario: Agenda semanal completa no solicitada en este mensaje. El bloque activo actual es el provisto arriba].';
 
-  // Obtener playlist enriquecida con metadatos y formateada de forma inteligente para más de 300 canciones
-  const infoPlaylist = obtenerContextoPlaylistParaIA();
+  const agendaInmediata = quiereAgenda
+    ? obtenerActividadesHoyYManana()
+    : '';
+
+  // Carga condicional y ligera de la base de datos de música (300+ canciones)
+  const infoPlaylist = quiereMusica
+    ? obtenerContextoPlaylistParaIA()
+    : '[Música: Playlist no solicitada en este mensaje. Si el usuario te pide reproducir o buscar música, pídele detalles y te proveeré el catálogo].';
 
   // Construir la actitud o system instructions dinámicas sin duplicación
   const systemInstruction = obtenerSystemInstruction(
@@ -113,8 +129,11 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     infoHorarioCompleto,
     infoPlaylist,
     obtenerContextoTiempoReal(),
-    obtenerActividadesHoyYManana()
+    agendaInmediata
   );
+
+  // Acotar el historial al límite definido para cuidar los tokens y la velocidad de respuesta
+  const historialAcotado = _historial.slice(-RECORDAR_MAX_MENSAJES);
 
   // Si no está corriendo bajo Tauri
   if (!window.__TAURI__) {
@@ -146,9 +165,9 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
   };
 
   try {
-    // LLamamos al comando unificado en Rust pasándole la clave y el modelo preferido
+    // LLamamos al comando unificado en Rust pasándole el historial acotado para cuidar tokens
     await window.__TAURI__.core.invoke('completar_chat_comando', {
-      historial: _historial,
+      historial: historialAcotado,
       actitud: systemInstruction,
       customKey: apiCustomKey,
       canal
