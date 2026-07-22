@@ -23,18 +23,18 @@ export const SEO = {
     icon: 'fa-robot',
     position: 'left'
   },
-  '/ajustes': {
-    tag: 'Ajustes',
-    title: 'Ajustes del Sistema',
-    subtitle: 'Personalización y Preferencias',
-    icon: 'fa-gear',
-    position: 'right'
-  },
   '/cuenta': {
     tag: 'Cuenta',
     title: 'Mi Cuenta',
     subtitle: 'Gestión de Perfil y Preferencias',
     icon: 'fa-user-gear',
+    position: 'right'
+  },
+  '/ajustes': {
+    tag: 'Ajustes',
+    title: 'Ajustes del Sistema',
+    subtitle: 'Personalización y Preferencias',
+    icon: 'fa-gear',
     position: 'right'
   },
 };

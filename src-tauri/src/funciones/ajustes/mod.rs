@@ -4,3 +4,4 @@ pub mod cuenta;
 pub mod permisos;
 pub mod ajustes;
 pub mod energia;
+pub mod actualizador;

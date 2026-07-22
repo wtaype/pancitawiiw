@@ -49,6 +49,8 @@ pub fn run() {
             funciones::ajustes::ajustes::fijar_estado_suspension,
             funciones::ajustes::permisos::permisos_verificar_estado_sistema,
             funciones::ajustes::energia::cambiar_anti_suspension,
+            funciones::ajustes::actualizador::actualizador_obtener_version_actual,
+            funciones::ajustes::actualizador::actualizador_descargar_y_actualizar,
             
             // Enrutador de Sistema y Laboratorio General
             funciones::lab::lab::obtener_sistema_comando,
