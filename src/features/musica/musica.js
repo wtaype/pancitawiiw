@@ -4,10 +4,10 @@
 import { obtenerListaPredeterminada } from '@features/musica/lista/lista.js';
 import { savels, getls } from '@core/widev/storage.js';
 import { wiTip } from '@core/widev/witip.js';
-import { renderHero, bindHeroEvents } from '@features/musica/componentes/musica_hero.js';
-import { renderFiltros, bindFiltrosEvents } from '@features/musica/componentes/musica_filtros.js';
-import { renderListaItems, bindListaItemsEvents } from '@features/musica/componentes/musica_lista_items.js';
-import { abrirModalMusica, renderMisCarpetasHTML } from '@features/musica/componentes/musica_modales.js';
+import { renderHero, bindHeroEvents } from '@features/musica/componentes/hero.js';
+import { renderFiltros, bindFiltrosEvents } from '@features/musica/componentes/filtros.js';
+import { renderListaItems, bindListaItemsEvents } from '@features/musica/componentes/lista_items.js';
+import { abrirModalMusica, renderMisCarpetasHTML } from '@features/musica/componentes/modal_rutas.js';
 import '@features/musica/musica.css';
 
 const DEFAULT_PLAYLIST = obtenerListaPredeterminada();
@@ -166,6 +166,12 @@ export function bindMusicaEvents(container) {
     const favTab = container.querySelector('[data-filter="favoritos"]');
     if (favTab) {
       favTab.innerHTML = `<i class="fa-solid fa-heart"></i> Favoritos (${likes.length})`;
+    }
+
+    // 2.1 Refrescar Pestaña de Todos (xx)
+    const todosTab = container.querySelector('[data-filter="todos"]');
+    if (todosTab) {
+      todosTab.innerHTML = `<i class="fa-solid fa-music"></i> Todos (${playlistActual.length})`;
     }
 
     // 3. Refrescar Lista de Canciones
@@ -337,6 +343,13 @@ export function bindMusicaEvents(container) {
   });
 
   // Listener Audio Progress
+  audio.onloadedmetadata = () => {
+    const total = container.querySelector('#msc_time_total');
+    if (total && audio.duration) {
+      total.textContent = `${Math.floor(audio.duration / 60)}:${String(Math.floor(audio.duration % 60)).padStart(2, '0')}`;
+    }
+  };
+
   audio.ontimeupdate = () => {
     if (!audio.duration) return;
     const pct = (audio.currentTime / audio.duration) * 100;
@@ -349,6 +362,16 @@ export function bindMusicaEvents(container) {
   };
 
   audio.onended = () => cargarYReproducir(currentTrackIndex + 1, true);
+
+  // Cargar origen de audio inicial sin reproducir para obtener duración
+  const trackInicial = playlistActual[currentTrackIndex] || playlistActual[0];
+  if (trackInicial) {
+    const srcSeguro = resolverUrlPista(trackInicial);
+    if (audio.src !== srcSeguro) {
+      audio.src = srcSeguro;
+      audio.load();
+    }
+  }
 
   refrescarUICompleta();
 }
