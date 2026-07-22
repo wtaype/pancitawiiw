@@ -124,7 +124,8 @@
 }
 
 /* ==================== VISTA PREVIA (Planilla de Horarios Excel Premium) ==================== */
-.horario_table_planilla {
+.horario_table_planilla,
+.horario_table_planilla_ed {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--brd);
@@ -134,7 +135,8 @@
   background: var(--bg3);
 }
 
-.horario_table_planilla th {
+.horario_table_planilla th,
+.horario_table_planilla_ed th {
   background: var(--bg4);
   color: var(--tx1);
   font-size: var(--fz_s3);
@@ -145,7 +147,8 @@
   text-align: center;
 }
 
-.horario_table_planilla td {
+.horario_table_planilla td,
+.horario_table_planilla_ed td {
   border: 1px solid var(--brd);
   padding: 0.6vh 0.4vw;
   font-size: var(--fz_s4);
@@ -159,12 +162,15 @@
 
 /* Columna de Condición */
 .horario_th_cond,
-.horario_td_cond {
+.horario_td_cond,
+.horario_th_cond_ed,
+.horario_td_cond_ed {
   width: 80px;
   min-width: 60px;
 }
 
-.horario_badge_fijo {
+.horario_badge_fijo,
+.horario_badge_fijo_ed {
   font-size: 10px;
   font-weight: 800;
   color: #000;
@@ -175,43 +181,63 @@
 
 /* Columna de Hora */
 .horario_th_hora,
-.horario_td_hora {
+.horario_td_hora,
+.horario_th_hora_ed,
+.horario_td_hora_ed {
   width: 90px;
   min-width: 80px;
   font-weight: 700;
   color: var(--mco);
 }
 
-.horario_time_start {
-  font-size: var(--fz_s3);
+.horario_time_start,
+.horario_time_start_ed {
+  font-size: var(--fz_s2);
 }
 
-.horario_time_end {
-  font-size: var(--fz_s5);
+.horario_time_end,
+.horario_time_end_ed {
+  font-size: var(--fz_s1);
   color: var(--tx3);
   margin-top: 0.2vh;
 }
 
 /* Celda de Actividad */
-.horario_td_actividad {
+.horario_td_actividad,
+.horario_td_actividad_ed {
   background-color: var(--bloque-color) !important;
   color: var(--txa) !important;
   font-weight: 600;
+  cursor: pointer;
   transition: all var(--tr_f);
 }
 
-/* Si la actividad tiene fondo amarillo (oro), asegurar texto oscuro legible */
-.horario_td_actividad[style*="--bloque-color: var(--oro)"] {
+.horario_td_actividad:hover,
+.horario_td_actividad_ed:hover {
+  opacity: 0.9;
+  filter: brightness(1.1);
+}
+
+/* Forzar color de texto oscuro para celdas claras de alta luminosidad */
+.horario_color_claro {
   color: #000 !important;
 }
 
-.horario_actividad_titulo {
+/* Si la actividad tiene fondo amarillo (oro), asegurar texto oscuro legible */
+.horario_td_actividad[style*="--bloque-color: var(--oro)"],
+.horario_td_actividad_ed[style*="--bloque-color: var(--oro)"] {
+  color: #000 !important;
+}
+
+.horario_actividad_titulo,
+.horario_actividad_titulo_ed {
   font-size: var(--fz_s4);
   word-break: break-word;
   line-height: 1.2;
 }
 
-.horario_actividad_subbadge {
+.horario_actividad_subbadge,
+.horario_actividad_subbadge_ed {
   font-size: 9px;
   opacity: 0.75;
   text-transform: uppercase;
@@ -219,8 +245,16 @@
 }
 
 /* Celda Vacía */
-.horario_td_vacio {
+.horario_td_vacio,
+.horario_td_vacio_ed {
   background: var(--bg3);
+  cursor: pointer;
+  transition: background var(--tr_f);
+}
+
+.horario_td_vacio:hover,
+.horario_td_vacio_ed:hover {
+  background: rgba(100, 110, 255, 0.08) !important;
 }
 
 /* ==================== VISTA EDICIÓN ==================== */
@@ -228,44 +262,6 @@
   display: flex;
   flex-direction: column;
   gap: 2.5vh;
-}
-
-.horario_editor_top_bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--brd);
-  padding-bottom: 1.5vh;
-}
-
-.horario_editor_selector_dias {
-  display: flex;
-  align-items: center;
-  gap: 0.4vw;
-  flex-wrap: wrap;
-}
-
-.horario_dia_pill {
-  background: var(--bg4);
-  border: 1px solid var(--brd);
-  color: var(--tx2);
-  padding: 0.6vh 1vw;
-  border-radius: 5vh;
-  font-size: var(--fz_s4);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--tr_f);
-}
-
-.horario_dia_pill:hover {
-  border-color: var(--mco);
-  color: var(--tx1);
-}
-
-.horario_dia_pill.active {
-  background: var(--mco);
-  color: var(--txa);
-  border-color: var(--mco);
 }
 
 /* Formulario de Adición de Bloques */
@@ -313,6 +309,44 @@
   border-color: var(--mco);
 }
 
+/* Input Color Picker */
+.horario_form_field_color {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vh;
+  width: 60px;
+  min-width: 50px;
+  box-sizing: border-box;
+}
+
+.horario_form_field_color label {
+  font-size: var(--fz_s2);
+  font-weight: 700;
+  color: var(--tx2);
+  text-transform: uppercase;
+}
+
+.horario_form_field_color input[type="color"] {
+  background: var(--inp);
+  border: 1px solid var(--brd);
+  color: var(--tx1);
+  padding: 0.2vh 0.2vw !important;
+  border-radius: 0.6vh;
+  outline: none;
+  height: 4vh;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.horario_form_actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  align-self: flex-end;
+  box-sizing: border-box;
+}
+
 .horario_btn_agregar_submit {
   background: var(--mco);
   color: var(--txa);
@@ -322,7 +356,6 @@
   font-size: var(--fz_s4);
   font-weight: 700;
   cursor: pointer;
-  align-self: flex-end;
   display: flex;
   align-items: center;
   gap: 0.5vw;
@@ -335,89 +368,70 @@
   opacity: 0.9;
 }
 
-/* Lista de Bloques en Editor */
-.horario_editor_lista_bloques {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8vh;
+/* Icon Only Overrides para Botones compactos */
+.horario_btn_agregar_submit.icon_only,
+.horario_btn_cancelar_edit.icon_only,
+.horario_btn_eliminar_edit.icon_only {
+  width: 4vh !important;
+  height: 4vh !important;
+  min-width: 4vh !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: var(--fz_m2) !important;
+  border-radius: 0.6vh !important;
 }
 
-.horario_bloque_editor_row {
-  background: var(--wb);
+.horario_btn_cancelar_edit {
+  background: var(--bg4);
+  color: var(--tx2);
   border: 1px solid var(--brd);
-  border-radius: 0.8vh;
   padding: 1vh 1.2vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1vw;
-}
-
-.horario_bloque_editor_info {
-  display: flex;
-  align-items: center;
-  gap: 1vw;
-}
-
-.horario_bloque_editor_time {
+  border-radius: 0.6vh;
   font-size: var(--fz_s4);
-  font-weight: 700;
-  color: var(--mco);
-  min-width: 110px;
-}
-
-.horario_bloque_editor_title {
-  font-size: var(--fz_m1);
   font-weight: 600;
-  color: var(--tx1);
-}
-
-.horario_bloque_action_btns {
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.4vw;
-}
-
-.horario_bloque_btn_edit {
-  background: var(--bg4);
-  color: var(--tx3);
-  border: 1px solid var(--brd);
-  width: 3.2vh;
-  height: 3.2vh;
-  border-radius: 0.6vh;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all var(--tr_f);
+  height: 4vh;
+  box-sizing: border-box;
 }
 
-.horario_bloque_btn_edit:hover,
-.horario_bloque_btn_edit.active {
-  background: var(--mco);
-  color: var(--txa);
+.horario_btn_cancelar_edit:hover {
   border-color: var(--mco);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  color: var(--tx1);
 }
 
-.horario_bloque_btn_delete {
-  background: var(--bg4);
-  color: var(--tx3);
-  border: 1px solid var(--brd);
-  width: 3.2vh;
-  height: 3.2vh;
+.horario_btn_eliminar_edit {
+  background: rgba(225, 29, 72, 0.1);
+  color: #e11d48;
+  border: 1px solid #e11d48;
+  padding: 1vh 1.2vw;
   border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.4vw;
   transition: all var(--tr_f);
+  height: 4vh;
+  box-sizing: border-box;
 }
 
-.horario_bloque_btn_delete:hover {
+.horario_btn_eliminar_edit:hover {
   background: #e11d48;
   color: #fff;
-  border-color: #e11d48;
+}
+
+.horario_editor_planilla_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  margin-top: 0;
 }
 
 /* Clases Utilitarias Extraídas de Inline */
@@ -489,13 +503,15 @@
 }
 
 /* ==================== FASE 3: HIGHLIGHTS EN VIVO & HOY ==================== */
-.horario_th_dia.horario_th_hoy {
+.horario_th_dia.horario_th_hoy,
+.horario_th_dia_ed.horario_th_hoy_ed {
   background: var(--mco) !important;
   color: var(--txa) !important;
   position: relative;
 }
 
-.horario_hoy_badge {
+.horario_hoy_badge,
+.horario_hoy_badge_ed {
   background: var(--wb);
   color: var(--mco);
   font-size: var(--fz_s3) !important;
@@ -507,14 +523,23 @@
   vertical-align: middle;
 }
 
-.horario_col_hoy_vacio {
+.horario_col_hoy_vacio,
+.horario_col_hoy_vacio_ed {
   background: rgba(100, 110, 255, 0.03) !important;
 }
 
-.horario_td_actividad.horario_bloque_activo {
+.horario_td_actividad.horario_bloque_activo,
+.horario_td_actividad_ed.horario_bloque_activo_ed {
   outline: 2px solid var(--success) !important;
   outline-offset: -2px;
   animation: horario_activo_pulse 2s infinite ease-in-out;
+}
+
+/* Celda seleccionada para edición */
+.horario_td_actividad_ed.horario_bloque_editando_ed {
+  outline: 2px solid var(--mco) !important;
+  outline-offset: -2px;
+  box-shadow: 0 0 12px var(--mco);
 }
 
 @keyframes horario_activo_pulse {
@@ -529,7 +554,8 @@
   }
 }
 
-.horario_live_dot {
+.horario_live_dot,
+.horario_live_dot_ed {
   position: absolute;
   top: 0.8vh;
   right: 0.6vw;

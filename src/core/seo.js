@@ -23,13 +23,6 @@ export const SEO = {
     icon: 'fa-robot',
     position: 'left'
   },
-  '/cuenta': {
-    tag: 'Cuenta',
-    title: 'Mi Cuenta',
-    subtitle: 'Gestión de Perfil y Preferencias',
-    icon: 'fa-user-gear',
-    position: 'right'
-  },
   '/ajustes': {
     tag: 'Ajustes',
     title: 'Ajustes del Sistema',
@@ -43,7 +36,14 @@ export const SEO = {
     subtitle: 'Créditos y Versión',
     icon: 'fa-info-circle',
     position: 'right'
-  }
+  },
+  '/cuenta': {
+    tag: 'Cuenta',
+    title: 'Mi Cuenta',
+    subtitle: 'Gestión de Perfil y Preferencias',
+    icon: 'fa-user-gear',
+    position: 'right'
+  },
 };
 
 export const SEO_DEFAULT = SEO['/inicio'];

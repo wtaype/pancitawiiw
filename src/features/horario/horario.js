@@ -20,6 +20,58 @@ export const TABS = [
 ];
 
 /**
+ * Traduce variables CSS del tema a formato Hexadecimal para el input[type="color"]
+ */
+function obtenerHexDeColor(col) {
+  if (!col) return '#1978d7';
+  if (col.startsWith('#')) return col;
+  
+  const mapa = {
+    'var(--oro)': '#FFDA34',
+    'var(--cielo)': '#0EBEFF',
+    'var(--paz)': '#29C72E',
+    'var(--mora)': '#7000FF',
+    'var(--mco)': '#1978d7',
+    'var(--dulce)': '#FF5C69'
+  };
+  return mapa[col] || '#1978d7';
+}
+
+/**
+ * Determina dinámicamente si un color es claro para aplicar contraste de texto oscuro
+ */
+function esColorClaro(hex) {
+  if (!hex) return false;
+  let cleanHex = hex;
+  if (hex.startsWith('var(')) {
+    const mapa = {
+      'var(--oro)': true,
+      'var(--cielo)': false,
+      'var(--paz)': false,
+      'var(--mora)': false,
+      'var(--mco)': false,
+      'var(--dulce)': false
+    };
+    return !!mapa[hex];
+  }
+  
+  if (cleanHex.startsWith('#')) {
+    cleanHex = cleanHex.slice(1);
+  }
+  if (cleanHex.length === 3) {
+    cleanHex = cleanHex.split('').map(c => c + c).join('');
+  }
+  if (cleanHex.length !== 6) return false;
+  
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+  
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 180;
+}
+
+/**
  * Recopila una lista única de sugerencias mezclando actividades predeterminadas y las guardadas en la base de datos local.
  * @param {Array} horario Lista de bloques actual
  * @returns {Array} Listado de sugerencias de texto
@@ -42,8 +94,8 @@ function obtenerSugerenciasDinamicas(horario) {
 
 export function arrancar(container) {
   let typeSelectControl = null;
-  let presetsSugerenciasControl = null;
   let sugerenciasControl = null;
+  let daySelectControl = null;
 
   // Limpiar listeners y timers previos si existen
   if (container._cleanupHorario) {
@@ -53,7 +105,9 @@ export function arrancar(container) {
   const handleSubtabChange = (e) => {
     if (e.detail.subtabId === 'preview' || e.detail.subtabId === 'editar') {
       tabActiva = e.detail.subtabId;
-      bloqueEditandoId = null;
+      if (!e.detail.keepId) {
+        bloqueEditandoId = null;
+      }
       render();
     }
   };
@@ -75,13 +129,13 @@ export function arrancar(container) {
       typeSelectControl.destroy();
       typeSelectControl = null;
     }
-    if (presetsSugerenciasControl) {
-      presetsSugerenciasControl.destroy();
-      presetsSugerenciasControl = null;
-    }
     if (sugerenciasControl) {
       sugerenciasControl.destroy();
       sugerenciasControl = null;
+    }
+    if (daySelectControl) {
+      daySelectControl.destroy();
+      daySelectControl = null;
     }
   };
 
@@ -91,13 +145,13 @@ export function arrancar(container) {
       typeSelectControl.destroy();
       typeSelectControl = null;
     }
-    if (presetsSugerenciasControl) {
-      presetsSugerenciasControl.destroy();
-      presetsSugerenciasControl = null;
-    }
     if (sugerenciasControl) {
       sugerenciasControl.destroy();
       sugerenciasControl = null;
+    }
+    if (daySelectControl) {
+      daySelectControl.destroy();
+      daySelectControl = null;
     }
 
     const horario = horarioDB.obtenerHorario();
@@ -118,18 +172,69 @@ export function arrancar(container) {
 
         <!-- Pestaña Activa -->
         <div class="horario_body_content">
-          ${tabActiva === 'preview' ? renderVistaPrevia(horario) : renderVistaEditar(horario)}
+          ${tabActiva === 'preview' ? renderVistaPrevia(horario, bloqueActual) : renderVistaEditar(horario)}
         </div>
       </div>
     `;
 
-    // 2. Eventos en Pestaña Editar
+    // ── CONFIGURACIÓN DE VISTA PREVIA ─────────────────────────────────────
+    if (tabActiva === 'preview') {
+      // Evento clic en celdas de actividades de la tabla para editar
+      container.querySelectorAll('.horario_table_planilla .horario_td_actividad').forEach(td => {
+        td.addEventListener('click', () => {
+          const id = td.getAttribute('data-id');
+          const dia = td.getAttribute('data-dia');
+          if (id) {
+            bloqueEditandoId = id;
+            diaActivoEdit = dia;
+            // Forzar actualización visual de pestañas en el header de Pancitawii
+            document.dispatchEvent(new CustomEvent('wi_subtab_change', {
+              detail: { subtabId: 'editar', keepId: true }
+            }));
+          }
+        });
+      });
+
+      // Evento clic en celdas vacías para crear una nueva actividad pre-rellenada
+      container.querySelectorAll('.horario_table_planilla .horario_td_vacio').forEach(td => {
+        td.addEventListener('click', () => {
+          const dia = td.getAttribute('data-dia');
+          const inicio = td.getAttribute('data-inicio');
+          const fin = td.getAttribute('data-fin');
+
+          bloqueEditandoId = null;
+          diaActivoEdit = dia;
+
+          document.dispatchEvent(new CustomEvent('wi_subtab_change', {
+            detail: { subtabId: 'editar', keepId: true }
+          }));
+
+          // Rellenar las horas de inicio y fin en el editor recién pintado
+          const inpStart = container.querySelector('#horario_inp_hora_inicio');
+          const inpEnd = container.querySelector('#horario_inp_hora_fin');
+          if (inpStart) inpStart.value = inicio;
+          if (inpEnd) inpEnd.value = fin;
+
+          // Actualizar el indicador visual de duración
+          const durEl = container.querySelector('#horario_lbl_duracion');
+          if (durEl) {
+            const sMin = horaAMinutos(inicio);
+            let eMin = horaAMinutos(fin);
+            if (eMin < sMin) eMin += 24 * 60;
+            durEl.textContent = `(${formatearDuracion(eMin - sMin)})`;
+          }
+        });
+      });
+    }
+
+    // ── CONFIGURACIÓN DE VISTA EDICIÓN ────────────────────────────────────
     if (tabActiva === 'editar') {
       const inpStart = container.querySelector('#horario_inp_hora_inicio');
       const inpEnd = container.querySelector('#horario_inp_hora_fin');
       const inpTitle = container.querySelector('#horario_inp_titulo');
-      const inpPresets = container.querySelector('#horario_inp_presets');
+      const inpColor = container.querySelector('#horario_inp_color');
       const selType = container.querySelector('#horario_sel_tipo');
+      const selDia = container.querySelector('#horario_sel_dia');
       const durEl = container.querySelector('#horario_lbl_duracion');
 
       // Función para recalcular duración en vivo
@@ -149,63 +254,39 @@ export function arrancar(container) {
         }
       };
 
-      // Inicializar select premium wiSelect en Tipo
+      // Inicializar select premium wiSelect en Día
+      if (selDia) {
+        daySelectControl = wiSelect(selDia, {
+          placeholder: 'Selecciona día...',
+          searchPlaceholder: 'Buscar...',
+          onChange: (val) => {
+            diaActivoEdit = val;
+          }
+        });
+        if (diaActivoEdit) {
+          daySelectControl.setValue(diaActivoEdit);
+        }
+      }
+
+      // Inicializar select premium wiSelect en Tipo y enlazar colores por defecto
       if (selType) {
         typeSelectControl = wiSelect(selType, {
           placeholder: 'Selecciona tipo...',
           searchPlaceholder: 'Buscar...',
           onChange: (val) => {
             recalcularYValidar();
-          }
-        });
-      }
-
-      // Inicializar Autocompletado wiSugerencias para Presets Rápidos
-      if (inpPresets) {
-        const presetLabels = ["Estudio 📘", "Trabajo 💼", "Comer 🥞", "Dormir 🌙", "Relax 🎬"];
-        presetsSugerenciasControl = wiSugerencias(inpPresets, {
-          sugerencias: presetLabels,
-          maxResultados: 5,
-          onSelect: (val) => {
-            const presetData = {
-              "Estudio 📘": { tit: "Estudio 📘", tipo: "estudio", dur: 60 },
-              "Trabajo 💼": { tit: "Trabajo 💼", tipo: "fijo", dur: 480 },
-              "Comer 🥞": { tit: "Comer 🥞", tipo: "flexible", dur: 45 },
-              "Dormir 🌙": { tit: "Dormir 🌙", tipo: "dormir", dur: 480 },
-              "Relax 🎬": { tit: "Tiempo Libre / Relax 🎬", tipo: "flexible", dur: 60 }
-            };
-
-            const info = presetData[val];
-            if (info) {
-              if (inpTitle) inpTitle.value = info.tit;
-              
-              if (typeSelectControl) {
-                typeSelectControl.setValue(info.tipo);
-              } else if (selType) {
-                selType.value = info.tipo;
+            // Asignar color por defecto al selector si el usuario no tiene cargado uno de edición
+            if (!bloqueEditandoId && inpColor) {
+              const coloresDefault = {
+                fijo: '#FFDA34',      // var(--oro)
+                flexible: '#0EBEFF',  // var(--cielo)
+                estudio: '#1978d7',   // var(--mco)
+                dormir: '#7000FF'     // var(--mora)
+              };
+              if (coloresDefault[val]) {
+                inpColor.value = coloresDefault[val];
               }
-
-              if (inpStart && inpEnd) {
-                const sVal = inpStart.value || '08:00';
-                const sMin = horaAMinutos(sVal);
-                let eMin = sMin + info.dur;
-                if (eMin >= 24 * 60) eMin -= 24 * 60;
-
-                const pad = (n) => String(n).padStart(2, '0');
-                const h = Math.floor(eMin / 60);
-                const m = eMin % 60;
-                inpEnd.value = `${pad(h)}:${pad(m)}`;
-              }
-
-              recalcularYValidar();
             }
-
-            // Limpiar la casilla visual del preset para que vuelva a su placeholder
-            setTimeout(() => {
-              if (inpPresets) {
-                inpPresets.value = '';
-              }
-            }, 150);
           }
         });
       }
@@ -228,11 +309,17 @@ export function arrancar(container) {
           if (inpStart) inpStart.value = itemEdit.horaInicio;
           if (inpEnd) inpEnd.value = itemEdit.horaFin;
           if (inpTitle) inpTitle.value = itemEdit.titulo;
+          if (inpColor) inpColor.value = obtenerHexDeColor(itemEdit.color);
           
           if (typeSelectControl) {
             typeSelectControl.setValue(itemEdit.tipo);
           } else if (selType) {
             selType.value = itemEdit.tipo;
+          }
+
+          if (daySelectControl) {
+            daySelectControl.setValue(itemEdit.dia);
+            diaActivoEdit = itemEdit.dia;
           }
         }
       }
@@ -246,15 +333,6 @@ export function arrancar(container) {
       // Calcular inicialmente al entrar a la pestaña editar
       recalcularYValidar();
 
-      // Cambiar de día en el editor
-      container.querySelectorAll('.horario_dia_pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          diaActivoEdit = pill.getAttribute('data-dia');
-          bloqueEditandoId = null;
-          render();
-        });
-      });
-
       // Guardar / Registrar Bloque
       const formAgregar = container.querySelector('#horario_form_agregar_bloque');
       if (formAgregar) {
@@ -263,16 +341,11 @@ export function arrancar(container) {
           const horaInicio = inpStart?.value;
           const horaFin = inpEnd?.value;
           const titulo = inpTitle?.value;
+          const color = inpColor?.value || 'var(--mco)';
           const tipo = typeSelectControl ? typeSelectControl.getValue() : (selType?.value || 'fijo');
+          const dia = daySelectControl ? daySelectControl.getValue() : diaActivoEdit;
 
           if (horaInicio && horaFin && titulo) {
-            const coloresMap = {
-              fijo: 'var(--oro)',
-              flexible: 'var(--cielo)',
-              estudio: 'var(--mco)',
-              dormir: 'var(--mora)'
-            };
-
             const listaActual = horarioDB.obtenerHorario();
 
             if (bloqueEditandoId) {
@@ -281,12 +354,12 @@ export function arrancar(container) {
               if (index !== -1) {
                 listaActual[index] = {
                   ...listaActual[index],
-                  dia: diaActivoEdit,
+                  dia,
                   horaInicio,
                   horaFin,
                   titulo,
                   tipo,
-                  color: coloresMap[tipo] || 'var(--mco)'
+                  color
                 };
                 horarioDB.guardarHorario(listaActual);
               }
@@ -294,12 +367,12 @@ export function arrancar(container) {
             } else {
               // Agregar nuevo bloque
               const nuevoBloque = {
-                dia: diaActivoEdit,
+                dia,
                 horaInicio,
                 horaFin,
                 titulo,
                 tipo,
-                color: coloresMap[tipo] || 'var(--mco)'
+                color
               };
               horarioDB.agregarBloque(nuevoBloque);
             }
@@ -309,29 +382,63 @@ export function arrancar(container) {
         });
       }
 
-      // Evento Toggle Editar Bloque (Primer clic activa, Segundo clic cancela y limpia)
-      container.querySelectorAll('.horario_bloque_btn_edit').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-id');
-          if (bloqueEditandoId === id) {
-            // Toggle Off: Cancelar edición y limpiar selección
-            bloqueEditandoId = null;
-          } else {
-            // Toggle On: Seleccionar bloque para editar
-            bloqueEditandoId = id;
-          }
+      // Botón Cancelar en el Formulario
+      const btnCancel = container.querySelector('#horario_btn_cancelar_edit');
+      if (btnCancel) {
+        btnCancel.addEventListener('click', () => {
+          bloqueEditandoId = null;
           render();
+        });
+      }
+
+      // Botón Eliminar en el Formulario
+      const btnDelete = container.querySelector('#horario_btn_eliminar_edit');
+      if (btnDelete) {
+        btnDelete.addEventListener('click', () => {
+          if (bloqueEditandoId) {
+            horarioDB.eliminarBloque(bloqueEditandoId);
+            bloqueEditandoId = null;
+            render();
+          }
+        });
+      }
+
+      // ── VINCULAR EVENTOS CLIC EN LA TABLA DEL EDITOR ──────────────────────
+      container.querySelectorAll('.horario_table_planilla_ed .horario_td_actividad_ed').forEach(td => {
+        td.addEventListener('click', () => {
+          const id = td.getAttribute('data-id');
+          const dia = td.getAttribute('data-dia');
+          if (id) {
+            bloqueEditandoId = id;
+            diaActivoEdit = dia;
+            render();
+          }
         });
       });
 
-      // Evento Eliminar Bloque
-      container.querySelectorAll('.horario_bloque_btn_delete').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-id');
-          if (id) {
-            horarioDB.eliminarBloque(id);
-            if (bloqueEditandoId === id) bloqueEditandoId = null;
-            render();
+      container.querySelectorAll('.horario_table_planilla_ed .horario_td_vacio_ed').forEach(td => {
+        td.addEventListener('click', () => {
+          const dia = td.getAttribute('data-dia');
+          const inicio = td.getAttribute('data-inicio');
+          const fin = td.getAttribute('data-fin');
+
+          bloqueEditandoId = null;
+          diaActivoEdit = dia;
+          render();
+
+          // Rellenar las horas en el formulario recién renderizado
+          const inpStartNew = container.querySelector('#horario_inp_hora_inicio');
+          const inpEndNew = container.querySelector('#horario_inp_hora_fin');
+          if (inpStartNew) inpStartNew.value = inicio;
+          if (inpEndNew) inpEndNew.value = fin;
+
+          // Actualizar el indicador visual de duración
+          const durElNew = container.querySelector('#horario_lbl_duracion');
+          if (durElNew) {
+            const sMin = horaAMinutos(inicio);
+            let eMin = horaAMinutos(fin);
+            if (eMin < sMin) eMin += 24 * 60;
+            durElNew.textContent = `(${formatearDuracion(eMin - sMin)})`;
           }
         });
       });
@@ -361,8 +468,7 @@ export function arrancar(container) {
   }, 30000);
 }
 
-function renderVistaPrevia(horario) {
-  const bloqueActual = obtenerBloqueActual(horario);
+function renderVistaPrevia(horario, bloqueActual) {
   const diasInglesEsp = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
   const nombreHoy = diasInglesEsp[new Date().getDay()];
 
@@ -411,15 +517,106 @@ function renderVistaPrevia(horario) {
                 const esActivo = b && b.id && bloqueActual && b.id === bloqueActual.id;
 
                 if (b) {
+                  const cl = esColorClaro(b.color);
                   return `
-                    <td class="horario_td_actividad ${esActivo ? 'horario_bloque_activo' : ''}" style="--bloque-color: ${b.color || 'var(--mco)'}" data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin})">
+                    <td class="horario_td_actividad ${esActivo ? 'horario_bloque_activo' : ''} ${cl ? 'horario_color_claro' : ''}" 
+                        style="--bloque-color: ${b.color || 'var(--mco)'}" 
+                        data-id="${b.id}"
+                        data-dia="${dia}"
+                        data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin}) (Haz clic para editar)">
                       ${esActivo ? '<span class="horario_live_dot"></span>' : ''}
                       <div class="horario_actividad_titulo">${b.titulo}</div>
                       <div class="horario_actividad_subbadge">${b.tipo.toUpperCase()}</div>
                     </td>
                   `;
                 } else {
-                  return `<td class="horario_td_vacio ${dia === nombreHoy ? 'horario_col_hoy_vacio' : ''}"></td>`;
+                  return `
+                    <td class="horario_td_vacio ${dia === nombreHoy ? 'horario_col_hoy_vacio' : ''}"
+                        data-dia="${dia}"
+                        data-inicio="${slot.inicio}"
+                        data-fin="${slot.fin}"
+                        data-witip="Libre: ${dia} (${slot.inicio} - ${slot.fin}) (Haz clic para agregar bloque)">
+                    </td>
+                  `;
+                }
+              }).join('')}
+            </tr>
+          `;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderVistaPreviaEditar(horario, bloqueActual) {
+  const diasInglesEsp = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
+  const nombreHoy = diasInglesEsp[new Date().getDay()];
+
+  const slotsMap = new Map();
+  horario.forEach(b => {
+    const key = `${b.horaInicio}-${b.horaFin}`;
+    if (!slotsMap.has(key)) {
+      slotsMap.set(key, { inicio: b.horaInicio, fin: b.horaFin });
+    }
+  });
+  const slots = Array.from(slotsMap.values());
+  slots.sort((a, b) => horaAMinutos(a.inicio) - horaAMinutos(b.inicio));
+
+  return `
+    <table class="horario_table_planilla_ed">
+      <thead>
+        <tr>
+          <th class="horario_th_cond_ed">Cond.</th>
+          <th class="horario_th_hora_ed">Hour</th>
+          ${DIAS_SEMANA.map(d => `
+            <th class="horario_th_dia_ed ${d === nombreHoy ? 'horario_th_hoy_ed' : ''}">
+              ${d}
+              ${d === nombreHoy ? '<span class="horario_hoy_badge_ed">HOY</span>' : ''}
+            </th>
+          `).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${slots.map(slot => {
+          const bloquesEnSlot = horario.filter(b => b.horaInicio === slot.inicio && b.horaFin === slot.fin);
+          const esFijo = bloquesEnSlot.some(b => b.tipo === 'fijo');
+
+          return `
+            <tr>
+              <td class="horario_td_cond_ed">
+                ${esFijo ? '<span class="horario_badge_fijo_ed">FIJO</span>' : ''}
+              </td>
+              <td class="horario_td_hora_ed">
+                <div class="horario_time_start_ed">${slot.inicio}</div>
+                <div class="horario_time_end_ed">${slot.fin}</div>
+              </td>
+              ${DIAS_SEMANA.map(dia => {
+                const b = bloquesEnSlot.find(item => item.dia === dia);
+                const esActivo = b && b.id && bloqueActual && b.id === bloqueActual.id;
+                const esEditando = b && b.id && b.id === bloqueEditandoId;
+
+                if (b) {
+                  const cl = esColorClaro(b.color);
+                  return `
+                    <td class="horario_td_actividad_ed ${esActivo ? 'horario_bloque_activo_ed' : ''} ${esEditando ? 'horario_bloque_editando_ed' : ''} ${cl ? 'horario_color_claro' : ''}" 
+                        style="--bloque-color: ${b.color || 'var(--mco)'}" 
+                        data-id="${b.id}"
+                        data-dia="${dia}"
+                        data-witip="${b.dia}: ${b.titulo} (${b.horaInicio} - ${b.horaFin}) ${esEditando ? '(Editando actualmente)' : '(Haz clic para editar)'}">
+                      ${esActivo ? '<span class="horario_live_dot_ed"></span>' : ''}
+                      <div class="horario_actividad_titulo_ed">${b.titulo}</div>
+                      <div class="horario_actividad_subbadge_ed">${b.tipo.toUpperCase()}</div>
+                    </td>
+                  `;
+                } else {
+                  return `
+                    <td class="horario_td_vacio_ed ${dia === nombreHoy ? 'horario_col_hoy_vacio_ed' : ''}"
+                        data-dia="${dia}"
+                        data-inicio="${slot.inicio}"
+                        data-fin="${slot.fin}"
+                        data-witip="Libre: ${dia} (${slot.inicio} - ${slot.fin}) (Haz clic para agregar bloque)">
+                    </td>
+                  `;
                 }
               }).join('')}
             </tr>
@@ -431,26 +628,23 @@ function renderVistaPrevia(horario) {
 }
 
 function renderVistaEditar(horario) {
-  const bloquesDia = horario.filter(b => b.dia === diaActivoEdit);
-
   return `
     <div class="horario_editor_box">
-      <!-- Selector de Días -->
-      <div class="horario_editor_top_bar">
-        <div class="horario_editor_selector_dias">
-          ${DIAS_SEMANA.map(d => `
-            <button class="horario_dia_pill ${d === diaActivoEdit ? 'active' : ''}" data-dia="${d}" data-witip="Ver bloques del ${d}">${d}</button>
-          `).join('')}
-        </div>
-      </div>
-
       <!-- Formulario para Agregar / Editar Bloque -->
       <form class="horario_form_agregar_bloque" id="horario_form_agregar_bloque">
         
-        <!-- Presets Rápidos en input autocomplete de wiSugerencias -->
+        <!-- Campo Día como wiSelect Dropdown Premium -->
         <div class="horario_form_field">
-          <label>Cargar Actividad</label>
-          <input type="text" id="horario_inp_presets" placeholder="Selecciona una plantilla..." data-witip="Escribe o selecciona un preset rápido" />
+          <label>Día</label>
+          <select id="horario_sel_dia">
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
         </div>
 
         <div class="horario_form_field">
@@ -474,39 +668,31 @@ function renderVistaEditar(horario) {
             <option value="dormir">Dormir</option>
           </select>
         </div>
+        
+        <!-- Input Color Picker Premium -->
+        <div class="horario_form_field_color">
+          <label>Color</label>
+          <input type="color" id="horario_inp_color" value="#0EBEFF" data-witip="Elige el color para identificar este bloque" />
+        </div>
 
-        <button type="submit" class="horario_btn_agregar_submit" data-witip="Registrar o guardar cambios en tu horario">
-          <i class="fa-solid ${bloqueEditandoId ? 'fa-floppy-disk' : 'fa-plus'}"></i> ${bloqueEditandoId ? 'Guardar Cambios' : 'Agregar'}
-        </button>
+        <div class="horario_form_actions">
+          <button type="submit" class="horario_btn_agregar_submit icon_only" data-witip="${bloqueEditandoId ? 'Guardar Cambios' : 'Agregar Actividad'}">
+            <i class="fa-solid ${bloqueEditandoId ? 'fa-floppy-disk' : 'fa-plus'}"></i>
+          </button>
+          ${bloqueEditandoId ? `
+            <button type="button" class="horario_btn_cancelar_edit icon_only" id="horario_btn_cancelar_edit" data-witip="Cancelar edición y limpiar">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+            <button type="button" class="horario_btn_eliminar_edit icon_only" id="horario_btn_eliminar_edit" data-witip="Eliminar este bloque">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          ` : ''}
+        </div>
       </form>
 
-      <!-- Lista de Bloques del Día Activo con Toggle de Editar y Eliminar -->
-      <div class="horario_editor_lista_bloques">
-        <h4 class="hr_modal_subtitle">
-          Bloques configurados para el ${diaActivoEdit}:
-        </h4>
-        ${bloquesDia.length > 0 ? bloquesDia.map(b => {
-          const isEditingThis = b.id === bloqueEditandoId;
-          return `
-            <div class="horario_bloque_editor_row">
-              <div class="horario_bloque_editor_info">
-                <span class="horario_bloque_editor_time"><i class="fa-regular fa-clock"></i> ${b.horaInicio} - ${b.horaFin}</span>
-                <span class="horario_bloque_editor_title">${b.titulo}</span>
-                <span class="horario_bloque_tipo_badge horario_bloque_tipo_badge_spacing">
-                  ${b.tipo === 'fijo' ? '<i class="fa-solid fa-lock"></i> FIJO' : '<i class="fa-solid fa-unlock"></i> FLEXIBLE'}
-                </span>
-              </div>
-              <div class="horario_bloque_action_btns">
-                <button class="horario_bloque_btn_edit ${isEditingThis ? 'active' : ''}" data-id="${b.id}" data-witip="${isEditingThis ? 'Cancelar edición' : 'Editar este bloque'}">
-                  <i class="fa-solid ${isEditingThis ? 'fa-xmark' : 'fa-pen'}"></i>
-                </button>
-                <button class="horario_bloque_btn_delete" data-id="${b.id}" data-witip="Eliminar este bloque de forma permanente">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('') : '<p class="hr_empty_bloques_text">No hay bloques asignados para este día.</p>'}
+      <!-- Tabla Planilla Semanal Interactiva en la propia Vista de Edición -->
+      <div class="horario_editor_planilla_container">
+        ${renderVistaPreviaEditar(horario, obtenerBloqueActual(horario))}
       </div>
     </div>
   `;
