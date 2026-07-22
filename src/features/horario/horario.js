@@ -3,6 +3,7 @@
 
 import { wiTip } from '@widev';
 import { horarioDB } from './lib/horario_db.js';
+import { obtenerBloqueActual } from './lib/horario_dev.js';
 import './horario.css';
 
 let liveTimer = null;
@@ -11,36 +12,6 @@ let diaActivoEdit = 'Lunes';
 let bloqueEditandoId = null;
 
 const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-
-function obtenerBloqueActual(horario) {
-  const ahora = new Date();
-  const diasInglesEsp = { 0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' };
-  const diaHoy = diasInglesEsp[ahora.getDay()];
-  const minsAhora = ahora.getHours() * 60 + ahora.getMinutes();
-
-  const bloquesHoy = horario.filter(b => b.dia === diaHoy);
-  
-  for (const b of bloquesHoy) {
-    const [hI, mI] = b.horaInicio.split(':').map(Number);
-    const [hF, mF] = b.horaFin.split(':').map(Number);
-    const startMins = hI * 60 + mI;
-    let endMins = hF * 60 + mF;
-    if (endMins < startMins) endMins += 24 * 60; // Caso medianoche
-
-    let currentMins = minsAhora;
-    if (endMins > 24 * 60 && currentMins < startMins) currentMins += 24 * 60;
-
-    if (currentMins >= startMins && currentMins < endMins) {
-      const minsRestantes = endMins - currentMins;
-      const hrsR = Math.floor(minsRestantes / 60);
-      const mR = minsRestantes % 60;
-      const tiempoRestanteStr = hrsR > 0 ? `${hrsR}h ${mR}m` : `${mR} min`;
-      return { ...b, tiempoRestanteStr };
-    }
-  }
-
-  return { titulo: 'Tiempo Libre / Planificación 🌟', horaInicio: '--:--', horaFin: '--:--', tiempoRestanteStr: 'Activo' };
-}
 
 export const TABS = [
   { id: 'preview', label: 'Vista Previa', icon: 'fa-eye', position: 'left', active: true },
@@ -85,25 +56,14 @@ export function arrancar(container) {
 
     container.innerHTML = `
       <div class="horario_container">
-        <!-- Cabecera Compacta sin Parpadeos -->
-        <div class="horario_header">
-          <div class="horario_header_title">
-            <i class="fa-solid fa-calendar-days hr_icon_hero"></i>
-            <div>
-              <h2>Bienvenidos a Horario, Pancita</h2>
-              <p>Organización semanal inteligente de tus materias, trabajo y descansos.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Banner de Estado en Vivo -->
+        <!-- Banner de Estado en Vivo (Sección Inicial) -->
         <div class="horario_live_status">
           <div class="live_status_left">
             <i class="fa-solid fa-circle-play"></i>
-            <span>AHORA MISMO: ${bloqueActual.titulo} (${bloqueActual.horaInicio} - ${bloqueActual.horaFin})</span>
+            <span class="live_status_title">AHORA MISMO: ${bloqueActual.titulo} (${bloqueActual.horaInicio} - ${bloqueActual.horaFin})</span>
           </div>
           <div class="live_status_right">
-            <span>⏳ Tiempo restante: <strong>${bloqueActual.tiempoRestanteStr}</strong></span>
+            <span>⏳ Tiempo restante: <strong class="live_status_time">${bloqueActual.tiempoRestanteStr}</strong></span>
           </div>
         </div>
 
@@ -226,14 +186,20 @@ export function arrancar(container) {
 
   render();
 
-  // Actualizar estado en vivo cada 30 segundos
+  // Actualizar estado en vivo cada 30 segundos de forma segura
   liveTimer = setInterval(() => {
     const liveEl = container.querySelector('.horario_live_status');
     if (liveEl) {
       const horario = horarioDB.obtenerHorario();
       const bActual = obtenerBloqueActual(horario);
-      liveEl.querySelector('.live_status_title').textContent = `AHORA MISMO: ${bActual.titulo} (${bActual.horaInicio} - ${bActual.horaFin})`;
-      liveEl.querySelector('.live_status_time').textContent = `⏳ ${bActual.tiempoRestanteStr}`;
+      const titleEl = liveEl.querySelector('.live_status_title');
+      const timeEl = liveEl.querySelector('.live_status_time');
+      if (titleEl) {
+        titleEl.textContent = `AHORA MISMO: ${bActual.titulo} (${bActual.horaInicio} - ${bActual.horaFin})`;
+      }
+      if (timeEl) {
+        timeEl.textContent = bActual.tiempoRestanteStr;
+      }
     }
   }, 30000);
 }

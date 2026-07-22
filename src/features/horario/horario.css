@@ -5,12 +5,20 @@
   display: flex;
   flex-direction: column;
   gap: 1.5vh;
-  padding: 1.5vh 1.5vw;
+  padding: 1.5vh 0;
   width: 100%;
   height: 100%;
   flex: 1;
   overflow-y: auto;
   box-sizing: border-box;
+  
+  /* Ocultar scrollbar visual pero mantener scroll libre */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.horario_container::-webkit-scrollbar {
+  display: none;
 }
 
 /* Cabecera Compacta del Horario */
