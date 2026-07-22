@@ -54,3 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
     rutas.navegar(rutas.rutaActual);
   }
 });
+
+// 4. Interceptar y abrir enlaces externos en el navegador predeterminado
+document.addEventListener('click', async (e) => {
+  const anchor = e.target.closest('a');
+  if (anchor) {
+    const href = anchor.getAttribute('href');
+    if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+      if (window.__TAURI__) {
+        e.preventDefault();
+        try {
+          await window.__TAURI__.core.invoke('abrir_url_externa', { url: href });
+        } catch (err) {
+          console.error('[App] Error al abrir enlace externo:', err);
+        }
+      }
+    }
+  }
+});

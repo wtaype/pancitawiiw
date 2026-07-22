@@ -149,7 +149,7 @@ export function arrancar(container) {
                       <i class="fa-solid fa-eye-slash"></i>
                     </button>
                   </div>
-                  <p class="cuenta_form_tip">Esta clave se utilizará para realizar las peticiones de streaming de ChatWii.</p>
+                  <p class="cuenta_form_tip">Esta clave se utilizará para realizar las peticiones de streaming de ChatWii. Obtén tu clave en <a href="https://aistudio.google.com/api-keys" target="_blank" class="cuenta_api_link" style="color: var(--mco); text-decoration: none; font-weight: 600; transition: opacity var(--tr_f);"><i class="fa-solid fa-up-right-from-square" style="font-size: var(--fz_s3);"></i> Google AI Studio</a>.</p>
                 </div>
 
                 <div class="cuenta_form_grp">

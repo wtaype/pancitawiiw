@@ -11,7 +11,6 @@ export const TABS = [
   { id: 'acerca', label: 'Acerca', icon: 'fa-circle-info', position: 'left' },
   { id: 'privacidad', label: 'Privacidad', icon: 'fa-user-shield', position: 'left' },
   { id: 'terminos', label: 'Términos', icon: 'fa-file-signature', position: 'left' },
-  { id: 'versiones', label: 'Versiones', icon: 'fa-code-branch', position: 'left' },
   { id: 'actualizar', label: 'Actualizar', icon: 'fa-circle-arrow-up', position: 'left' },
   { id: 'actualizar_ajustes_action', label: 'Actualizar', icon: 'fa-arrows-rotate', position: 'right', iconOnly: true }
 ];
@@ -31,7 +30,6 @@ export function arrancar(container) {
       <div id="ajustes_section_acerca" class="ajustes_section_content"></div>
       <div id="ajustes_section_privacidad" class="ajustes_section_content"></div>
       <div id="ajustes_section_terminos" class="ajustes_section_content"></div>
-      <div id="ajustes_section_versiones" class="ajustes_section_content"></div>
       <div id="ajustes_section_actualizar" class="ajustes_section_content"></div>
     </div>
   `;
@@ -65,7 +63,7 @@ export function arrancar(container) {
 
   const handleSubtabChange = (e) => {
     const subtabId = e.detail.subtabId;
-    if (['general', 'acerca', 'privacidad', 'terminos', 'versiones', 'actualizar'].includes(subtabId)) {
+    if (['general', 'acerca', 'privacidad', 'terminos', 'actualizar'].includes(subtabId)) {
       tabActiva = subtabId;
       
       // Mostrar/ocultar secciones en el DOM

@@ -31,6 +31,7 @@ macro_rules! registrar_puentes {
             // Puente hacia Ajustes (General y Energía)
             $crate::funciones::ajustes::ajustes::ajustes_obtener_version,
             $crate::funciones::ajustes::ajustes::fijar_estado_suspension,
+            $crate::funciones::ajustes::ajustes::abrir_url_externa,
             $crate::funciones::ajustes::energia::cambiar_anti_suspension,
             $crate::funciones::ajustes::permisos::permisos_verificar_estado_sistema,
 
