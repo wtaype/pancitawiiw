@@ -1040,3 +1040,296 @@
 .msc_ios_switch input:checked + .msc_ios_slider:before {
   transform: translateX(20px);
 }
+
+/* ═══════════════════════════════════════════
+   5. PANEL DE BIBLIOTECA IN-PAGE (DOUBLE COLUMN)
+   ═══════════════════════════════════════════ */
+.msc_panel_layout {
+  display: flex;
+  gap: 1.5vw;
+  height: calc(100vh - 180px); /* Adaptable a la pantalla */
+  min-height: 420px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.6vh;
+  box-shadow: 0 8px 32px 0 var(--glass-shd);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
+  overflow: hidden;
+}
+
+/* Sidebar izquierda del panel */
+.msc_panel_sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.15);
+  border-right: 1px solid var(--glass-brd);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh;
+  padding: 2vh 1vw;
+  box-sizing: border-box;
+}
+
+.msc_sidebar_tab_btn {
+  width: 100%;
+  padding: 1.2vh 1vw;
+  border-radius: 1vh;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--tx2);
+  font-size: clamp(11px, 0.78vw, 13px);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  transition: all var(--tr_m);
+}
+
+.msc_sidebar_tab_btn:hover {
+  color: var(--tx1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.msc_sidebar_tab_btn.active {
+  color: var(--mco);
+  background: color-mix(in srgb, var(--mco) 10%, transparent);
+  border-color: color-mix(in srgb, var(--mco) 30%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--mco) 20%, transparent);
+}
+
+.msc_sidebar_spacer {
+  flex: 1;
+}
+
+.msc_panel_exit_btn {
+  width: 100%;
+  padding: 1.2vh 1vw;
+  border-radius: 1vh;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-brd);
+  color: var(--tx3);
+  font-size: clamp(11px, 0.78vw, 13px);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5vw;
+  transition: all var(--tr_m);
+}
+
+.msc_panel_exit_btn:hover {
+  color: var(--tx1);
+  border-color: var(--tx1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Cuerpo derecha del panel */
+.msc_panel_body {
+  flex: 1;
+  padding: 2.5vh 2vw;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2vh;
+}
+
+.msc_subpanel_title {
+  font-size: clamp(14px, 1.05vw, 18px);
+  font-weight: 700;
+  color: var(--tx1);
+  border-bottom: 1px solid var(--glass-brd);
+  padding-bottom: 1vh;
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  text-align: left;
+}
+
+.msc_subpanel_title i {
+  color: var(--mco);
+}
+
+/* Ajustes de YouTube */
+.msc_yt_panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+.msc_yt_info_card {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  padding: 1.4vh 1vw;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1vh;
+}
+
+.msc_yt_destination_label {
+  font-size: clamp(10px, 0.7vw, 12px);
+  color: var(--tx3);
+}
+
+.msc_yt_destination_name {
+  font-size: clamp(10px, 0.72vw, 12px);
+  font-weight: 700;
+  color: var(--mco);
+}
+
+.msc_yt_input_group {
+  display: flex;
+  gap: 0.6vw;
+  width: 100%;
+}
+
+.msc_yt_input_field {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1vh;
+  padding: 1.2vh 1vw;
+  color: var(--tx1);
+  font-size: clamp(11px, 0.78vw, 13px);
+  outline: none;
+  transition: all var(--tr_m);
+}
+
+.msc_yt_input_field:focus {
+  border-color: var(--mco);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--mco) 20%, transparent);
+}
+
+.msc_yt_download_btn {
+  background: linear-gradient(135deg, #ff0055 0%, #ff4500 100%);
+  border: none;
+  border-radius: 1vh;
+  padding: 1.2vh 1.5vw;
+  color: white;
+  font-weight: 700;
+  font-size: clamp(11px, 0.78vw, 13px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  transition: all var(--tr_m);
+  box-shadow: 0 4px 12px rgba(255, 0, 85, 0.3);
+}
+
+.msc_yt_download_btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 0, 85, 0.5);
+  filter: brightness(1.1);
+}
+
+.msc_yt_download_btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Indicador de progreso YouTube */
+.msc_yt_progress_container {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1vh;
+  padding: 2vh 1.2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+  box-sizing: border-box;
+}
+
+.msc_yt_loader_row {
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  font-size: clamp(11px, 0.78vw, 13px);
+  color: var(--tx1);
+  text-align: left;
+}
+
+.msc_yt_spinner {
+  color: var(--mco);
+}
+
+.msc_yt_progress_bar_outer {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.msc_yt_progress_bar_inner {
+  width: 0%;
+  height: 100%;
+  background: var(--mco);
+  border-radius: 99px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Consola de logs */
+.msc_yt_log_container {
+  height: 140px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.8vh;
+  padding: 1vh 0.8vw;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: clamp(10px, 0.7vw, 11px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vh;
+}
+
+.msc_yt_log_line {
+  margin: 0;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.msc_yt_log_line.info { color: var(--tx3); }
+.msc_yt_log_line.success { color: var(--success); }
+.msc_yt_log_line.error { color: var(--error); }
+
+.msc_yt_log_time {
+  color: var(--mco);
+  margin-right: 0.4vw;
+}
+
+.msc_folders_list_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  margin-top: 1.5vh;
+}
+
+.msc_folders_list_title {
+  font-size: clamp(11px, 0.78vw, 13px);
+  font-weight: 700;
+  color: var(--tx2);
+  text-align: left;
+}
+
+.msc_tag_combined {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--tx2);
+  font-size: clamp(8px, 0.55vw, 9px);
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  border: 1px solid var(--glass-brd);
+}
+
+.msc_folder_item_card.combined_mode {
+  border-color: rgba(255, 255, 255, 0.05);
+}
+

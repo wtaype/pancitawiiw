@@ -43,7 +43,8 @@ macro_rules! registrar_puentes {
             $crate::funciones::ajustes::actualizador::actualizador_descargar_y_actualizar,
 
             // Puente hacia Música (Reproductor de Audio)
-            $crate::funciones::musica::musica_lista::seleccionar_carpeta_musica_comando
+            $crate::funciones::musica::musica::seleccionar_carpeta_musica_comando,
+            $crate::funciones::musica::musica::descargar_cancion_youtube_comando
         ]
     };
 }

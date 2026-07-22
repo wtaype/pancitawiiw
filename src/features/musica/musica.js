@@ -8,7 +8,8 @@ import { wiAtajo } from '@core/widev/atajos.js';
 import { renderHero, bindHeroEvents } from '@features/musica/componentes/hero.js';
 import { renderFiltros, bindFiltrosEvents } from '@features/musica/componentes/filtros.js';
 import { renderListaItems, bindListaItemsEvents } from '@features/musica/componentes/lista_items.js';
-import { abrirModalMusica, renderMisCarpetasHTML } from '@features/musica/componentes/modal_rutas.js';
+import { renderMisCarpetasHTML } from '@features/musica/componentes/ruta_local.js';
+import { rutas } from '@core/rutas.js';
 import '@features/musica/musica.css';
 
 const DEFAULT_PLAYLIST = obtenerListaPredeterminada();
@@ -656,8 +657,33 @@ export function bindMusicaEvents(container) {
       if (paginaActual < totalPaginas) { paginaActual++; refrescarUICompleta(); }
     },
     onRefresh: (btn) => { refrescarUICompleta(); wiTip(btn, 'Lista actualizada', 'top', 1500); },
-    onAdd: () => {
-      abrirModalMusica(carpetasGuardadas, carpetaActivaId, combinarRutas, combinarTodas, {
+    onAdd: async () => {
+      const panel = document.getElementById('wimain_content');
+      if (!panel) return;
+
+      // Navegación virtual en el enrutador central
+      rutas.rutaActual = '/ajustes_musica';
+
+      // Actualizar cabecera del panel principal
+      const headerTitle = document.querySelector('.wii_header_title');
+      const headerSub = document.querySelector('.wii_header_sub');
+      const headerIcon = document.querySelector('.wii_header_icon i');
+      if (headerTitle) headerTitle.textContent = "Biblioteca de Música";
+      if (headerSub) headerSub.innerHTML = `<span class="wii_online_dot"></span> Administra tus carpetas de música local y descargas de YouTube en tiempo real.`;
+      if (headerIcon) headerIcon.className = `fa-solid fa-music`;
+
+      // Limpiar pestañas superiores
+      const tabsWrapper = document.getElementById('wimain_tabs_wrapper');
+      if (tabsWrapper) tabsWrapper.innerHTML = '';
+
+      // Cargar panel modularmente
+      const { arrancarPanel } = await import('./componentes/panel.js');
+      panel.innerHTML = '';
+      arrancarPanel(panel, {
+        carpetasGuardadas,
+        carpetaActivaId,
+        combinarRutas,
+        combinarTodas,
         onSeleccionarNuevaCarpeta: (nuevasCanciones, nombreCarpeta, rutaRaiz) => {
           if (combinarRutas) {
             const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
@@ -714,6 +740,22 @@ export function bindMusicaEvents(container) {
           const foldersList = document.querySelector('#msc_folders_list');
           if (foldersList) {
             foldersList.innerHTML = renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId, combinarTodas);
+          }
+        },
+        onDescargaCompletada: (cancionDescargada) => {
+          const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
+          if (activa) {
+            let nextId = activa.canciones.reduce((max, c) => Math.max(max, c.id), 0) + 1;
+            cancionDescargada.id = nextId;
+            activa.canciones.push(cancionDescargada);
+            
+            if (combinarTodas) {
+              actualizarPlaylistCombinada();
+            } else {
+              playlistActual = activa.canciones;
+              guardarEstado();
+              refrescarUICompleta();
+            }
           }
         }
       });

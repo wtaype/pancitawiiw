@@ -1,5 +1,5 @@
-// src-tauri/src/funciones/musica/musica_lista.rs
-// Comando nativo de Rust para seleccionar carpetas de Windows sin avisos de navegador y recorrer subcarpetas
+// src-tauri/src/funciones/musica/local_lista.rs
+// Lógica nativa de escaneo y selección de carpetas de música local
 
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -23,7 +23,7 @@ pub struct RespuestaMusica {
     pub canciones: Vec<PistaMusica>,
 }
 
-fn recorrer_directorio_recursivo(dir: &Path, canciones: &mut Vec<PistaMusica>, contador: &mut usize) {
+pub fn recorrer_directorio_recursivo(dir: &Path, canciones: &mut Vec<PistaMusica>, contador: &mut usize) {
     if let Ok(entries) = fs::read_dir(dir) {
         for entry in entries.flatten() {
             let path = entry.path();
@@ -60,8 +60,7 @@ fn recorrer_directorio_recursivo(dir: &Path, canciones: &mut Vec<PistaMusica>, c
     }
 }
 
-#[tauri::command]
-pub async fn seleccionar_carpeta_musica_comando() -> Result<Option<RespuestaMusica>, String> {
+pub async fn seleccionar_carpeta_musica_interno() -> Result<Option<RespuestaMusica>, String> {
     let folder = rfd::AsyncFileDialog::new()
         .set_title("Seleccionar Carpeta de Música")
         .pick_folder()

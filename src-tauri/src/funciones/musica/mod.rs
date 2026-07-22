@@ -1,4 +1,6 @@
 // src-tauri/src/funciones/musica/mod.rs
-// Modulo de Musica para backend Rust
+// Modulo de Musica para backend Rust - Registro modular de sub-archivos
 
-pub mod musica_lista;
+pub mod local_lista;
+pub mod youtube_lista;
+pub mod musica;
