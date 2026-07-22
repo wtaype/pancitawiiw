@@ -1,0 +1,6 @@
+/* src/features/ajustes/secciones/terminos.css */
+.terminos_section_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}

@@ -1,0 +1,6 @@
+/* src/features/ajustes/secciones/acerca.css */
+.acerca_section_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}

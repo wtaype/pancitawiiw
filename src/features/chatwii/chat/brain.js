@@ -48,7 +48,7 @@ export const limpiarHistorial = async () => {
   await guardarHistorial();
 };
 
-export const enviarMensaje = async (textoUsuario, onChunk, quotedMsg = null, imagenesBase64 = []) => {
+export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
   // Límite de uso local (60 por día)
   const rate = wiRateLimit('chatwii_pancita_uses', 60, 'dia');
   if (!rate.ok) {
@@ -56,26 +56,23 @@ export const enviarMensaje = async (textoUsuario, onChunk, quotedMsg = null, ima
     throw new Error('Límite de uso alcanzado');
   }
 
-  // Prepara el texto a guardar
-  let textoGuardar = textoUsuario;
-  if (quotedMsg) {
-    textoGuardar = `[Citado: "${quotedMsg.text}"]\n\n${textoUsuario}`;
-  }
-
-  // Formato Gemini parts
-  const parts = [{ text: textoGuardar }];
+  // Formato Gemini parts (las citas ya vienen formateadas en el textoUsuario desde el frontend)
+  const parts = [{ text: textoUsuario }];
   
-  // Agregar imágenes multimodales si existen
+  // Agregar imágenes multimodales si existen (soportando objeto {base64, mime} o string directo)
   if (imagenesBase64 && imagenesBase64.length > 0) {
     imagenesBase64.forEach(img => {
-      // Extrae el base64 sin el prefijo "data:image/jpeg;base64,"
-      const base64Data = img.startsWith('data:') ? img.split(',')[1] : img;
-      parts.push({
-        inlineData: {
-          mimeType: 'image/webp',
-          data: base64Data
-        }
-      });
+      const srcData = typeof img === 'string' ? img : (img.base64 || '');
+      const mimeType = typeof img === 'string' ? 'image/webp' : (img.mime || 'image/webp');
+      if (srcData) {
+        const base64Data = srcData.startsWith('data:') ? srcData.split(',')[1] : srcData;
+        parts.push({
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Data
+          }
+        });
+      }
     });
   }
 

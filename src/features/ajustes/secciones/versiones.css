@@ -1,0 +1,6 @@
+/* src/features/ajustes/secciones/versiones.css */
+.versiones_section_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}

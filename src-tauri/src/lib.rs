@@ -46,6 +46,7 @@ pub fn run() {
             // Enrutador de Ajustes, Cuenta y Energía
             funciones::ajustes::cuenta::cuenta_verificar_estado,
             funciones::ajustes::ajustes::ajustes_obtener_version,
+            funciones::ajustes::ajustes::fijar_estado_suspension,
             funciones::ajustes::permisos::permisos_verificar_estado_sistema,
             funciones::ajustes::energia::cambiar_anti_suspension,
             

@@ -1,15 +1,63 @@
 /* src/features/ajustes/ajustes.css */
+/* Estilos premium para el feature de Ajustes de Pancitawii */
 
-.ajustes_feature_wrap {
+.ajustes_container {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.5vh 0;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
+  gap: 2.5vh;
+}
+
+.ajustes_section_content {
+  display: none;
+}
+
+.ajustes_section_content.active {
+  display: block;
+  animation: ajustesTabFadeIn 0.3s ease forwards;
+}
+
+@keyframes ajustesTabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ajustes_card {
-  background: var(--wb);
-  border: 1px solid var(--txe);
-  border-radius: 14px;
-  padding: 1.5rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.8vh;
+  padding: 3vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px 0 var(--glass-shd);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.ajustes_loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10vh 0;
+  gap: 1.5vh;
+  color: var(--tx3);
+  font-size: var(--fz_m2);
+}
+
+.ajustes_error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10vh 0;
+  color: var(--error);
+  font-size: var(--fz_m2);
+  font-weight: 600;
 }

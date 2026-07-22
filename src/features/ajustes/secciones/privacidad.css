@@ -1,0 +1,6 @@
+/* src/features/ajustes/secciones/privacidad.css */
+.privacidad_section_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}

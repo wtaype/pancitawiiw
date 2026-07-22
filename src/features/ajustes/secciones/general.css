@@ -1,0 +1,110 @@
+/* src/features/ajustes/secciones/general.css */
+/* Estilos premium para Ajustes Generales y Apple Toggle Switches */
+
+.general_section_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+}
+
+.general_card {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+}
+
+.general_card_title {
+  font-size: var(--fz_m3);
+  font-weight: 700;
+  color: var(--mco);
+  margin-bottom: 1.5vh;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  border-bottom: 1px solid var(--brd);
+  padding-bottom: 1.2vh;
+}
+
+.general_setting_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3vh;
+  padding: 1.8vh 0;
+}
+
+.general_setting_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+  flex: 1;
+}
+
+.general_setting_label {
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  color: var(--tx1);
+}
+
+.general_setting_desc {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  line-height: 1.4;
+}
+
+/* ==================== APPLE SWITCH TOGGLE ==================== */
+.apple_switch_container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.apple_switch {
+  position: relative;
+  display: inline-block;
+  width: 51px;
+  height: 31px;
+}
+
+.apple_switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.apple_switch_slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--brd);
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 34px;
+}
+
+.apple_switch_slider:before {
+  position: absolute;
+  content: "";
+  height: 27px;
+  width: 27px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.02);
+}
+
+.apple_switch input:checked + .apple_switch_slider {
+  background-color: var(--success);
+}
+
+.apple_switch input:focus + .apple_switch_slider {
+  box-shadow: 0 0 1px var(--success);
+}
+
+.apple_switch input:checked + .apple_switch_slider:before {
+  transform: translateX(20px);
+}
