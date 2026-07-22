@@ -1,5 +1,5 @@
 // src/features/inicio/inicio.js
-// Módulo de Inicio Asistente & Dashboard de Productividad (Con widgets de rutina, progreso del día y sin reloj duplicado)
+// Módulo de Inicio Asistente & Dashboard de Productividad (Con mensajes dinámicos inteligentes y barra de progreso)
 
 import { Saludar, fechaHoy, Capi } from '@widev';
 import state from '../../core/state.js';
@@ -7,19 +7,11 @@ import { rutas } from '@core/rutas.js';
 import { horarioDB } from '../horario/lib/horario_db.js';
 import { obtenerBloqueActual } from '../horario/lib/horario_dev.js';
 import { obtenerProgresoDia } from './lib/progreso.js';
+import { obtenerMensajesInteligentes } from './lib/mensajes.js';
 import './inicio.css';
 
 let rolesTimer = null;
 let progressTimer = null;
-
-// Array de frases cortas, útiles y con íconos positivos
-const MENSAJES_PANCITA = [
-  'En 30 min tienes que dormir 🌙',
-  'En 1 hora tienes clases de universidad 🎓 ',
-  'Recuerda tomar un vaso de agua 💧 ',
-  'Enfoque activo en tu materia principal 📚',
-  '¡Vas excelente en tus metas hoy! 🏆'
-];
 
 export function arrancar(container) {
   // Limpiar temporizadores previos si existían
@@ -32,9 +24,10 @@ export function arrancar(container) {
   const saludoTag = `${saludoLimpioTag.toUpperCase()}  PANCITA!`;
   const fechaTexto = fechaHoy();
 
-  // Obtener bloque de actividad actual
+  // Obtener bloque de actividad actual y mensajes dinámicos
   const listaHorario = horarioDB.obtenerHorario();
   const bloqueActual = obtenerBloqueActual(listaHorario);
+  const mensajesEnVivo = obtenerMensajesInteligentes();
 
   const activeBlockHTML = bloqueActual
     ? `
@@ -75,7 +68,7 @@ export function arrancar(container) {
           </div>
         </div>
 
-        <!-- Progreso del Día (Nuevo en Inicio para evitar redundancia en barra lateral) -->
+        <!-- Progreso del Día -->
         <div class="inicio_progress_container hwi_item">
           <div class="inicio_progress_info">
             <span class="inicio_progress_label"><i class="fa-solid fa-chart-line"></i> Progreso del Día</span>
@@ -91,8 +84,8 @@ export function arrancar(container) {
             <i class="fa-solid fa-calendar-day"></i> ${Capi(fechaTexto)}
           </div>
           <div class="banner_bottom_right hwi_item">
-            <div class="pancita_roles_box">
-              ${MENSAJES_PANCITA.map((msg, i) => `
+            <div class="pancita_roles_box" id="inicio_pancita_roles_container">
+              ${mensajesEnVivo.map((msg, i) => `
                 <span class="pancita_role_item ${i === 0 ? 'active' : ''}">${msg}</span>
               `).join('')}
             </div>
@@ -179,16 +172,32 @@ export function arrancar(container) {
   actualizarProgreso();
   progressTimer = setInterval(actualizarProgreso, 1000);
 
-  // 4. Rotación de mensajes Pancita según TIEMPO_HERO
+  // 4. Rotación de mensajes Pancita con regeneración al dar la vuelta
   let roleIdx = 0;
-  const roles = container.querySelectorAll('.pancita_role_item');
-  if (roles.length) {
-    rolesTimer = setInterval(() => {
-      roles[roleIdx].classList.remove('active');
-      roleIdx = (roleIdx + 1) % roles.length;
-      roles[roleIdx].classList.add('active');
-    }, 7000);
-  }
+  const rolesBox = container.querySelector('#inicio_pancita_roles_container');
+
+  const rotarMensajes = () => {
+    let roleItems = container.querySelectorAll('.pancita_role_item');
+    if (roleItems.length === 0) return;
+
+    roleItems[roleIdx].classList.remove('active');
+    roleIdx = (roleIdx + 1) % roleItems.length;
+
+    // Si volvemos al principio, regeneramos los mensajes en vivo
+    if (roleIdx === 0 && rolesBox) {
+      const nuevosMensajes = obtenerMensajesInteligentes();
+      rolesBox.innerHTML = nuevosMensajes.map((msg, i) => `
+        <span class="pancita_role_item ${i === 0 ? 'active' : ''}">${msg}</span>
+      `).join('');
+      roleItems = container.querySelectorAll('.pancita_role_item');
+    }
+
+    if (roleItems[roleIdx]) {
+      roleItems[roleIdx].classList.add('active');
+    }
+  };
+
+  rolesTimer = setInterval(rotarMensajes, 7000);
 
   // 5. Eventos de navegación en las Cards
   container.querySelectorAll('[data-nav]').forEach(btn => {
