@@ -40,6 +40,8 @@ pub fn run() {
 
             // Enrutador de Asistente pancitawii (chatwii)
             nucleo::chatwii::gemini::completar_chat_comando,
+            nucleo::chatwii::gemini::chatwii_guardar_historial,
+            nucleo::chatwii::gemini::chatwii_cargar_historial,
             
             // Enrutador de Ajustes, Cuenta y Energía
             funciones::ajustes::cuenta::cuenta_verificar_estado,

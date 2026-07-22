@@ -139,3 +139,29 @@ pub async fn completar_chat_comando(
 ) -> Result<(), String> {
     stream_chat(historial, actitud, custom_key, canal).await
 }
+
+#[tauri::command]
+pub fn chatwii_guardar_historial(app_handle: tauri::AppHandle, historial: serde_json::Value) -> Result<(), String> {
+    use tauri::Manager;
+    let mut path = app_handle.path().app_data_dir().map_err(|e| e.to_string())?;
+    path.push("chatwii_historial.json");
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let json_str = serde_json::to_string_pretty(&historial).map_err(|e| e.to_string())?;
+    std::fs::write(path, json_str).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn chatwii_cargar_historial(app_handle: tauri::AppHandle) -> Result<serde_json::Value, String> {
+    use tauri::Manager;
+    let mut path = app_handle.path().app_data_dir().map_err(|e| e.to_string())?;
+    path.push("chatwii_historial.json");
+    if !path.exists() {
+        return Ok(serde_json::Value::Array(vec![]));
+    }
+    let content = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
+    let parsed = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+    Ok(parsed)
+}
