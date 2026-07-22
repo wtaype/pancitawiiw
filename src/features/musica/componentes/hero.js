@@ -53,6 +53,20 @@ export function renderHero(track, isPlaying, liked, carpeta) {
 
       <!-- Meta info -->
       <div class="msc_meta_bar">
+        <!-- Visualizadores de ondas laterales sobre la barra de meta -->
+        <div class="msc_visualizer_side left ${isPlaying ? 'playing' : ''}" id="msc_visualizer_left">
+          <div class="msc_wave_bar"></div>
+          <div class="msc_wave_bar"></div>
+          <div class="msc_wave_bar"></div>
+          <div class="msc_wave_bar"></div>
+        </div>
+        <div class="msc_visualizer_side right ${isPlaying ? 'playing' : ''}" id="msc_visualizer_right">
+          <div class="msc_wave_bar"></div>
+          <div class="msc_wave_bar"></div>
+          <div class="msc_wave_bar"></div>
+          <div class="msc_wave_bar"></div>
+        </div>
+
         <span id="msc_meta_text">MP3 · ${actual.peso} · Modificado: ${actual.fecha}</span>
         <span id="msc_path_text" class="msc_path_copy" data-witip="Copiar ruta" data-wtipo="top">
           ${carpeta || '..\\musica\\lista\\'} <i class="fa-regular fa-copy"></i>
@@ -71,7 +85,8 @@ export function bindHeroEvents(container, {
   onToggleShuffle,
   onToggleRepeat,
   onVolumeChange,
-  onToggleMute
+  onToggleMute,
+  onCopyPath
 }) {
   const mainPlayBtn  = container.querySelector('#msc_main_play_btn');
   const prevBtn      = container.querySelector('#msc_btn_prev');
@@ -82,6 +97,7 @@ export function bindHeroEvents(container, {
   const volumeSlider = container.querySelector('#msc_volume_slider');
   const volumeBtn    = container.querySelector('#msc_btn_volume');
   const progressBar  = container.querySelector('#msc_progress_bar');
+  const pathBtn      = container.querySelector('#msc_path_text');
 
   if (mainPlayBtn) mainPlayBtn.onclick = () => onTogglePlay();
   if (prevBtn)     prevBtn.onclick     = () => onPrev();
@@ -96,6 +112,10 @@ export function bindHeroEvents(container, {
 
   if (volumeBtn && typeof onToggleMute === 'function') {
     volumeBtn.onclick = () => onToggleMute();
+  }
+
+  if (pathBtn && typeof onCopyPath === 'function') {
+    pathBtn.onclick = () => onCopyPath(pathBtn);
   }
 
   if (progressBar && typeof onSeek === 'function') {

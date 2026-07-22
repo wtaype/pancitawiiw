@@ -1,10 +1,10 @@
-// src/features/musica/componentes/musica_modales.js
+// src/features/musica/componentes/modal_rutas.js
 // Modal de gestión de música con Tabs y Escaneo Instantáneo (Cero Botones Innecesarios)
 
 import { abrirModal, cerrarModal } from '@core/widev/modales.js';
 import { wiTip } from '@core/widev/witip.js';
 
-export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = '') {
+export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = '', combinarRutas = true) {
   return `
     <div class="wiModal" id="modal_musica" tabIndex="-1">
       <div class="modalBody msc_modal_glass_wide">
@@ -13,11 +13,14 @@ export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = 
         <!-- Cabecera con Pestañas -->
         <div class="msc_modal_header_tabs">
           <div class="msc_modal_tab_btn active" data-mtab="nueva">
-            <i class="fa-solid fa-folder-plus"></i> Seleccionar carpeta nueva
+            <i class="fa-solid fa-folder-plus"></i> Seleccionar
           </div>
           <div class="msc_modal_tab_btn" data-mtab="mis_carpetas">
             <i class="fa-solid fa-folder-tree"></i> Mis carpetas
             <span class="msc_badge_count" id="msc_badge_folders">${carpetasGuardadas.length || 1}</span>
+          </div>
+          <div class="msc_modal_tab_btn" data-mtab="ajustes">
+            <i class="fa-solid fa-sliders"></i> Ajustes
           </div>
         </div>
 
@@ -36,6 +39,20 @@ export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = 
         <div class="msc_modal_tab_content" id="msc_mtab_mis_carpetas">
           <div class="msc_folders_list" id="msc_folders_list">
             ${renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId)}
+          </div>
+        </div>
+
+        <!-- Contenido de Pestaña 3: Ajustes -->
+        <div class="msc_modal_tab_content" id="msc_mtab_ajustes">
+          <div class="msc_setting_row">
+            <div class="msc_setting_info">
+              <span class="msc_setting_title">Combinar carpetas al importar</span>
+              <span class="msc_setting_desc">Añade las canciones de las carpetas nuevas a la lista activa actual en lugar de sobreescribirla.</span>
+            </div>
+            <label class="msc_ios_switch">
+              <input type="checkbox" id="msc_opt_combine" ${combinarRutas ? 'checked' : ''} />
+              <span class="msc_ios_slider"></span>
+            </label>
           </div>
         </div>
       </div>
@@ -82,22 +99,24 @@ export function renderMisCarpetasHTML(carpetas, activaId) {
   }).join('');
 }
 
-export function asegurarModalEnBody(carpetas, activaId, callbacks) {
+export function asegurarModalEnBody(carpetas, activaId, combinarRutas, callbacks) {
   if (typeof document === 'undefined') return;
 
   let modalEl = document.getElementById('modal_musica');
-  if (!modalEl) {
-    const div = document.createElement('div');
-    div.innerHTML = renderModalMusicaHTML(carpetas, activaId);
-    modalEl = div.firstElementChild;
-    document.body.appendChild(modalEl);
-  }
+  if (modalEl) modalEl.remove();
+
+  const div = document.createElement('div');
+  div.innerHTML = renderModalMusicaHTML(carpetas, activaId, combinarRutas);
+  modalEl = div.firstElementChild;
+  document.body.appendChild(modalEl);
 
   bindModalMusicaEvents(modalEl, callbacks);
 }
 
-export function bindModalMusicaEvents(modalEl, { onSeleccionarNuevaCarpeta, onActivarCarpeta, onEliminarCarpeta }) {
+export function bindModalMusicaEvents(modalEl, callbacks) {
   wiTip();
+
+  const { onSeleccionarNuevaCarpeta, onActivarCarpeta, onEliminarCarpeta, onToggleCombine } = callbacks;
 
   // Cambios de Pestaña dentro del Modal
   const tabBtns = modalEl.querySelectorAll('.msc_modal_tab_btn');
@@ -128,7 +147,7 @@ export function bindModalMusicaEvents(modalEl, { onSeleccionarNuevaCarpeta, onAc
           const respuesta = await invoke('seleccionar_carpeta_musica_comando');
           if (respuesta && respuesta.canciones && respuesta.canciones.length > 0) {
             if (typeof onSeleccionarNuevaCarpeta === 'function') {
-              onSeleccionarNuevaCarpeta(respuesta.canciones, respuesta.carpeta_nombre || 'Carpeta Importada');
+              onSeleccionarNuevaCarpeta(respuesta.canciones, respuesta.carpeta_nombre || 'Carpeta Importada', respuesta.ruta_raiz);
             }
             cerrarModal('modal_musica');
             wiTip(document.body, `Carpeta "${respuesta.carpeta_nombre}" activada (${respuesta.canciones.length} canciones)`, 'top', 2000);
@@ -170,7 +189,7 @@ export function bindModalMusicaEvents(modalEl, { onSeleccionarNuevaCarpeta, onAc
           });
 
           if (typeof onSeleccionarNuevaCarpeta === 'function') {
-            onSeleccionarNuevaCarpeta(canciones, carpetaNombre);
+            onSeleccionarNuevaCarpeta(canciones, carpetaNombre, null);
           }
           cerrarModal('modal_musica');
           wiTip(document.body, `Carpeta "${carpetaNombre}" activada (${canciones.length} canciones)`, 'top', 2000);
@@ -197,18 +216,17 @@ export function bindModalMusicaEvents(modalEl, { onSeleccionarNuevaCarpeta, onAc
       }
     };
   }
+
+  // Pestaña 3: Ajustes - Switch Toggle
+  const combineSwitch = modalEl.querySelector('#msc_opt_combine');
+  if (combineSwitch && typeof onToggleCombine === 'function') {
+    combineSwitch.onchange = () => {
+      onToggleCombine(combineSwitch.checked);
+    };
+  }
 }
 
-export function abrirModalMusica(carpetas, activaId, callbacks) {
-  // Asegurar que el modal esté en el body con datos frescos
-  let modalEl = document.getElementById('modal_musica');
-  if (modalEl) modalEl.remove(); // Re-render con lista fresca
-
-  const div = document.createElement('div');
-  div.innerHTML = renderModalMusicaHTML(carpetas, activaId);
-  modalEl = div.firstElementChild;
-  document.body.appendChild(modalEl);
-
-  bindModalMusicaEvents(modalEl, callbacks);
+export function abrirModalMusica(carpetas, activaId, combinarRutas, callbacks) {
+  asegurarModalEnBody(carpetas, activaId, combinarRutas, callbacks);
   abrirModal('modal_musica');
 }

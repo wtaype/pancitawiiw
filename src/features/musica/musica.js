@@ -60,7 +60,8 @@ function cargarEstado() {
     volume: 1.0,
     isMuted: false,
     repeatMode: 'off',
-    shuffleActive: false
+    shuffleActive: false,
+    combinarRutas: true
   };
 
   let carpetaActiva = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
@@ -85,7 +86,8 @@ function guardarEstado() {
     volume,
     isMuted,
     repeatMode,
-    shuffleActive
+    shuffleActive,
+    combinarRutas
   }, 8760);
   savels(STORAGE_KEY_LISTA, {
     playlist:   playlistActual,
@@ -114,6 +116,7 @@ let volume            = estado.config?.volume ?? 1.0;
 let isMuted           = estado.config?.isMuted ?? false;
 let repeatMode        = estado.config?.repeatMode ?? 'off';
 let shuffleActive     = estado.config?.shuffleActive ?? false;
+let combinarRutas     = estado.config?.combinarRutas ?? true;
 
 const audio = new Audio();
 audio.volume = isMuted ? 0 : volume;
@@ -295,6 +298,16 @@ export function bindMusicaEvents(container) {
       mainPlayBtn.setAttribute('data-witip', isPlaying ? 'Pausar' : 'Reproducir');
       mainPlayBtn.innerHTML = `<i class="fa-solid ${isPlaying ? 'fa-pause' : 'fa-play'}"></i>`;
     }
+
+    // 1.5 Refrescar visualizadores de ondas laterales
+    const vizLeft = container.querySelector('#msc_visualizer_left');
+    const vizRight = container.querySelector('#msc_visualizer_right');
+    [vizLeft, vizRight].forEach(el => {
+      if (el) {
+        if (isPlaying) el.classList.add('playing');
+        else el.classList.remove('playing');
+      }
+    });
 
     // 2. Refrescar Pestaña de Favoritos (xx)
     const favTab = container.querySelector('[data-filter="favoritos"]');
@@ -478,6 +491,20 @@ export function bindMusicaEvents(container) {
       aplicarVolumen();
       guardarEstado();
       refrescarUICompleta();
+    },
+    onCopyPath: (btn) => {
+      const track = playlistActual[currentTrackIndex] || playlistActual[0];
+      if (track) {
+        const pathACopiar = track.ruta_completa || track.url || '';
+        if (pathACopiar) {
+          navigator.clipboard.writeText(pathACopiar).then(() => {
+            wiTip(btn, 'Ruta copiada al portapapeles', 'top', 1500);
+          }).catch(err => {
+            console.error('Copy error:', err);
+            wiTip(btn, 'Error al copiar ruta', 'top', 1500);
+          });
+        }
+      }
     }
   });
 
@@ -493,11 +520,27 @@ export function bindMusicaEvents(container) {
     },
     onRefresh: (btn) => { refrescarUICompleta(); wiTip(btn, 'Lista actualizada', 'top', 1500); },
     onAdd: () => {
-      abrirModalMusica(carpetasGuardadas, carpetaActivaId, {
-        onSeleccionarNuevaCarpeta: (nuevasCanciones, nombreCarpeta) => {
+      abrirModalMusica(carpetasGuardadas, carpetaActivaId, combinarRutas, {
+        onSeleccionarNuevaCarpeta: (nuevasCanciones, nombreCarpeta, rutaRaiz) => {
+          if (combinarRutas) {
+            const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
+            if (activa) {
+              let startId = activa.canciones.reduce((max, c) => Math.max(max, c.id), 0) + 1;
+              const cancionesMapeadas = nuevasCanciones.map((cancion, idx) => ({
+                ...cancion,
+                id: startId + idx
+              }));
+              activa.canciones = [...activa.canciones, ...cancionesMapeadas];
+              playlistActual = activa.canciones;
+              guardarEstado();
+              refrescarUICompleta();
+              return;
+            }
+          }
+
           const nuevaCarpeta = {
             id: 'folder_' + Date.now(),
-            nombre: nombreCarpeta,
+            nombre: rutaRaiz || nombreCarpeta,
             canciones: nuevasCanciones,
             fecha: new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'short' }),
             activa: true
@@ -508,7 +551,11 @@ export function bindMusicaEvents(container) {
           activarCarpetaPorId(nuevaCarpeta.id);
         },
         onActivarCarpeta: (folderId) => activarCarpetaPorId(folderId),
-        onEliminarCarpeta: (folderId) => eliminarCarpetaPorId(folderId)
+        onEliminarCarpeta: (folderId) => eliminarCarpetaPorId(folderId),
+        onToggleCombine: (checked) => {
+          combinarRutas = checked;
+          guardarEstado();
+        }
       });
     }
   });
