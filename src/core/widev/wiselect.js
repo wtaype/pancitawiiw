@@ -76,7 +76,7 @@ if (typeof document !== 'undefined') {
       left: 0;
       width: 100%;
       z-index: 9999;
-      background: var(--bg4);
+      background: var(--inp);
       border: 1px solid var(--brd);
       border-radius: 1.2vh;
       box-shadow: 0 12px 40px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.14);
