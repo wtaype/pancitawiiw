@@ -3,6 +3,7 @@
 // En servidor: pasar Astro.locals.lang o lang string. En cliente: langwii lee window.__l (0ms).
 
 import { langwii } from './langwii.js';
+import { getls } from './storage.js';
 
 export const Saludar = (nombre = '', lang = '') => {
   const hrs  = new Date().getHours();
@@ -13,4 +14,13 @@ export const Saludar = (nombre = '', lang = '') => {
       ? (isEn ? 'Good afternoon' : 'Buenas tardes')
       : (isEn ? 'Good evening'   : 'Buenas noches');
   return nombre ? `${saludo}, ${nombre}` : `${saludo},`;
+};
+
+// saludoSmile: obtiene el primer nombre del perfil wiSmile y saluda según la hora e idioma
+export const saludoSmile = (lang = '') => {
+  const perfil = getls('wiSmile');
+  const nombreCompleto = perfil ? (perfil.nombre || '') : '';
+  const primerNombre = nombreCompleto.trim().split(/\s+/)[0] || 'Campeon';
+  const activeLang = lang || langwii.get();
+  return Saludar(primerNombre, activeLang);
 };

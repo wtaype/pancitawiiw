@@ -1,21 +1,18 @@
 // src/core/state.js
 // Estado reactivo global de la aplicación (Tema Central y Comandos de Ventanas Nativas)
 
-import { witema } from '@widev';
+import { witema, getls, savels } from '@widev';
 import wii from '../wii.js';
 
 function obtenerTemaGuardado() {
   try {
-    if (typeof localStorage !== 'undefined') {
-      const t = localStorage.getItem('wiTema') || localStorage.getItem('witema');
-      if (t) {
-        if (t.startsWith('{')) {
-          const p = JSON.parse(t);
-          return p.value || p;
-        }
-        return t;
-      }
+    let t = getls('wiTema') || getls('witema');
+    if (!t && typeof localStorage !== 'undefined') {
+      t = localStorage.getItem('wiTema') || localStorage.getItem('witema');
     }
+    if (t) return t;
+    const perfil = getls('wiSmile');
+    if (perfil && perfil.tema) return perfil.tema;
   } catch (e) {}
   return wii.dtema || 'futuro';
 }
@@ -49,8 +46,15 @@ class GlobalState {
   setTema(nuevoTema) {
     this.tema = nuevoTema;
     try {
-      localStorage.setItem('wiTema', nuevoTema);
-      localStorage.setItem('witema', nuevoTema);
+      savels('wiTema', nuevoTema, null);
+      savels('witema', nuevoTema, null);
+
+      // Sincronizar el tema dentro del perfil wiSmile si existe
+      const perfil = getls('wiSmile');
+      if (perfil) {
+        perfil.tema = nuevoTema;
+        savels('wiSmile', perfil, null);
+      }
     } catch (e) {}
 
     if (document?.documentElement) {

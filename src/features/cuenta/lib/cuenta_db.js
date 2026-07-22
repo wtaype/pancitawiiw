@@ -5,7 +5,7 @@ import { getls, savels } from '@widev';
 
 // Clave en localStorage para compatibilidad
 const CLAVE_STORAGE = 'wiSmile';
-const HORAS_EXPIRACION = 87600; // 10 años para simular persistencia permanente
+const HORAS_EXPIRACION = null; // Almacenamiento permanente sin expiración
 
 // Datos iniciales por defecto (Principal Pancita Good)
 const PERFIL_DEFECTO = {

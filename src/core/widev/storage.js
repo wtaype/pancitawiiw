@@ -5,7 +5,8 @@ export function savels(clave, valor, horas = 24) {
   try {
     if (typeof localStorage === 'undefined') return false;
     if (!clave || typeof clave !== 'string') return false;
-    localStorage.setItem(clave, JSON.stringify({ value: valor, expiry: Date.now() + horas * 3600000 }));
+    const expiry = (horas === null || horas === false) ? null : Date.now() + horas * 3600000;
+    localStorage.setItem(clave, JSON.stringify({ value: valor, expiry }));
     return true;
   } catch(e) {
     console.error('esv:', e);
@@ -19,8 +20,21 @@ export function getls(clave) {
     if (!clave || typeof clave !== 'string') return null;
     const item = localStorage.getItem(clave);
     if (!item) return null;
-    const parsed = JSON.parse(item);
-    if (!parsed || Date.now() > parsed.expiry) {
+    
+    let parsed;
+    try {
+      parsed = JSON.parse(item);
+    } catch(parseErr) {
+      return item; // Retrocompatibilidad: Si no es JSON válido, retornar crudo
+    }
+    
+    // Retrocompatibilidad: Si es JSON pero no tiene el formato { value, expiry }
+    if (!parsed || typeof parsed !== 'object' || !('value' in parsed)) {
+      return parsed;
+    }
+    
+    // Solo expira si tiene un campo 'expiry' numérico y ya venció
+    if (parsed.expiry && Date.now() > parsed.expiry) {
       localStorage.removeItem(clave);
       return null;
     }

@@ -2,7 +2,7 @@
 // El cerebro del módulo que une y expone las utilidades segmentadas de widev/
 // v1.0.1: Añadido export de atajos.js
 
-export { Saludar } from './saludo.js';
+export { Saludar, saludoSmile } from './saludo.js';
 export { wiTip } from './witip.js';
 export { wiVista, herowi, showi, wiFade } from './animacion.js';
 export { wicopy } from './copy.js';
