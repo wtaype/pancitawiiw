@@ -464,6 +464,34 @@
   }
 }
 
+/* ==================== CENTRO APIS ==================== */
+#cuenta_section_apis .cuenta_card {
+  gap: 2.2vh;
+}
+
+.cuenta_form_tip {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  margin-top: 0.8vh;
+  line-height: 1.4;
+}
+
+/* Custom styling for API selects */
+.cuenta_card select.cuenta_form_select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.5vh center;
+  background-size: 1.8vh;
+  padding-right: 4.5vh;
+}
+
+.cuenta_card select.cuenta_form_select::-ms-expand {
+  display: none;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 900px) {
   .cuenta_grid {

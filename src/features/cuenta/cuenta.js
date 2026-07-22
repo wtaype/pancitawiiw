@@ -11,6 +11,7 @@ let tabActiva = 'perfil'; // 'perfil' | 'seguridad'
 export const TABS = [
   { id: 'perfil', label: 'Mi Perfil', icon: 'fa-user-astronaut', position: 'left', active: true },
   { id: 'seguridad', label: 'Seguridad', icon: 'fa-shield-halved', position: 'left' },
+  { id: 'apis', label: 'Centro APIs', icon: 'fa-cubes', position: 'left' },
   { id: 'guardar_perfil_action', label: 'Guardar', icon: 'fa-save', position: 'right', iconOnly:true }
 ];
 
@@ -132,6 +133,37 @@ export function arrancar(container) {
                 </div>
 
                 <button id="cuenta_guardar_pass_btn" class="cuenta_btn"><i class="fa-solid fa-shield-halved"></i> Actualizar Contraseña</button>
+              </div>
+            </div>
+
+            <!-- Pestaña Centro APIs -->
+            <div id="cuenta_section_apis" class="cuenta_section_content">
+              <div class="cuenta_card">
+                <h2 class="cuenta_card_tit"><i class="fa-solid fa-cubes"></i> Configuración de APIs</h2>
+                
+                <div class="cuenta_form_grp">
+                  <label for="cuenta_gemini_key"><i class="fa-solid fa-key"></i> Clave API de Gemini</label>
+                  <div class="cuenta_pass_wrap">
+                    <input type="password" id="cuenta_gemini_key" placeholder="AIzaSy...">
+                    <button type="button" class="cuenta_pass_eye" data-target="cuenta_gemini_key">
+                      <i class="fa-solid fa-eye-slash"></i>
+                    </button>
+                  </div>
+                  <p class="cuenta_form_tip">Esta clave se utilizará para realizar las peticiones de streaming de ChatWii.</p>
+                </div>
+
+                <div class="cuenta_form_grp">
+                  <label for="cuenta_gemini_model"><i class="fa-solid fa-brain"></i> Modelo Gemini Principal</label>
+                  <select id="cuenta_gemini_model" class="cuenta_form_select">
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recomendado - Rápido)</option>
+                    <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                    <option value="gemini-flash-latest">Gemini Flash Latest</option>
+                  </select>
+                  <p class="cuenta_form_tip">Modelo de lenguaje preferido para las respuestas del chat.</p>
+                </div>
+
+                <button id="cuenta_guardar_apis_btn" class="cuenta_btn"><i class="fa-solid fa-save"></i> Guardar APIs</button>
               </div>
             </div>
 
@@ -360,10 +392,35 @@ export function arrancar(container) {
     btnGuardarPass.addEventListener('click', guardarContrasena);
   }
 
+  // 6. Acción de Guardar APIs
+  const guardarApis = () => {
+    const inputKey = container.querySelector('#cuenta_gemini_key');
+    const selectModel = container.querySelector('#cuenta_gemini_model');
+    const keyVal = inputKey?.value.trim() || '';
+    const modelVal = selectModel?.value || 'gemini-2.5-flash';
+
+    localStorage.setItem('gemini_api_key', keyVal);
+    localStorage.setItem('gemini_model', modelVal);
+    Mensaje('¡Configuración de APIs guardada correctamente!', 'success');
+  };
+
+  const btnGuardarApis = container.querySelector('#cuenta_guardar_apis_btn');
+  if (btnGuardarApis) {
+    btnGuardarApis.addEventListener('click', guardarApis);
+  }
+
+  // Cargar clave API y modelo guardados
+  const savedKeyVal = localStorage.getItem('gemini_api_key') || '';
+  const savedModelVal = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
+  const inputKey = container.querySelector('#cuenta_gemini_key');
+  const selectModel = container.querySelector('#cuenta_gemini_model');
+  if (inputKey) inputKey.value = savedKeyVal;
+  if (selectModel) selectModel.value = savedModelVal;
+
   // --- NAVEGACIÓN ENTRE SUB-TABS ---
   const handleSubtabChange = (e) => {
     const subtabId = e.detail.subtabId;
-    if (subtabId === 'perfil' || subtabId === 'seguridad') {
+    if (subtabId === 'perfil' || subtabId === 'seguridad' || subtabId === 'apis') {
       tabActiva = subtabId;
       
       // Alternar clases activas en los contenedores de sección
@@ -383,6 +440,8 @@ export function arrancar(container) {
         guardarPerfil();
       } else if (tabActiva === 'seguridad') {
         guardarContrasena();
+      } else if (tabActiva === 'apis') {
+        guardarApis();
       }
     }
   };

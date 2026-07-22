@@ -77,7 +77,8 @@ export const rutas = {
 
     try {
       const folder = agente === 'chat' ? 'chatwii' : agente;
-      const modulo = await import(`../features/${folder}/${agente}.js`);
+      const file = agente === 'chat' ? 'chatwii' : agente;
+      const modulo = await import(`../features/${folder}/${file}.js`);
       
       // 3. Renderizar y vincular sub-tabs desde las exportaciones del módulo cargado
       const tabsWrapper = document.getElementById('wimain_tabs_wrapper');

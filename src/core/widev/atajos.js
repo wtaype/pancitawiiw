@@ -5,6 +5,19 @@ export function wiAtajo(keys, callback) {
   if (typeof window === 'undefined') return;
 
   const handler = (e) => {
+    // Omitir atajos si el foco está en un campo de texto o editor
+    const activeEl = document.activeElement;
+    if (
+      activeEl && (
+        activeEl.tagName === 'INPUT' || 
+        activeEl.tagName === 'TEXTAREA' || 
+        activeEl.isContentEditable || 
+        activeEl.contentEditable === 'true'
+      )
+    ) {
+      return;
+    }
+
     const targetKeys = keys.toLowerCase().split('+');
     
     const ctrlPressed  = targetKeys.includes('ctrl') || targetKeys.includes('control');

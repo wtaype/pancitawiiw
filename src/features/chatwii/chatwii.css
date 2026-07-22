@@ -1,0 +1,26 @@
+/* src/features/chatwii/chatwii.css */
+@import "./components/chat.css";
+
+/* Adaptar el Widget del Chat a la pantalla completa de Pancitawii */
+#chat_app_container,
+.chat_app_container,
+.cr_chat_widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+
+
+/* Permitir scroll libre y limpio en el body del chat */
+.chatwii_body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2vh 3vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+}
