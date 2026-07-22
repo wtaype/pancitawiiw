@@ -1,0 +1,275 @@
+/* src/features/reloj/componentes/personalizar.css */
+/* Diseño en dos columnas premium para personalización del reloj */
+
+.clock_pers_container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5vh;
+  padding: 1.5vh;
+  animation: wiFadeIn 0.3s ease;
+}
+
+.clock_pers_columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3vw;
+}
+
+@media (max-width: 1024px) {
+  .clock_pers_columns {
+    grid-template-columns: 1fr;
+    gap: 3vh;
+  }
+}
+
+.clock_pers_col {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 
+    0 8px 32px 0 var(--glass-shd), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-radius: 1.6vh;
+  padding: 3.5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+}
+
+.clock_pers_col_title {
+  font-size: var(--fz_l);
+  font-weight: 800;
+  color: var(--tx);
+  margin-top: 0;
+  margin-bottom: 1vh;
+  display: flex;
+  align-items: center;
+  gap: 1.2vh;
+  border-bottom: 1px solid var(--brd);
+  padding-bottom: 1.5vh;
+}
+
+.clock_pers_col_title i {
+  color: var(--mco);
+}
+
+/* --- Controls --- */
+.clock_config_group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+  width: 100%;
+}
+
+.clock_config_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3vh;
+  padding-bottom: 2.2vh;
+  border-bottom: 1px dashed var(--brd);
+}
+
+.clock_config_row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.clock_config_label {
+  font-size: var(--fz_m);
+  font-weight: 700;
+  color: var(--tx1);
+}
+
+.clock_setting_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+  flex: 1;
+}
+
+.clock_setting_title {
+  font-size: var(--fz_m);
+  font-weight: 700;
+  color: var(--tx1);
+}
+
+.clock_setting_desc {
+  font-size: var(--fz_s3);
+  color: var(--tx2);
+  line-height: 1.4;
+}
+
+/* --- Color Palette --- */
+.clock_color_palette {
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+  flex-wrap: wrap;
+}
+
+.clock_color_dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.clock_color_dot.active {
+  border-color: var(--tx);
+  transform: scale(1.15);
+}
+
+.clock_color_dot.neon-cyan {
+  background-color: #00f2fe;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+}
+.clock_color_dot.neon-green {
+  background-color: #39ff14;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+}
+.clock_color_dot.neon-pink {
+  background-color: #ff007f;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+}
+.clock_color_dot.neon-gold {
+  background-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+.clock_color_dot.neon-purple {
+  background-color: #bd00ff;
+  box-shadow: 0 0 10px rgba(189, 0, 255, 0.5);
+}
+.clock_color_dot.retro-white {
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* --- iOS Switches --- */
+.clock_ios_switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.clock_ios_switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.clock_ios_slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg4);
+  border: 1px solid var(--brd);
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 34px;
+}
+
+.clock_ios_slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.clock_ios_switch input:checked + .clock_ios_slider {
+  background-color: var(--success, #10b981);
+  border-color: var(--success, #10b981);
+}
+
+.clock_ios_switch input:checked + .clock_ios_slider:before {
+  transform: translateX(22px);
+}
+
+/* --- Range Slider --- */
+.clock_range_slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 4px;
+  outline: none;
+  transition: background 0.3s;
+}
+
+.clock_range_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--mco);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--mco);
+  transition: transform 0.1s;
+}
+
+.clock_range_slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.clock_range_slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: var(--mco);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--mco);
+  transition: transform 0.1s;
+}
+
+.clock_range_slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* --- Exit Button --- */
+.clock_pers_actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.clock_exit_btn {
+  background: var(--bg3);
+  border: 1px solid var(--brd);
+  color: var(--tx1);
+  padding: 1.4vh 3.2vh;
+  border-radius: 0.8vh;
+  font-size: var(--fz_m);
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  transition: all var(--tr_f);
+}
+
+.clock_exit_btn:hover {
+  background: var(--brd);
+  border-color: var(--mco);
+  color: var(--mco);
+}
+
+.clock_select_native {
+  width: 100%;
+}

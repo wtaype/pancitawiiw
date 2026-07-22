@@ -63,15 +63,25 @@
 }
 
 .reloj_hero_clock {
-  font-size: clamp(2rem, 10vw, 5.2rem);
+  font-size: var(--reloj-font-size, clamp(2rem, 10vw, 5.2rem));
   font-weight: 800;
   letter-spacing: 2px;
-  color: var(--mco);
+  color: var(--reloj-color-text, var(--mco));
   text-align: center;
-  font-family: var(--ff_T, 'Orbitron'), sans-serif;
-  text-shadow: 0 0 1.5vh var(--bg5);
+  font-family: var(--reloj-font-family, var(--ff_T, 'Orbitron'));
+  text-shadow: var(--reloj-glow, 0 0 1.5vh var(--bg5));
   line-height: 1;
   white-space: nowrap;
+  transition: color var(--tr_f), text-shadow var(--tr_f), font-family var(--tr_f), font-size var(--tr_f);
+}
+
+.reloj_hero_date_sub {
+  font-size: clamp(10px, 0.7vw, 12px);
+  color: var(--tx2);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-top: -0.2vh;
+  transition: all var(--tr_f);
 }
 
 .reloj_hero_footer {
