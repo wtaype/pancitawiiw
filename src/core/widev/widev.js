@@ -31,6 +31,7 @@ export { wiInit } from './wiinit.js';
 export { langwii, getLang } from './langwii.js';
 export { wiDropdown, cerrarTodosLosDropdowns } from './dropdown.js';
 export { wiSelect } from './wiselect.js';
+export { wiSugerencias } from './sugerencias.js';
 export { wiAtajo } from './atajos.js';
 export { wiGaleria } from './galeria.js';
 export { wiEditor } from './editor.js';

@@ -66,7 +66,7 @@
   border: 1px solid var(--brd);
 }
 
-.tab_btn {
+.horario_tab_btn {
   background: transparent;
   border: none;
   color: var(--tx2);
@@ -81,11 +81,11 @@
   transition: all var(--tr_f);
 }
 
-.tab_btn:hover {
+.horario_tab_btn:hover {
   color: var(--tx1);
 }
 
-.tab_btn.active {
+.horario_tab_btn.active {
   background: var(--mco);
   color: var(--txa);
 }
@@ -103,7 +103,7 @@
   box-shadow: var(--bs_l);
 }
 
-.live_status_left {
+.horario_live_status_left {
   display: flex;
   align-items: center;
   gap: 0.6vw;
@@ -112,12 +112,12 @@
   color: var(--tx1);
 }
 
-.live_status_left i {
+.horario_live_status_left i {
   color: var(--mco);
   font-size: var(--fz_m2);
 }
 
-.live_status_right {
+.horario_live_status_right {
   font-size: var(--fz_s4);
   font-weight: 600;
   color: var(--tx2);
@@ -136,7 +136,7 @@
   background: var(--bg3);
 }
 
-.dia_column {
+.horario_dia_column {
   background: var(--bg3);
   padding: 1.2vh 0.5vw;
   display: flex;
@@ -146,22 +146,22 @@
   box-sizing: border-box;
 }
 
-.dia_column:last-child {
+.horario_dia_column:last-child {
   border-right: none;
 }
 
 /* Bordes redondeados unificados en esquinas de la tabla */
-.dia_column:first-child {
+.horario_dia_column:first-child {
   border-top-left-radius: 1.2vh;
   border-bottom-left-radius: 1.2vh;
 }
 
-.dia_column:last-child {
+.horario_dia_column:last-child {
   border-top-right-radius: 1.2vh;
   border-bottom-right-radius: 1.2vh;
 }
 
-.dia_column_header {
+.horario_dia_column_header {
   font-size: var(--fz_s4);
   font-weight: 700;
   color: var(--mco);
@@ -172,7 +172,7 @@
   border-bottom: 1px solid var(--brd);
 }
 
-.bloque_card_preview {
+.horario_bloque_card_preview {
   background: var(--bg4);
   border: 1px solid var(--brd);
   border-radius: 0.6vh;
@@ -185,7 +185,7 @@
   transition: border-color var(--tr_f);
 }
 
-.bloque_card_preview::before {
+.horario_bloque_card_preview::before {
   content: '';
   position: absolute;
   top: 0;
@@ -196,132 +196,104 @@
   background: var(--bloque-color, var(--mco));
 }
 
-.bloque_card_preview:hover {
+.horario_bloque_card_preview:hover {
   border-color: var(--mco);
 }
 
-.bloque_hora {
-  font-size: var(--fz_s2);
+.horario_bloque_hora {
+  font-size: var(--fz_s5);
   font-weight: 700;
-  color: var(--tx2);
-  letter-spacing: -0.2px;
+  color: var(--tx3);
 }
 
-.bloque_titulo {
+.horario_bloque_titulo {
   font-size: var(--fz_s4);
   font-weight: 600;
   color: var(--tx1);
-  line-height: 1.2;
+  word-break: break-word;
 }
 
-.bloque_tipo_badge {
-  font-size: var(--fz_s1);
+.horario_bloque_tipo_badge {
+  font-size: var(--fz_s3);
   font-weight: 700;
-  text-transform: uppercase;
   color: var(--mco);
-  display: flex;
-  align-items: center;
-  gap: 0.3vw;
-  margin-top: 0.2vh;
+  margin-top: 0.4vh;
 }
 
-/* ==================== VISTA EDITAR CON BOTONES EDITAR Y ELIMINAR ==================== */
+/* ==================== VISTA EDICIÓN ==================== */
 .horario_editor_box {
-  background: var(--bg3);
-  border: 1px solid var(--brd);
-  border-radius: 1.2vh;
-  padding: 2vh 1.8vw;
   display: flex;
   flex-direction: column;
-  gap: 1.8vh;
+  gap: 2.5vh;
 }
 
-.editor_top_bar {
+.horario_editor_top_bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1vw;
-  flex-wrap: wrap;
+  border-bottom: 1px solid var(--brd);
+  padding-bottom: 1.5vh;
 }
 
-.editor_selector_dias {
+.horario_editor_selector_dias {
   display: flex;
   align-items: center;
   gap: 0.4vw;
   flex-wrap: wrap;
 }
 
-.dia_pill {
-  background: var(--inp);
+.horario_dia_pill {
+  background: var(--bg4);
   border: 1px solid var(--brd);
   color: var(--tx2);
-  padding: 0.8vh 1.1vw;
-  border-radius: 0.6vh;
+  padding: 0.6vh 1vw;
+  border-radius: 5vh;
   font-size: var(--fz_s4);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--tr_f);
 }
 
-.dia_pill:hover {
+.horario_dia_pill:hover {
   border-color: var(--mco);
   color: var(--tx1);
 }
 
-.dia_pill.active {
+.horario_dia_pill.active {
   background: var(--mco);
   color: var(--txa);
   border-color: var(--mco);
 }
 
-.btn_reset_rutina {
-  background: var(--bg4);
-  color: var(--tx2);
-  border: 1px solid var(--brd);
-  padding: 0.8vh 1vw;
-  border-radius: 0.6vh;
-  font-size: var(--fz_s3);
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-  transition: all var(--tr_f);
-}
-
-.btn_reset_rutina:hover {
-  border-color: var(--mco);
-  color: var(--mco);
-}
-
-/* Formulario de Agregar / Editar Bloque */
-.form_agregar_bloque {
-  background: var(--wb);
+/* Formulario de Adición de Bloques */
+.horario_form_agregar_bloque {
+  background: var(--bg3);
   border: 1px solid var(--brd);
   border-radius: 1vh;
-  padding: 1.5vh 1.2vw;
+  padding: 1.8vh 1.5vw;
   display: flex;
   align-items: center;
   gap: 0.8vw;
   flex-wrap: wrap;
+  position: relative;
 }
 
-.form_field {
+.horario_form_field {
   display: flex;
   flex-direction: column;
   gap: 0.4vh;
   flex: 1;
-  min-width: 110px;
+  min-width: 130px;
 }
 
-.form_field label {
+.horario_form_field label {
   font-size: var(--fz_s2);
   font-weight: 700;
   color: var(--tx2);
   text-transform: uppercase;
 }
 
-.form_field input, .form_field select {
+.horario_form_field input, .horario_form_field select {
   background: var(--inp);
   border: 1px solid var(--brd);
   color: var(--tx1);
@@ -330,13 +302,15 @@
   font-size: var(--fz_s4);
   outline: none;
   transition: border-color var(--tr_f);
+  height: 4vh;
+  box-sizing: border-box;
 }
 
-.form_field input:focus, .form_field select:focus {
+.horario_form_field input:focus, .horario_form_field select:focus {
   border-color: var(--mco);
 }
 
-.btn_agregar_submit {
+.horario_btn_agregar_submit {
   background: var(--mco);
   color: var(--txa);
   border: none;
@@ -350,20 +324,22 @@
   align-items: center;
   gap: 0.5vw;
   transition: all var(--tr_f);
+  height: 4vh;
+  box-sizing: border-box;
 }
 
-.btn_agregar_submit:hover {
+.horario_btn_agregar_submit:hover {
   opacity: 0.9;
 }
 
 /* Lista de Bloques en Editor */
-.editor_lista_bloques {
+.horario_editor_lista_bloques {
   display: flex;
   flex-direction: column;
   gap: 0.8vh;
 }
 
-.bloque_editor_row {
+.horario_bloque_editor_row {
   background: var(--wb);
   border: 1px solid var(--brd);
   border-radius: 0.8vh;
@@ -374,54 +350,32 @@
   gap: 1vw;
 }
 
-.bloque_editor_info {
+.horario_bloque_editor_info {
   display: flex;
   align-items: center;
   gap: 1vw;
 }
 
-.bloque_editor_time {
+.horario_bloque_editor_time {
   font-size: var(--fz_s4);
   font-weight: 700;
   color: var(--mco);
   min-width: 110px;
 }
 
-.bloque_editor_title {
+.horario_bloque_editor_title {
   font-size: var(--fz_m1);
   font-weight: 600;
   color: var(--tx1);
 }
 
-.bloque_action_btns {
+.horario_bloque_action_btns {
   display: flex;
   align-items: center;
   gap: 0.4vw;
 }
 
-.bloque_btn_edit {
-  background: var(--bg4);
-  color: var(--mco);
-  border: 1px solid var(--brd);
-  width: 3.2vh;
-  height: 3.2vh;
-  border-radius: 0.6vh;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--tr_f);
-}
-
-.bloque_btn_edit:hover,
-.bloque_btn_edit.active {
-  background: var(--mco);
-  color: var(--txa);
-  border-color: var(--mco);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-}
-
-.bloque_btn_delete {
+.horario_bloque_btn_edit {
   background: var(--bg4);
   color: var(--tx3);
   border: 1px solid var(--brd);
@@ -435,7 +389,29 @@
   transition: all var(--tr_f);
 }
 
-.bloque_btn_delete:hover {
+.horario_bloque_btn_edit:hover,
+.horario_bloque_btn_edit.active {
+  background: var(--mco);
+  color: var(--txa);
+  border-color: var(--mco);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.horario_bloque_btn_delete {
+  background: var(--bg4);
+  color: var(--tx3);
+  border: 1px solid var(--brd);
+  width: 3.2vh;
+  height: 3.2vh;
+  border-radius: 0.6vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--tr_f);
+}
+
+.horario_bloque_btn_delete:hover {
   background: #e11d48;
   color: #fff;
   border-color: #e11d48;
@@ -454,8 +430,8 @@
   margin-top: 1vh;
 }
 
-.form_field_wide {
-  flex: 2;
+.horario_form_field_wide {
+  flex: 1.6;
 }
 
 .hr_modal_subtitle {
@@ -465,7 +441,7 @@
   text-transform: uppercase;
 }
 
-.bloque_tipo_badge_spacing {
+.horario_bloque_tipo_badge_spacing {
   margin-left: 1vw;
 }
 
@@ -474,3 +450,110 @@
   color: var(--tx2);
 }
 
+/* ==================== FASE 2: PRESETS ==================== */
+.horario_form_lbl_duracion {
+  color: var(--mco);
+  font-weight: 700;
+  margin-left: 1vh;
+  font-size: var(--fz_s4);
+}
+
+/* ==================== PREMIUM WI-SELECT & INPUT[TIME] OVERRIDES ==================== */
+.wi-select-trigger {
+  padding: 0.8vh 0.8vw !important;
+  height: 4vh !important;
+  min-height: unset !important;
+  background: var(--inp) !important;
+  border: 1px solid var(--brd) !important;
+  border-radius: 0.6vh !important;
+  box-sizing: border-box;
+}
+
+.wi-select-label {
+  font-size: var(--fz_s4) !important;
+  color: var(--tx1) !important;
+  font-family: var(--ff_P) !important;
+  line-height: 1.4;
+}
+
+.horario_form_agregar_bloque input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* Invertir el icono de reloj en tema oscuro futuro para que tome el color claro --tx */
+:root[data-theme="futuro"] .horario_form_agregar_bloque input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) !important;
+}
+
+/* ==================== FASE 3: HIGHLIGHTS EN VIVO & HOY ==================== */
+.horario_dia_column.horario_dia_hoy {
+  background: rgba(100, 110, 255, 0.04) !important;
+  border-left: 1px dashed var(--mco) !important;
+  border-right: 1px dashed var(--mco) !important;
+  box-shadow: inset 0 0 12px rgba(100, 110, 255, 0.06);
+  position: relative;
+}
+
+.horario_hoy_badge {
+  background: var(--mco);
+  color: var(--txa);
+  font-size: var(--fz_s6);
+  font-weight: 800;
+  padding: 0.2vh 0.6vw;
+  border-radius: 2vh;
+  margin-left: 0.5vw;
+  display: inline-block;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.horario_bloque_card_preview.horario_bloque_activo {
+  border-color: var(--mco) !important;
+  box-shadow: 0 0 15px var(--mco) !important;
+  animation: horario_activo_pulse 2s infinite ease-in-out;
+}
+
+@keyframes horario_activo_pulse {
+  0% {
+    box-shadow: 0 0 6px rgba(100, 110, 255, 0.15);
+    border-color: var(--brd);
+  }
+  50% {
+    box-shadow: 0 0 16px var(--mco);
+    border-color: var(--mco);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(100, 110, 255, 0.15);
+    border-color: var(--brd);
+  }
+}
+
+.horario_live_badge {
+  position: absolute;
+  top: 0.8vh;
+  right: 0.5vw;
+  font-size: var(--fz_s6);
+  font-weight: 800;
+  color: var(--tx1);
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+  background: var(--bg3);
+  padding: 0.2vh 0.6vw;
+  border-radius: 0.4vh;
+  border: 1px solid var(--brd);
+}
+
+.horario_live_dot {
+  width: 6px;
+  height: 6px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  display: inline-block;
+  animation: horario_blink_dot 1s infinite alternate;
+}
+
+@keyframes horario_blink_dot {
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
