@@ -94,17 +94,110 @@
   backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
 }
 
-/* RELOJ DIGITAL IMPRESIONANTE GIGANTE (Escalado en vh) */
-.welcome_clock {
-  font-size: clamp(3.5rem, 8.5vh, 7rem);
+/* === DISEÑO DE CONTENIDO SPLIT (NUEVO) === */
+.welcome_body_split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4vh;
+  padding: 3vh 0;
+  width: 100%;
+}
+
+.welcome_left_side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  flex: 1.2;
+}
+
+.welcome_right_side {
+  display: flex;
+  flex-direction: column;
+  flex: 0.8;
+  justify-content: center;
+  min-width: 280px;
+}
+
+.welcome_user_greeting {
+  font-size: clamp(1.8rem, 4vh, 2.5rem);
+  font-weight: 800;
+  color: var(--tx1);
+  margin: 0;
+  font-family: var(--ff_O);
+  letter-spacing: -0.5px;
+}
+
+.welcome_motivation_quote {
+  font-size: var(--fz_m1);
+  color: var(--tx2);
+  font-style: italic;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* === BANNER DE ACTIVIDAD DEL HORARIO === */
+.inicio_actividad_banner {
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 1.8vh;
+  padding: 2.2vh 3vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8vh;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  box-shadow: 0 4px 12px var(--glass-shd);
+  transition: all 0.3s ease;
+}
+
+.inicio_actividad_banner.active {
+  border-left: 4px solid var(--mco);
+}
+
+.inicio_actividad_banner.free {
+  border-left: 4px solid var(--success);
+}
+
+.actividad_banner_label {
+  font-size: var(--fz_s4);
   font-weight: 800;
   color: var(--mco);
-  font-family: var(--ff_P);
-  letter-spacing: 1.5px;
-  line-height: 1.05;
-  text-shadow: 0 0 2.5vh var(--bg5);
-  margin: 0.5vh 0;
-  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.inicio_actividad_banner.free .actividad_banner_label {
+  color: var(--success);
+}
+
+.actividad_banner_title {
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  color: var(--tx1);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.actividad_banner_time {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .welcome_body_split {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3vh;
+    padding: 2vh 0;
+  }
+  .welcome_right_side {
+    min-width: 100%;
+  }
 }
 
 /* Fila Inferior: Bottom Left (Fecha 40%) & Bottom Right (Texto 56%) */
@@ -265,6 +358,54 @@
   border-color: var(--mco);
   box-shadow: 0 4px 16px 0 var(--glass-shd);
   transform: translateY(-1px);
+}
+
+/* === WIDGET PROGRESO DEL DÍA (NUEVO EN INICIO) === */
+.inicio_progress_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  margin: 1.5vh 0;
+  width: 100%;
+}
+
+.inicio_progress_info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.inicio_progress_label {
+  font-size: var(--fz_s3);
+  font-weight: 700;
+  color: var(--tx1);
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+}
+
+.inicio_progress_pct {
+  font-size: var(--fz_s3);
+  font-weight: 800;
+  color: var(--mco);
+}
+
+.inicio_progress_bar {
+  width: 100%;
+  height: 0.8vh;
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  overflow: hidden;
+}
+
+.inicio_progress_fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--mco), var(--success));
+  border-radius: 1vh;
+  transition: width 0.5s ease;
 }
 
 

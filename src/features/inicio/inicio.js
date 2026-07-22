@@ -1,16 +1,16 @@
 // src/features/inicio/inicio.js
-// Módulo de Inicio Asistente & Dashboard de Productividad (Hero Clock & herowi Animation & Pancita Roles)
+// Módulo de Inicio Asistente & Dashboard de Productividad (Con widgets de rutina, progreso del día y sin reloj duplicado)
 
 import { Saludar, fechaHoy, Capi } from '@widev';
 import state from '../../core/state.js';
 import { rutas } from '@core/rutas.js';
+import { horarioDB } from '../horario/lib/horario_db.js';
+import { obtenerBloqueActual } from '../horario/lib/horario_dev.js';
+import { obtenerProgresoDia } from './lib/progreso.js';
 import './inicio.css';
 
-// ⏱️ TIEMPO DE ROTACIÓN EN SEGUNDOS (Fácil de cambiar: 30, 60, etc.)
-let TIEMPO_HERO = 7;
-
-let clockTimer = null;
 let rolesTimer = null;
+let progressTimer = null;
 
 // Array de frases cortas, útiles y con íconos positivos
 const MENSAJES_PANCITA = [
@@ -23,18 +23,37 @@ const MENSAJES_PANCITA = [
 
 export function arrancar(container) {
   // Limpiar temporizadores previos si existían
-  if (clockTimer) clearInterval(clockTimer);
   if (rolesTimer) clearInterval(rolesTimer);
+  if (progressTimer) clearInterval(progressTimer);
 
   const hrs = new Date().getHours();
   const iconoSolLuna = hrs >= 6 && hrs < 18 ? 'fa-cloud-sun' : 'fa-moon';
-  const saludoTag = `${Saludar().toUpperCase()}  PANCITA!`;
+  const saludoLimpioTag = Saludar().trim().replace(/,$/, '');
+  const saludoTag = `${saludoLimpioTag.toUpperCase()}  PANCITA!`;
   const fechaTexto = fechaHoy();
-  const temaActual = state.tema || 'futuro';
+
+  // Obtener bloque de actividad actual
+  const listaHorario = horarioDB.obtenerHorario();
+  const bloqueActual = obtenerBloqueActual(listaHorario);
+
+  const activeBlockHTML = bloqueActual
+    ? `
+      <div class="inicio_actividad_banner active hwi_item">
+        <div class="actividad_banner_label"><i class="fa-solid fa-hourglass-half"></i> En curso ahora</div>
+        <div class="actividad_banner_title">${bloqueActual.titulo}</div>
+        <div class="actividad_banner_time">${bloqueActual.horaInicio} a ${bloqueActual.horaFin}</div>
+      </div>
+    `
+    : `
+      <div class="inicio_actividad_banner free hwi_item">
+        <div class="actividad_banner_label"><i class="fa-solid fa-mug-hot"></i> Tiempo Libre</div>
+        <div class="actividad_banner_title">¡Es momento de descansar o avanzar libremente!</div>
+      </div>
+    `;
 
   container.innerHTML = `
     <div class="inicio_container">
-      <!-- Banner Hero de Bienvenida con Reloj Masivo vh -->
+      <!-- Banner Hero de Bienvenida Refactorizado -->
       <div class="welcome_banner">
         <div class="welcome_top_bar">
           <div class="welcome_tag hwi_item">
@@ -45,8 +64,26 @@ export function arrancar(container) {
           </div>
         </div>
 
-        <div class="welcome_clock hwi_item" id="inicio_live_clock">
-          --:--:--
+        <!-- Área de contenido Split: Información de productividad y rutina -->
+        <div class="welcome_body_split hwi_item">
+          <div class="welcome_left_side">
+            <h1 class="welcome_user_greeting" id="welcome_user_greeting">¡Hola!</h1>
+            <p class="welcome_motivation_quote" id="welcome_motivation_quote"></p>
+          </div>
+          <div class="welcome_right_side">
+            ${activeBlockHTML}
+          </div>
+        </div>
+
+        <!-- Progreso del Día (Nuevo en Inicio para evitar redundancia en barra lateral) -->
+        <div class="inicio_progress_container hwi_item">
+          <div class="inicio_progress_info">
+            <span class="inicio_progress_label"><i class="fa-solid fa-chart-line"></i> Progreso del Día</span>
+            <span class="inicio_progress_pct" id="inicio_progress_pct">0%</span>
+          </div>
+          <div class="inicio_progress_bar">
+            <div class="inicio_progress_fill" id="inicio_progress_fill"></div>
+          </div>
         </div>
 
         <div class="banner_bottom_bar">
@@ -110,17 +147,39 @@ export function arrancar(container) {
     </div>
   `;
 
-  // 1. Reloj gigante en vivo en el hero banner
-  const clockEl = container.querySelector('#inicio_live_clock');
-  const updateClock = () => {
-    if (clockEl) {
-      clockEl.textContent = new Date().toLocaleTimeString();
-    }
-  };
-  updateClock();
-  clockTimer = setInterval(updateClock, 1000);
+  // 1. Cargar saludo personalizado libre de doble coma
+  const nombre = localStorage.getItem('chatwii_usuario_nombre') || 'Pancita';
+  const greetingEl = container.querySelector('#welcome_user_greeting');
+  if (greetingEl) {
+    greetingEl.innerHTML = `¡${saludoLimpioTag}, <span class="cuenta_val_capitalize">${nombre.trim()}</span>! 👋`;
+  }
 
-  // 2. Rotación de mensajes Pancita según TIEMPO_HERO (en ms)
+  // 2. Frase motivacional rotativa del día
+  const FRASES_MOTIVACIONALES = [
+    "El único modo de hacer un gran trabajo es amar lo que haces. 🚀",
+    "La productividad no es ser inteligente, es ser disciplinado. 💡",
+    "Pequeños pasos todos los días conducen a grandes resultados. 🌟",
+    "Mantén tu enfoque activo, la constancia vence al talento. 🎓",
+    "Aprovecha cada hora de hoy, el tiempo es tu recurso más valioso. ⏰"
+  ];
+  const fraseHoy = FRASES_MOTIVACIONALES[new Date().getDay() % FRASES_MOTIVACIONALES.length];
+  const quoteEl = container.querySelector('#welcome_motivation_quote');
+  if (quoteEl) {
+    quoteEl.textContent = fraseHoy;
+  }
+
+  // 3. Progreso del Día Reactivo en Vivo
+  const pctEl = container.querySelector('#inicio_progress_pct');
+  const fillEl = container.querySelector('#inicio_progress_fill');
+  const actualizarProgreso = () => {
+    const pct = obtenerProgresoDia();
+    if (pctEl) pctEl.textContent = `${pct}%`;
+    if (fillEl) fillEl.style.width = `${pct}%`;
+  };
+  actualizarProgreso();
+  progressTimer = setInterval(actualizarProgreso, 1000);
+
+  // 4. Rotación de mensajes Pancita según TIEMPO_HERO
   let roleIdx = 0;
   const roles = container.querySelectorAll('.pancita_role_item');
   if (roles.length) {
@@ -128,15 +187,14 @@ export function arrancar(container) {
       roles[roleIdx].classList.remove('active');
       roleIdx = (roleIdx + 1) % roles.length;
       roles[roleIdx].classList.add('active');
-    }, TIEMPO_HERO * 1000);
+    }, 7000);
   }
 
-  // 3. Eventos de navegación en las Cards
+  // 5. Eventos de navegación en las Cards
   container.querySelectorAll('[data-nav]').forEach(btn => {
     btn.addEventListener('click', () => {
       const path = btn.getAttribute('data-nav');
       if (path) rutas.navegar(path);
     });
   });
-
 }

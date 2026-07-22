@@ -216,11 +216,11 @@
 }
 
 #sidebar_reloj_wrapper {
-  height: 42%; /* Ajuste relativo a la altura de la pantalla */
+  height: 25%; /* Ajuste relativo a la altura de la pantalla */
   min-height: 180px;
 }
 
 #sidebar_musica_wrapper {
-  height: 55.2%; /* Ajuste relativo a la altura de la pantalla */
+  height: 72.1%; /* Ajuste relativo a la altura de la pantalla */
   min-height: 150px;
 }
