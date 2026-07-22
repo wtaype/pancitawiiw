@@ -44,7 +44,9 @@ macro_rules! registrar_puentes {
 
             // Puente hacia Música (Reproductor de Audio)
             $crate::funciones::musica::musica::seleccionar_carpeta_musica_comando,
-            $crate::funciones::musica::musica::descargar_cancion_youtube_comando
+            $crate::funciones::musica::musica::descargar_cancion_youtube_comando,
+            $crate::funciones::musica::musica::escanear_carpeta_musica_comando,
+            $crate::funciones::musica::musica::obtener_y_escanear_musica_sistema_comando
         ]
     };
 }

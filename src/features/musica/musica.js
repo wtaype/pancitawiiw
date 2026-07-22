@@ -10,6 +10,8 @@ import { renderFiltros, bindFiltrosEvents } from '@features/musica/componentes/f
 import { renderListaItems, bindListaItemsEvents } from '@features/musica/componentes/lista_items.js';
 import { renderMisCarpetasHTML } from '@features/musica/componentes/ruta_local.js';
 import { rutas } from '@core/rutas.js';
+import { Mensaje } from '@core/widev/mensajes.js';
+import { wiSpin } from '@core/widev/spin.js';
 import '@features/musica/musica.css';
 
 const DEFAULT_PLAYLIST = obtenerListaPredeterminada();
@@ -150,6 +152,42 @@ audio.volume = isMuted ? 0 : volume;
 
 function aplicarVolumen() {
   audio.volume = isMuted ? 0 : volume;
+}
+
+async function inicializarCarpetaSistema() {
+  if (typeof window === 'undefined' || !(window.__TAURI__ || window.__TAURI_INTERNALS__)) return;
+  try {
+    const { invoke } = window.__TAURI__.core || window.__TAURI__.tauri;
+    const res = await invoke('obtener_y_escanear_musica_sistema_comando');
+    if (res && res.ruta_raiz) {
+      const existe = carpetasGuardadas.some(c => c.nombre === res.ruta_raiz || c.id === 'folder_system');
+      if (!existe) {
+        const nuevaCarpeta = {
+          id: 'folder_system',
+          nombre: res.ruta_raiz,
+          canciones: res.canciones,
+          fecha: 'Sistema',
+          activa: false
+        };
+        carpetasGuardadas.push(nuevaCarpeta);
+        guardarEstado();
+        if (combinarTodas) {
+          actualizarPlaylistCombinada();
+        } else {
+          refrescarUICompleta();
+        }
+      } else {
+        const folder = carpetasGuardadas.find(c => c.nombre === res.ruta_raiz || c.id === 'folder_system');
+        if (folder) {
+          folder.canciones = res.canciones;
+          guardarEstado();
+          refrescarUICompleta();
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('No se pudo inicializar la carpeta de música del sistema:', e);
+  }
 }
 
 let atajosLimpieza = [];
@@ -656,7 +694,59 @@ export function bindMusicaEvents(container) {
       const totalPaginas = Math.ceil(playlistFiltrada().length / TAMANO_PAGINA) || 1;
       if (paginaActual < totalPaginas) { paginaActual++; refrescarUICompleta(); }
     },
-    onRefresh: (btn) => { refrescarUICompleta(); wiTip(btn, 'Lista actualizada', 'top', 1500); },
+    onRefresh: async (btn) => {
+      wiSpin(btn, true);
+      
+      let totalNuevosTemas = 0;
+      let totalCarpetasEscaneadas = 0;
+
+      if (typeof window !== 'undefined' && (window.__TAURI__ || window.__TAURI_INTERNALS__)) {
+        try {
+          const { invoke } = window.__TAURI__.core || window.__TAURI__.tauri;
+          
+          for (let i = 0; i < carpetasGuardadas.length; i++) {
+            const folder = carpetasGuardadas[i];
+            if (folder.id !== 'default') {
+              try {
+                const res = await invoke('escanear_carpeta_musica_comando', { ruta: folder.nombre });
+                if (res && res.canciones) {
+                  const prevCount = folder.canciones?.length || 0;
+                  folder.canciones = res.canciones;
+                  const diff = res.canciones.length - prevCount;
+                  if (diff > 0) {
+                    totalNuevosTemas += diff;
+                  }
+                  totalCarpetasEscaneadas++;
+                }
+              } catch (err) {
+                console.error('Error al actualizar carpeta:', folder.nombre, err);
+              }
+            }
+          }
+        } catch (globalErr) {
+          console.error('Error global de Tauri en refresh:', globalErr);
+        }
+      }
+
+      wiSpin(btn, false);
+
+      if (combinarTodas) {
+        actualizarPlaylistCombinada();
+      } else {
+        const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
+        playlistActual = activa.canciones || DEFAULT_PLAYLIST;
+        guardarEstado();
+        refrescarUICompleta();
+      }
+
+      if (totalNuevosTemas > 0) {
+        Mensaje(`Se agregaron ${totalNuevosTemas} canciones nuevas a tus carpetas`, 'success');
+      } else if (totalCarpetasEscaneadas > 0) {
+        Mensaje('Tus carpetas de música ya están al día', 'success');
+      } else {
+        Mensaje('No hay carpetas físicas agregadas para actualizar', 'info');
+      }
+    },
     onAdd: async () => {
       const panel = document.getElementById('wimain_content');
       if (!panel) return;
@@ -701,6 +791,7 @@ export function bindMusicaEvents(container) {
                 guardarEstado();
                 refrescarUICompleta();
               }
+              Mensaje(`Se combinaron ${nuevasCanciones.length} canciones a la lista activa`, 'success');
               return;
             }
           }
@@ -720,6 +811,7 @@ export function bindMusicaEvents(container) {
           } else {
             activarCarpetaPorId(nuevaCarpeta.id);
           }
+          Mensaje(`Carpeta "${nombreCarpeta}" agregada con ${nuevasCanciones.length} canciones`, 'success');
         },
         onActivarCarpeta: (folderId) => activarCarpetaPorId(folderId),
         onEliminarCarpeta: (folderId) => {
@@ -812,4 +904,5 @@ export function bindMusicaEvents(container) {
   }
 
   refrescarUICompleta();
+  inicializarCarpetaSistema();
 }

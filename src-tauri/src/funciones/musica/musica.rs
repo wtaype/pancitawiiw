@@ -29,3 +29,44 @@ pub async fn descargar_cancion_youtube_comando(
     }
     youtube_lista::descargar_cancion_youtube_interno(app, url, final_dest).await
 }
+
+#[tauri::command]
+pub async fn escanear_carpeta_musica_comando(ruta: String) -> Result<RespuestaMusica, String> {
+    let folder_path = std::path::Path::new(&ruta);
+    if !folder_path.exists() {
+        return Err("La carpeta no existe".to_string());
+    }
+    let folder_name = folder_path
+        .file_name()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .to_string();
+
+    let mut canciones = Vec::new();
+    let mut contador = 0;
+    local_lista::recorrer_directorio_recursivo(folder_path, &mut canciones, &mut contador);
+
+    Ok(RespuestaMusica {
+        carpeta_nombre: folder_name,
+        ruta_raiz: ruta,
+        canciones,
+    })
+}
+
+#[tauri::command]
+pub async fn obtener_y_escanear_musica_sistema_comando(app: tauri::AppHandle) -> Result<RespuestaMusica, String> {
+    use tauri::Manager;
+    let audio_dir = app.path().audio_dir()
+        .map_err(|_| "No se pudo obtener el directorio de música del sistema".to_string())?;
+    
+    let folder_name = "Música del Sistema".to_string();
+    let mut canciones = Vec::new();
+    let mut contador = 0;
+    local_lista::recorrer_directorio_recursivo(&audio_dir, &mut canciones, &mut contador);
+
+    Ok(RespuestaMusica {
+        carpeta_nombre: folder_name,
+        ruta_raiz: audio_dir.to_string_lossy().to_string(),
+        canciones,
+    })
+}
