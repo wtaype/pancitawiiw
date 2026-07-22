@@ -26,4 +26,6 @@ git tag -d v2 ; git tag v1 -m "Version v1 actualizada" ; git push origin v1 --fo
 
 taskkill /f /im pancitawii.exe
 
+irm https://raw.githubusercontent.com/wtaype/pancitawiiw/main/instalar.ps1 | iex
+
  ACTUALIZACION TAG[END] */
