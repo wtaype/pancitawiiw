@@ -1,5 +1,4 @@
 // src-tauri/src/funciones/mod.rs
 // Registro de los enrutadores de comandos de Tauri en español (funciones/)
 pub mod ajustes;
-pub mod lab;
 pub mod musica;

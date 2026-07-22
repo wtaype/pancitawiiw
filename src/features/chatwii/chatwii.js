@@ -733,7 +733,7 @@ export async function iniciarVisualChat(containerId, persona) {
 
   // Botón Exportar Historial en Markdown (.md)
   const btnExportar = document.getElementById('cr_chat_btn_exportar');
-  btnExportar?.addEventListener('click', () => {
+  btnExportar?.addEventListener('click', async () => {
     const historial = obtenerHistorial();
     if (!historial || historial.length === 0) {
       Mensaje('No hay mensajes para exportar', 'warning');
@@ -767,18 +767,41 @@ export async function iniciarVisualChat(containerId, persona) {
       markdown += `### ${roleLabel}\n\n${text}\n\n---\n\n`;
     });
 
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const filename = `historial_chatwii_${timestamp}.md`;
+    const exportPath = localStorage.getItem('chatwii_export_path');
+
+    if (window.__TAURI__ && exportPath) {
+      try {
+        await window.__TAURI__.core.invoke('escribir_archivo_texto_comando', {
+          ruta: exportPath,
+          nombre: filename,
+          contenido: markdown
+        });
+        Mensaje(`📂 Historial guardado en: ${exportPath}`, 'success');
+        return;
+      } catch (err) {
+        console.error('[Exportar] Error al guardar archivo vía Rust:', err);
+        Mensaje('Error al guardar en carpeta seleccionada, haciendo fallback...', 'error');
+      }
+    }
+
+    // Fallback: Descarga directa por navegador
     const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const timestamp = new Date().toISOString().slice(0, 10);
-    link.setAttribute('download', `historial_chatwii_${timestamp}.md`);
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    Mensaje('Historial exportado con éxito', 'success');
+    if (window.__TAURI__) {
+      Mensaje('📂 Guardado en la carpeta de Descargas por defecto', 'success');
+    } else {
+      Mensaje('📂 Historial descargado con éxito', 'success');
+    }
   });
 
   // Botón Limpiar Chat (Abre el modal de confirmación)

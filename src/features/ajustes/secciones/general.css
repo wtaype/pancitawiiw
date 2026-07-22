@@ -108,3 +108,50 @@
 .apple_switch input:checked + .apple_switch_slider:before {
   transform: translateX(20px);
 }
+
+/* ==================== FOLDER BROWSER STYLES ==================== */
+.general_folder_row {
+  display: flex;
+  align-items: center;
+  gap: 1.5vh;
+  margin-top: 1.5vh;
+  width: 100%;
+}
+
+.general_folder_input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--brd);
+  color: var(--tx1);
+  padding: 1.2vh 1.8vh;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s3);
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--tr_f);
+}
+
+.general_folder_input:focus {
+  border-color: var(--mco);
+}
+
+.general_folder_btn {
+  background: var(--bg3);
+  border: 1px solid var(--brd);
+  color: var(--tx1);
+  padding: 1.2vh 2.2vh;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s3);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  transition: all var(--tr_f);
+}
+
+.general_folder_btn:hover {
+  background: var(--brd);
+  border-color: var(--mco);
+  color: var(--mco);
+}

@@ -6,6 +6,9 @@ pub mod nucleo;
 pub mod funciones;
 pub mod rii;
 
+#[macro_use]
+pub mod puente_central;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -32,47 +35,7 @@ pub fn run() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![
-            // Enrutador de Ventana Nativa Sonrisa y Panel
-            nucleo::ventana::ventanas::toggle_smile,
-            nucleo::ventana::ventanas::fijar_sonrisa,
-            nucleo::ventana::ventanas::restablecer_posiciones,
-
-            // Enrutador de Asistente pancitawii (chatwii)
-            nucleo::chatwii::gemini::completar_chat_comando,
-            nucleo::chatwii::gemini::chatwii_guardar_historial,
-            nucleo::chatwii::gemini::chatwii_cargar_historial,
-            
-            // Enrutador de Ajustes, Cuenta y Energía
-            funciones::ajustes::cuenta::cuenta_verificar_estado,
-            funciones::ajustes::ajustes::ajustes_obtener_version,
-            funciones::ajustes::ajustes::fijar_estado_suspension,
-            funciones::ajustes::permisos::permisos_verificar_estado_sistema,
-            funciones::ajustes::energia::cambiar_anti_suspension,
-            funciones::ajustes::actualizador::actualizador_obtener_version_actual,
-            funciones::ajustes::actualizador::actualizador_descargar_y_actualizar,
-            
-            // Enrutador de Sistema y Laboratorio General
-            funciones::lab::lab::obtener_sistema_comando,
-            funciones::lab::lab::ejecutar_limpieza_comando,
-            funciones::lab::lab::consola_ejecutar_comando,
-            funciones::lab::lab::archivos_calcular_tamano_comando,
-            funciones::lab::lab::sistema_listar_procesos_comando,
-            funciones::lab::lab::sistema_matar_proceso_comando,
-            funciones::lab::lab::sistema_obtener_bateria_comando,
-            funciones::lab::lab::conectar_medir_latencia_comando,
-            funciones::lab::lab::base_datos_guardar_comando,
-            funciones::lab::lab::base_datos_cargar_comando,
-            funciones::lab::lab::notificaciones_lanzar_comando,
-            funciones::lab::lab::logs_escribir_comando,
-            funciones::lab::lab::logs_leer_comando,
-            funciones::lab::lab::logs_borrar_comando,
-            funciones::lab::lab::documento_leer_archivo_comando,
-
-            // Enrutador de Música
-            funciones::musica::musica_lista::seleccionar_carpeta_musica_comando
-        ])
+        .invoke_handler(registrar_puentes!())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-

@@ -9,12 +9,12 @@ const HORAS_EXPIRACION = null; // Almacenamiento permanente sin expiración
 
 // Datos iniciales por defecto (Principal Pancita Good)
 const PERFIL_DEFECTO = {
-  nombre: "Principal",
-  apellidos: "Good",
+  nombre: "Pancita",
+  apellidos: "Lapa",
   usuario: "pancita",
   email: "principal@pancitawii.me",
-  rol: "admin",
-  plan: "premium",
+  rol: "usuario",
+  plan: "vip",
   estado: "activo",
   activo: true,
   avatar: "/smile.avif",
