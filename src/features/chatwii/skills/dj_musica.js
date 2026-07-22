@@ -23,11 +23,29 @@ const METADATOS_CANCIONES = {
 export function obtenerPlaylistConMetadatos() {
   let playlist = obtenerListaPredeterminada();
   try {
-    const carpetasGuardadas = getls('musica_carpetas');
-    if (carpetasGuardadas && carpetasGuardadas.length > 0) {
-      const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
-      if (activa && activa.canciones && activa.canciones.length > 0) {
-        playlist = activa.canciones;
+    const carpetasGuardadas = getls('musica_carpetas') || [];
+    const config = getls('musica_config') || {};
+    const combinarTodas = config.combinarTodas || false;
+
+    if (carpetasGuardadas.length > 0) {
+      if (combinarTodas) {
+        let mergedSongs = [];
+        carpetasGuardadas.forEach(folder => {
+          if (folder.canciones) {
+            folder.canciones.forEach(c => {
+              const yaExiste = mergedSongs.some(m => m.archivo === c.archivo || m.url === c.url || (c.ruta_completa && m.ruta_completa === c.ruta_completa));
+              if (!yaExiste) {
+                mergedSongs.push({ ...c });
+              }
+            });
+          }
+        });
+        playlist = mergedSongs.map((c, idx) => ({ ...c, id: idx + 1 }));
+      } else {
+        const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
+        if (activa && activa.canciones && activa.canciones.length > 0) {
+          playlist = activa.canciones;
+        }
       }
     }
   } catch (e) {

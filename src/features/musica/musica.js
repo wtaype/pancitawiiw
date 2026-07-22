@@ -61,11 +61,35 @@ function cargarEstado() {
     isMuted: false,
     repeatMode: 'off',
     shuffleActive: false,
-    combinarRutas: true
+    combinarRutas: true,
+    combinarTodas: false
   };
 
   let carpetaActiva = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
-  const listRaw = carpetaActiva?.canciones || DEFAULT_PLAYLIST;
+  const combinarTodas = configGuardada.combinarTodas ?? false;
+
+  let listRaw = [];
+  let carpetaId = carpetaActiva?.id || 'default';
+  let carpetaNom = carpetaActiva?.nombre || 'Predeterminada';
+
+  if (combinarTodas) {
+    let mergedSongs = [];
+    carpetasGuardadas.forEach(folder => {
+      if (folder.canciones) {
+        folder.canciones.forEach(c => {
+          const yaExiste = mergedSongs.some(m => m.archivo === c.archivo || m.url === c.url || (c.ruta_completa && m.ruta_completa === c.ruta_completa));
+          if (!yaExiste) {
+            mergedSongs.push({ ...c });
+          }
+        });
+      }
+    });
+    listRaw = mergedSongs.map((c, idx) => ({ ...c, id: idx + 1 }));
+    carpetaId = 'combinadas';
+    carpetaNom = 'Combinación automática';
+  } else {
+    listRaw = carpetaActiva?.canciones || DEFAULT_PLAYLIST;
+  }
 
   return {
     carpetas:   carpetasGuardadas,
@@ -73,8 +97,8 @@ function cargarEstado() {
     trackIndex: listaGuardada?.trackIndex ?? 0,
     likes:      Array.isArray(likesGuardados) ? likesGuardados : [],
     filtro:     'todos',
-    carpetaId:  carpetaActiva.id,
-    carpetaNom: carpetaActiva.nombre,
+    carpetaId:  carpetaId,
+    carpetaNom: carpetaNom,
     config:     configGuardada
   };
 }
@@ -87,7 +111,8 @@ function guardarEstado() {
     isMuted,
     repeatMode,
     shuffleActive,
-    combinarRutas
+    combinarRutas,
+    combinarTodas
   }, 8760);
   savels(STORAGE_KEY_LISTA, {
     playlist:   playlistActual,
@@ -117,6 +142,7 @@ let isMuted           = estado.config?.isMuted ?? false;
 let repeatMode        = estado.config?.repeatMode ?? 'off';
 let shuffleActive     = estado.config?.shuffleActive ?? false;
 let combinarRutas     = estado.config?.combinarRutas ?? true;
+let combinarTodas     = estado.config?.combinarTodas ?? false;
 
 const audio = new Audio();
 audio.volume = isMuted ? 0 : volume;
@@ -207,10 +233,11 @@ export function bindMusicaEvents(container) {
   window.wiMusica = {
     play: () => {
       const track = playlistActual[currentTrackIndex];
+      if (!track) return 'No hay canciones en la playlist';
       const srcSeguro = resolverUrlPista(track);
       if (!audio.src || audio.src !== srcSeguro) {
         cargarYReproducir(currentTrackIndex, true);
-        return;
+        return `Reproduciendo: ${track.titulo}`;
       }
       aplicarVolumen();
       audio.play().then(() => {
@@ -219,6 +246,7 @@ export function bindMusicaEvents(container) {
       }).catch(err => {
         console.warn('Play error:', err);
       });
+      return `Reproduciendo: ${track.titulo}`;
     },
     pause: () => {
       if (isPlaying) {
@@ -226,15 +254,22 @@ export function bindMusicaEvents(container) {
         isPlaying = false;
         refrescarUICompleta();
       }
+      return 'Música pausada';
     },
     next: () => {
-      cargarYReproducir(obtenerSiguienteIndex(true), true);
+      const nextIdx = obtenerSiguienteIndex(true);
+      cargarYReproducir(nextIdx, true);
+      const track = playlistActual[nextIdx];
+      return track ? `Siguiente pista: ${track.titulo}` : 'Fin de la playlist';
     },
     prev: () => {
-      cargarYReproducir(obtenerSiguienteIndex(false), true);
+      const prevIdx = obtenerSiguienteIndex(false);
+      cargarYReproducir(prevIdx, true);
+      const track = playlistActual[prevIdx];
+      return track ? `Pista anterior: ${track.titulo}` : 'Fin de la playlist';
     },
     playTrack: (indexOrTitle) => {
-      if (playlistActual.length === 0) return;
+      if (playlistActual.length === 0) return 'No hay canciones en la playlist';
       let idx = -1;
       const num = parseInt(indexOrTitle, 10);
       if (!isNaN(num)) {
@@ -245,9 +280,22 @@ export function bindMusicaEvents(container) {
       }
       if (idx !== -1) {
         cargarYReproducir(idx, true);
+        return `Reproduciendo: ${playlistActual[idx].titulo}`;
       } else {
-        console.warn('window.wiMusica: Canción no encontrada para', indexOrTitle);
+        return `Canción no encontrada: "${indexOrTitle}"`;
       }
+    },
+    toggleLoop: () => {
+      if (repeatMode === 'off') {
+        repeatMode = 'all';
+      } else if (repeatMode === 'all') {
+        repeatMode = 'one';
+      } else {
+        repeatMode = 'off';
+      }
+      guardarEstado();
+      refrescarUICompleta();
+      return repeatMode === 'off' ? 'Repetición desactivada' : `Repetición configurada en: ${repeatMode}`;
     },
     buscar: (query) => {
       const searchInput = container.querySelector('#msc_search_input');
@@ -257,6 +305,7 @@ export function bindMusicaEvents(container) {
       searchQuery = query;
       paginaActual = 1;
       refrescarUICompleta();
+      return `Buscando canciones que coincidan con: "${query}"`;
     }
   };
 
@@ -294,6 +343,36 @@ export function bindMusicaEvents(container) {
     })
   ];
   atajosLimpieza.push(...atajos);
+
+  function actualizarPlaylistCombinada() {
+    if (combinarTodas) {
+      let mergedSongs = [];
+      carpetasGuardadas.forEach(folder => {
+        if (folder.canciones) {
+          folder.canciones.forEach(c => {
+            const yaExiste = mergedSongs.some(m => m.archivo === c.archivo || m.url === c.url || (c.ruta_completa && m.ruta_completa === c.ruta_completa));
+            if (!yaExiste) {
+              mergedSongs.push({ ...c });
+            }
+          });
+        }
+      });
+      playlistActual = mergedSongs.map((c, idx) => ({ ...c, id: idx + 1 }));
+      carpetaActivaId = 'combinadas';
+      carpetaActual = 'Combinación automática';
+    } else {
+      const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
+      if (activa) {
+        carpetaActivaId = activa.id;
+        carpetaActual = activa.nombre;
+        playlistActual = activa.canciones || DEFAULT_PLAYLIST;
+      }
+    }
+    currentTrackIndex = 0;
+    paginaActual = 1;
+    guardarEstado();
+    refrescarUICompleta();
+  }
 
   function refrescarUICompleta() {
     const actual = playlistActual[currentTrackIndex] || playlistActual[0];
@@ -470,6 +549,7 @@ export function bindMusicaEvents(container) {
   }
 
   function activarCarpetaPorId(folderId) {
+    combinarTodas = false;
     const carpeta = carpetasGuardadas.find(c => c.id === folderId);
     if (!carpeta) return;
 
@@ -501,7 +581,7 @@ export function bindMusicaEvents(container) {
 
     const foldersList = document.querySelector('#msc_folders_list');
     const badgeCount = document.querySelector('#msc_badge_folders');
-    if (foldersList) foldersList.innerHTML = renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId);
+    if (foldersList) foldersList.innerHTML = renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId, combinarTodas);
     if (badgeCount) badgeCount.textContent = carpetasGuardadas.length;
   }
 
@@ -577,7 +657,7 @@ export function bindMusicaEvents(container) {
     },
     onRefresh: (btn) => { refrescarUICompleta(); wiTip(btn, 'Lista actualizada', 'top', 1500); },
     onAdd: () => {
-      abrirModalMusica(carpetasGuardadas, carpetaActivaId, combinarRutas, {
+      abrirModalMusica(carpetasGuardadas, carpetaActivaId, combinarRutas, combinarTodas, {
         onSeleccionarNuevaCarpeta: (nuevasCanciones, nombreCarpeta, rutaRaiz) => {
           if (combinarRutas) {
             const activa = carpetasGuardadas.find(c => c.activa) || carpetasGuardadas[0];
@@ -588,9 +668,13 @@ export function bindMusicaEvents(container) {
                 id: startId + idx
               }));
               activa.canciones = [...activa.canciones, ...cancionesMapeadas];
-              playlistActual = activa.canciones;
-              guardarEstado();
-              refrescarUICompleta();
+              if (combinarTodas) {
+                actualizarPlaylistCombinada();
+              } else {
+                playlistActual = activa.canciones;
+                guardarEstado();
+                refrescarUICompleta();
+              }
               return;
             }
           }
@@ -605,13 +689,32 @@ export function bindMusicaEvents(container) {
 
           carpetasGuardadas.forEach(c => c.activa = false);
           carpetasGuardadas.unshift(nuevaCarpeta);
-          activarCarpetaPorId(nuevaCarpeta.id);
+          if (combinarTodas) {
+            actualizarPlaylistCombinada();
+          } else {
+            activarCarpetaPorId(nuevaCarpeta.id);
+          }
         },
         onActivarCarpeta: (folderId) => activarCarpetaPorId(folderId),
-        onEliminarCarpeta: (folderId) => eliminarCarpetaPorId(folderId),
+        onEliminarCarpeta: (folderId) => {
+          eliminarCarpetaPorId(folderId);
+          if (combinarTodas) {
+            actualizarPlaylistCombinada();
+          }
+        },
         onToggleCombine: (checked) => {
           combinarRutas = checked;
           guardarEstado();
+        },
+        onToggleCombineAll: (checked) => {
+          combinarTodas = checked;
+          actualizarPlaylistCombinada();
+          const opt = document.querySelector('#msc_opt_combine_all');
+          if (opt) opt.checked = checked;
+          const foldersList = document.querySelector('#msc_folders_list');
+          if (foldersList) {
+            foldersList.innerHTML = renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId, combinarTodas);
+          }
         }
       });
     }

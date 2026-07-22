@@ -848,6 +848,11 @@
   text-transform: uppercase;
 }
 
+.msc_tag_active.combined {
+  background: var(--oro) !important;
+  color: #000 !important;
+}
+
 .msc_folder_sub {
   font-size: clamp(9px, 0.6vw, 10px);
   color: var(--tx3);

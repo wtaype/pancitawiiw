@@ -368,33 +368,37 @@ const procesarEnvioMensaje = async () => {
 
   if (comandosMusicaFijos.test(textoLimpioLocal)) {
     esComandoLocal = true;
-    const { reproducir, pausar, siguiente, anterior, toggleLoop } = await import('./services/musica.js');
-    
-    if (/^(reproducir|play)$/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = reproducir();
-    } else if (/^(pausar|pause)$/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = pausar();
-    } else if (/^(siguiente|next)$/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = siguiente();
-    } else if (/^(anterior|prev|atras)$/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = anterior();
-    } else if (/^(repetir|loop|bucle)$/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = toggleLoop();
+    if (window.wiMusica) {
+      if (/^(reproducir|play)$/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.play();
+      } else if (/^(pausar|pause)$/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.pause();
+      } else if (/^(siguiente|next)$/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.next();
+      } else if (/^(anterior|prev|atras)$/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.prev();
+      } else if (/^(repetir|loop|bucle)$/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.toggleLoop();
+      }
+    } else {
+      respuestaComandoLocal = 'El reproductor de música no está listo en este momento.';
     }
   } else if (hasMusicaWord && hasActionWord) {
     esComandoLocal = true;
-    const { reproducir, pausar, siguiente, anterior, toggleLoop } = await import('./services/musica.js');
-    
-    if (/\b(play|reproducir)\b/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = reproducir();
-    } else if (/\b(pausar|pause|stop|parar)\b/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = pausar();
-    } else if (/\b(siguiente|next)\b/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = siguiente();
-    } else if (/\b(anterior|prev|atras)\b/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = anterior();
-    } else if (/\b(loop|bucle|repetir)\b/i.test(textoLimpioLocal)) {
-      respuestaComandoLocal = toggleLoop();
+    if (window.wiMusica) {
+      if (/\b(play|reproducir)\b/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.play();
+      } else if (/\b(pausar|pause|stop|parar)\b/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.pause();
+      } else if (/\b(siguiente|next)\b/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.next();
+      } else if (/\b(anterior|prev|atras)\b/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.prev();
+      } else if (/\b(loop|bucle|repetir)\b/i.test(textoLimpioLocal)) {
+        respuestaComandoLocal = window.wiMusica.toggleLoop();
+      }
+    } else {
+      respuestaComandoLocal = 'El reproductor de música no está listo en este momento.';
     }
   }
 
@@ -725,6 +729,56 @@ export async function iniciarVisualChat(containerId, persona) {
     await limpiarHistorial();
     renderHistorialChat();
     Mensaje('Nueva conversación iniciada.', 'success');
+  });
+
+  // Botón Exportar Historial en Markdown (.md)
+  const btnExportar = document.getElementById('cr_chat_btn_exportar');
+  btnExportar?.addEventListener('click', () => {
+    const historial = obtenerHistorial();
+    if (!historial || historial.length === 0) {
+      Mensaje('No hay mensajes para exportar', 'warning');
+      return;
+    }
+
+    const perfil = getls('wiSmile');
+    const nombreUsuario = perfil ? `${perfil.nombre} ${perfil.apellidos}`.trim() : 'Usuario';
+    const fecha = new Date().toLocaleString();
+
+    let markdown = `# Historial de Conversación con Pancitawii Asistente\n\n`;
+    markdown += `**Usuario:** ${nombreUsuario}\n`;
+    markdown += `**Fecha de Exportación:** ${fecha}\n\n`;
+    markdown += `*Este documento contiene la conversación mantenida con Pancitawii.*\n\n`;
+    markdown += `---\n\n`;
+
+    historial.forEach((msg) => {
+      const roleLabel = msg.role === 'user' ? `👤 **Tú**` : `🧘 **Pancitawii**`;
+      
+      let text = '';
+      if (Array.isArray(msg.parts)) {
+        text = msg.parts
+          .map(p => {
+            if (p.text) return p.text;
+            if (p.inlineData) return `[Imagen adjunta]`;
+            return '';
+          })
+          .join('\n');
+      }
+
+      markdown += `### ${roleLabel}\n\n${text}\n\n---\n\n`;
+    });
+
+    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const timestamp = new Date().toISOString().slice(0, 10);
+    link.setAttribute('download', `historial_chatwii_${timestamp}.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    Mensaje('Historial exportado con éxito', 'success');
   });
 
   // Botón Limpiar Chat (Abre el modal de confirmación)

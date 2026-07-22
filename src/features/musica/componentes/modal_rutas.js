@@ -4,7 +4,7 @@
 import { abrirModal, cerrarModal } from '@core/widev/modales.js';
 import { wiTip } from '@core/widev/witip.js';
 
-export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = '', combinarRutas = true) {
+export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = '', combinarRutas = true, combinarTodas = false) {
   return `
     <div class="wiModal" id="modal_musica" tabIndex="-1">
       <div class="modalBody msc_modal_glass_wide">
@@ -38,7 +38,7 @@ export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = 
         <!-- Contenido de Pestaña 2: Mis Carpetas -->
         <div class="msc_modal_tab_content" id="msc_mtab_mis_carpetas">
           <div class="msc_folders_list" id="msc_folders_list">
-            ${renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId)}
+            ${renderMisCarpetasHTML(carpetasGuardadas, carpetaActivaId, combinarTodas)}
           </div>
         </div>
 
@@ -54,13 +54,23 @@ export function renderModalMusicaHTML(carpetasGuardadas = [], carpetaActivaId = 
               <span class="msc_ios_slider"></span>
             </label>
           </div>
+          <div class="msc_setting_row">
+            <div class="msc_setting_info">
+              <span class="msc_setting_title">Mezclar todas las canciones</span>
+              <span class="msc_setting_desc">Une y reproduce todas las canciones de todas tus carpetas guardadas en automático.</span>
+            </div>
+            <label class="msc_ios_switch">
+              <input type="checkbox" id="msc_opt_combine_all" ${combinarTodas ? 'checked' : ''} />
+              <span class="msc_ios_slider"></span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
   `;
 }
 
-export function renderMisCarpetasHTML(carpetas, activaId) {
+export function renderMisCarpetasHTML(carpetas, activaId, combinarTodas = false) {
   if (!carpetas || carpetas.length === 0) {
     return `<div class="msc_empty_folders">
       <i class="fa-solid fa-folder-open"></i>
@@ -70,22 +80,27 @@ export function renderMisCarpetasHTML(carpetas, activaId) {
 
   return carpetas.map((c) => {
     const esActiva = c.id === activaId || c.activa;
+    const cardClass = combinarTodas ? 'active' : (esActiva ? 'active' : '');
+    const tagHTML = combinarTodas
+      ? '<span class="msc_tag_active combined">Mezclada</span>'
+      : (esActiva ? '<span class="msc_tag_active">Activa</span>' : '');
+
     return `
-      <div class="msc_folder_item_card ${esActiva ? 'active' : ''}" data-folder-id="${c.id}">
+      <div class="msc_folder_item_card ${cardClass}" data-folder-id="${c.id}">
         <div class="msc_folder_item_info">
           <div class="msc_folder_icon_box">
-            <i class="fa-solid ${esActiva ? 'fa-folder-open' : 'fa-folder'}"></i>
+            <i class="fa-solid ${combinarTodas || esActiva ? 'fa-folder-open' : 'fa-folder'}"></i>
           </div>
           <div class="msc_folder_details">
             <div class="msc_folder_name_row">
               <span class="msc_folder_name">${c.nombre}</span>
-              ${esActiva ? '<span class="msc_tag_active">Activa</span>' : ''}
+              ${tagHTML}
             </div>
             <span class="msc_folder_sub">${c.canciones?.length || 0} canciones · ${c.fecha || 'Reciente'}</span>
           </div>
         </div>
         <div class="msc_folder_actions">
-          ${!esActiva ? `
+          ${!(combinarTodas || esActiva) ? `
             <button class="msc_folder_act_btn activate" data-action="activar" data-folder-id="${c.id}" data-witip="Activar carpeta" data-wtipo="top">
               <i class="fa-solid fa-play"></i> Activar
             </button>
@@ -99,14 +114,14 @@ export function renderMisCarpetasHTML(carpetas, activaId) {
   }).join('');
 }
 
-export function asegurarModalEnBody(carpetas, activaId, combinarRutas, callbacks) {
+export function asegurarModalEnBody(carpetas, activaId, combinarRutas, combinarTodas, callbacks) {
   if (typeof document === 'undefined') return;
 
   let modalEl = document.getElementById('modal_musica');
   if (modalEl) modalEl.remove();
 
   const div = document.createElement('div');
-  div.innerHTML = renderModalMusicaHTML(carpetas, activaId, combinarRutas);
+  div.innerHTML = renderModalMusicaHTML(carpetas, activaId, combinarRutas, combinarTodas);
   modalEl = div.firstElementChild;
   document.body.appendChild(modalEl);
 
@@ -116,7 +131,7 @@ export function asegurarModalEnBody(carpetas, activaId, combinarRutas, callbacks
 export function bindModalMusicaEvents(modalEl, callbacks) {
   wiTip();
 
-  const { onSeleccionarNuevaCarpeta, onActivarCarpeta, onEliminarCarpeta, onToggleCombine } = callbacks;
+  const { onSeleccionarNuevaCarpeta, onActivarCarpeta, onEliminarCarpeta, onToggleCombine, onToggleCombineAll } = callbacks;
 
   // Cambios de Pestaña dentro del Modal
   const tabBtns = modalEl.querySelectorAll('.msc_modal_tab_btn');
@@ -224,9 +239,16 @@ export function bindModalMusicaEvents(modalEl, callbacks) {
       onToggleCombine(combineSwitch.checked);
     };
   }
+
+  const combineAllSwitch = modalEl.querySelector('#msc_opt_combine_all');
+  if (combineAllSwitch && typeof onToggleCombineAll === 'function') {
+    combineAllSwitch.onchange = () => {
+      onToggleCombineAll(combineAllSwitch.checked);
+    };
+  }
 }
 
-export function abrirModalMusica(carpetas, activaId, combinarRutas, callbacks) {
-  asegurarModalEnBody(carpetas, activaId, combinarRutas, callbacks);
+export function abrirModalMusica(carpetas, activaId, combinarRutas, combinarTodas, callbacks) {
+  asegurarModalEnBody(carpetas, activaId, combinarRutas, combinarTodas, callbacks);
   abrirModal('modal_musica');
 }

@@ -19,6 +19,11 @@ export const crearHeader = (persona) => {
           <i class="fas fa-plus"></i>
         </button>
         
+        <!-- Exportar historial -->
+        <button class="cr_chat_btn_header export" id="cr_chat_btn_exportar" data-witip="Exportar historial">
+          <i class="fas fa-file-export"></i>
+        </button>
+
         <!-- Limpiar conversación actual -->
         <button class="cr_chat_btn_header clear" id="cr_chat_btn_limpiar" data-witip="Limpiar chat">
           <i class="fas fa-trash-alt"></i>
