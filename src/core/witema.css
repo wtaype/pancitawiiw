@@ -1,10 +1,10 @@
 /* ============================================================ */
-/* 🎨 SISTEMA DE DISEÑO WITEMA V2.0 - @by @Wilder_Taype              */
-/* Estilos globales, temas de color y módulos centrales de widev*/
+/* 🎨 SISTEMA DE DISEÑO WITEMA V2.0                             */
+/*    Diseñado por @wilder.taype - 100% Reutilizable          */
 /* ============================================================ */
 
 /* ============================================================ */
-/* 1. VARIABLES GLOBALES Y TEMAS DE COLOR (:root)             */
+/* VARIABLES GLOBALES Y TEMAS DE COLOR (:root)                */
 /* ============================================================ */
 :root {
   --fz_s1: clamp(0.625rem, 0.8vh, 0.7rem);
@@ -229,9 +229,7 @@
   --glass-blur: 24px;
 }
 
-/* ============================================================ */
-/* 2. RESET Y ESTILOS BASE DE LA APLICACIÓN                    */
-/* ============================================================ */
+/* ==================== RESET Y ESTILOS BASE ==================== */
 *,
 *::before,
 *::after {
@@ -252,21 +250,6 @@ html {
 
 a {
   text-decoration: none;
-}
-
-/* ── Liquid Glass (Clase Utilitaria Global) ──────────────── */
-.wii_glass {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-brd);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: 0 8px 32px 0 var(--glass-shd), inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  transition: box-shadow var(--tr_m), transform var(--tr_m), background var(--tr_m);
-}
-
-.wii_glass:hover {
-  box-shadow: 0 12px 40px 0 var(--glass-shd), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  transform: translateY(-1px);
 }
 
 /* ── Widget de Cambio de Tema (#wiTema) ─────────────────── */
@@ -322,31 +305,27 @@ a {
   transition: var(--tr_m);
 }
 
-/* ── Animaciones Globales (wiAnima v12) ─────────────────── */
-.wi_fadeUp,
-.wi_fadeLeft,
-.wi_fadeRight,
-.wi_fadeIn,
-.wi_scale {
-  opacity: 0;
-  transition: opacity .6s cubic-bezier(.4, 0, .2, 1), transform .6s cubic-bezier(.4, 0, .2, 1);
+/* ── Liquid Glass (Clase Utilitaria Global) ──────────────── */
+.wii_glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 8px 32px 0 var(--glass-shd), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: box-shadow var(--tr_m), transform var(--tr_m), background var(--tr_m);
 }
 
-.wi_fadeUp { transform: translateY(5vh); }
-.wi_fadeLeft { transform: translateX(-5vh); }
-.wi_fadeRight { transform: translateX(5vh); }
-.wi_scale { transform: scale(.95); }
-
-.wi_visible {
-  opacity: 1 !important;
-  transform: none !important;
+.wii_glass:hover {
+  box-shadow: 0 12px 40px 0 var(--glass-shd), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
 }
 
 /* ============================================================ */
-/* 3. MÓDULOS DE MÁXIMA FRECUENCIA Y ALTA PRIORIDAD             */
+/* ⚙️ ESTILOS REUTILIZABLES PARA COMPONENTES WIDEV             */
+/*    (src/core/widev/*)                                        */
 /* ============================================================ */
 
-/* ── 3.1 MENSAJES Y NOTIFICACIONES (widev/mensajes.js) ─────── */
+/* ── 1. MENSAJES Y NOTIFICACIONES (widev/mensajes.js) ──────── */
 .widev-toast {
   position: fixed;
   top: 3vh;
@@ -441,7 +420,7 @@ a {
 
 .notification button:hover { color: var(--tx1, #212529); }
 
-/* ── 3.2 TOOLTIPS DINÁMICOS WITIP() (widev/witip.js) ───────── */
+/* ── 2. TOOLTIPS DINÁMICOS WITIP() (widev/witip.js) ────────── */
 .wiTip {
   position: fixed;
   color: var(--txa);
@@ -544,7 +523,7 @@ a {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ── 3.3 EDITOR MARKDOWN ENRIQUECIDO WIEDITOR() (widev/editor.js) */
+/* ── 3. EDITOR MARKDOWN ENRIQUECIDO WIEDITOR() (widev/editor.js) */
 .wi_editor_modal_body {
   max-width: 400px !important;
   padding: 24px !important;
@@ -1179,7 +1158,7 @@ a {
 .po_ico_mco { color: var(--mco); }
 .po_ico_warning { color: var(--warning); }
 
-/* ── 3.4 SELECT PREMIUM WISELECT() (widev/wiselect.js) ───────── */
+/* ── 4. SELECT PREMIUM WISELECT() (widev/wiselect.js) ───────── */
 .wi-select-trigger {
   display: flex;
   align-items: center;
@@ -1345,7 +1324,7 @@ a {
   gap: 8px;
 }
 
-/* ── 3.5 AUTOCOMPLETADO Y SUGERENCIAS (widev/sugerencias.js) ── */
+/* ── 5. AUTOCOMPLETADO Y SUGERENCIAS (widev/sugerencias.js) ── */
 .wi-sugerencias-panel {
   position: absolute;
   top: calc(100% + 4px);
@@ -1401,11 +1380,7 @@ a {
   color: var(--mco);
 }
 
-/* ============================================================ */
-/* 4. COMPONENTES INTERMEDIOS Y MODALES                         */
-/* ============================================================ */
-
-/* ── 4.1 MODALES Y CONFIRMACIONES (widev/confirmar.js) ─────── */
+/* ── 6. MODALES Y CONFIRMACIONES (widev/confirmar.js) ─────── */
 .wiModal {
   display: flex;
   align-items: center;
@@ -1583,7 +1558,7 @@ body.modal-open {
   color: var(--bg, #0a0e1a);
 }
 
-/* ── 4.2 VISOR DE GALERÍA DE IMÁGENES (widev/galeria.js) ───── */
+/* ── 7. VISOR DE GALERÍA DE IMÁGENES (widev/galeria.js) ───── */
 @keyframes wim_fade_in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1856,7 +1831,7 @@ body.modal-open {
   .wim_next { right: 1.2vh !important; }
 }
 
-/* ── 4.3 CARGA DIFERIDA IMGWII() (widev/imgwii.js) ─────────── */
+/* ── 8. CARGA DIFERIDA IMGWII() (widev/imgwii.js) ─────────── */
 .wi_skeleton {
   filter: blur(8px);
   transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -1871,11 +1846,26 @@ img[data-src] {
   opacity: 1;
 }
 
-/* ============================================================ */
-/* 5. ANIMACIONES, WICODE Y CLASES UTILITARIAS                  */
-/* ============================================================ */
+/* ── 9. ANIMACIONES DE ENTRADA Y WIANIMA (widev/animacion.js) ─ */
+.wi_fadeUp,
+.wi_fadeLeft,
+.wi_fadeRight,
+.wi_fadeIn,
+.wi_scale {
+  opacity: 0;
+  transition: opacity .6s cubic-bezier(.4, 0, .2, 1), transform .6s cubic-bezier(.4, 0, .2, 1);
+}
 
-/* ── 5.1 ANIMACIONES DE ENTRADA (widev/animacion.js) ────────── */
+.wi_fadeUp { transform: translateY(5vh); }
+.wi_fadeLeft { transform: translateX(-5vh); }
+.wi_fadeRight { transform: translateX(5vh); }
+.wi_scale { transform: scale(.95); }
+
+.wi_visible {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 @keyframes hwi_fade {
   from { opacity: 0; transform: translateY(3vh); }
   to { opacity: 1; transform: translateY(0); }
@@ -1884,7 +1874,7 @@ img[data-src] {
 .hwi { animation: hwi_fade 0.8s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
 .swi { opacity: 0; transform: translateY(3vh); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
 
-/* ── 5.2 BLOQUES DE CÓDIGO WICODE() (widev/wicode.js) ──────── */
+/* ── 10. BLOQUES DE CÓDIGO WICODE() (widev/wicode.js) ──────── */
 .wiCode-box {
   position: relative;
   background: var(--bg4, #1e1e2e);
@@ -1916,7 +1906,7 @@ img[data-src] {
   color: #fff;
 }
 
-/* ── 5.3 CLASES UTILITARIAS COMPLEMENTARIAS ───────────────── */
+/* ── 11. CLASES UTILITARIAS COMPLEMENTARIAS ───────────────── */
 .spin_icon_margin {
   margin-left: 1vh;
 }
