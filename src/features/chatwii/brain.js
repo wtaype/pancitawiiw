@@ -1,5 +1,5 @@
 // src/features/chatwii/brain.js
-// Motor lógico de ChatWii — Conexión nativa con Rust, Canal IPC de Tauri v2 y Almacenamiento JSON
+// Cerebro Central de ChatWii — Orquestador de IA, habilidades, prompts e IPC nativo
 
 import { coachPersona, obtenerSystemInstruction } from './personalidad.js';
 import { horarioDB } from '../horario/lib/horario_db.js';
@@ -8,6 +8,15 @@ import { wiRateLimit, Notificacion, getls, savels } from '@widev';
 import { obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
 import { obtenerContextoHorario } from './skills/leer_horario.js';
 import { obtenerContextoTiempoReal, obtenerActividadesHoyYManana, obtenerSaludoInteligente } from './lib/chatdev.js';
+import {
+  initEstadoChat,
+  obtenerHistorial,
+  guardarHistorial,
+  limpiarHistorial,
+  agregarMensajeUser,
+  agregarMensajeModel,
+  removerUltimoMensaje
+} from './lib/estado_chat.js';
 
 // Configuración centralizada de modelos de Inteligencia Artificial
 export const MODELO_PRINCIPAL = 'gemini-3.1-flash-lite';
@@ -18,57 +27,19 @@ export const MODELOS_RESPALDO = [
   'gemini-1.5-flash'
 ];
 
-// Configuración centralizada de modelos de Voz (Fase 2)
 export const MODELO_PRINCIPAL_VOZ = 'gemini-3-flash-live';
 export const MODELOS_SECUNDARIOS_VOZ = [
   'gemini-2.5-flash-native-audio',
   'gemini-3.1-flash-tts'
 ];
 
-// Configuración de límites y optimizaciones del asistente
 export const RECORDAR_MAX_MENSAJES = 10;
 
-let _historial = [];
+// Re-exportar funciones del estado
+export { obtenerHistorial, guardarHistorial, limpiarHistorial };
 
 export const initCoach = async () => {
-  if (window.__TAURI__) {
-    try {
-      const saved = await window.__TAURI__.core.invoke('chatwii_cargar_historial');
-      _historial = Array.isArray(saved) ? saved : [];
-    } catch (err) {
-      console.error('[ChatWii] Error al cargar historial desde Rust:', err);
-      _historial = [];
-    }
-  } else {
-    try {
-      const saved = getls('chatwii_history_pancita');
-      _historial = Array.isArray(saved) ? saved : [];
-    } catch (_) {
-      _historial = [];
-    }
-  }
-  return _historial;
-};
-
-export const obtenerHistorial = () => _historial;
-
-export const guardarHistorial = async () => {
-  if (window.__TAURI__) {
-    try {
-      await window.__TAURI__.core.invoke('chatwii_guardar_historial', { historial: _historial });
-    } catch (err) {
-      console.error('[ChatWii] Error al guardar historial en Rust:', err);
-    }
-  } else {
-    try {
-      savels('chatwii_history_pancita', _historial, null);
-    } catch (_) {}
-  }
-};
-
-export const limpiarHistorial = async () => {
-  _historial = [];
-  await guardarHistorial();
+  return await initEstadoChat();
 };
 
 export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
@@ -79,10 +50,9 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     throw new Error('Límite de uso alcanzado');
   }
 
-  // Formato Gemini parts (las citas ya vienen formateadas en el textoUsuario desde el frontend)
+  // Formato Gemini parts
   const parts = [{ text: textoUsuario }];
   
-  // Agregar imágenes multimodales si existen (soportando objeto {base64, mime} o string directo)
   if (imagenesBase64 && imagenesBase64.length > 0) {
     imagenesBase64.forEach(img => {
       const srcData = typeof img === 'string' ? img : (img.base64 || '');
@@ -99,31 +69,25 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     });
   }
 
-  // Añadir al historial persistente local
-  _historial.push({ role: 'user', parts });
-  await guardarHistorial();
+  // Añadir mensaje de usuario al estado
+  await agregarMensajeUser(parts);
 
-  // Clasificador de intención dinámico para recortar el tamaño de tokens del prompt
+  // Clasificador de intención dinámico para acotar contexto
   const quiereMusica = /musica|música|cancion|canción|reproducir|play|escuchar|playlist|sonar|reproductor|temas|phonk|lofi|rock|pop|género/i.test(textoUsuario);
   const quiereAgenda = /horario|rutina|agenda|semana|calendario|hacer|tarea|actividad|mañana|hoy|lunes|martes|miércoles|jueves|viernes|sábado|domingo|pendiente/i.test(textoUsuario);
 
-  // Obtener clave API y modelo personalizados desde Cuenta/Centro APIs con getls
   const apiCustomKey = getls('gemini_api_key') || null;
-  const selectModelVal = getls('gemini_model') || MODELO_PRINCIPAL;
 
-  // Obtener datos del perfil wiSmile
   const perfil = getls('wiSmile');
   const nombreUsuario = perfil ? `${perfil.nombre} ${perfil.apellidos}` : 'Usuario';
   const primerNombre = perfil ? (perfil.nombre.trim().split(/\s+/)[0] || 'Usuario') : 'Usuario';
 
-  // Obtener contexto de productividad del Horario en Vivo y Semanal
   const listaHorario = horarioDB.obtenerHorario();
   const bloqueActual = obtenerBloqueActual(listaHorario);
   const infoHorario = bloqueActual 
     ? `CONTEXTO HORARIO EN CURSO AHORA:\n- Actividad: "${bloqueActual.titulo}" (${bloqueActual.horaInicio} a ${bloqueActual.horaFin}).`
     : `CONTEXTO HORARIO EN CURSO AHORA:\n- El usuario está en tiempo libre y no tiene actividades programadas en este momento.`;
 
-  // Carga condicional y ligera de la base de datos de rutina
   const infoHorarioCompleto = quiereAgenda
     ? obtenerContextoHorario()
     : '[Horario: Agenda semanal completa no solicitada en este mensaje. El bloque activo actual es el provisto arriba].';
@@ -132,12 +96,10 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     ? obtenerActividadesHoyYManana()
     : '';
 
-  // Carga condicional y ligera de la base de datos de música (300+ canciones)
   const infoPlaylist = quiereMusica
     ? obtenerContextoPlaylistParaIA()
-    : '[Música: Playlist no solicitada en este mensaje. Si el usuario te pide reproducir o buscar música, pídele detalles y te proveeré el catálogo].';
+    : '[Música: Playlist no solicitada en este mensaje].';
 
-  // Construir la actitud o system instructions dinámicas sin duplicación
   const systemInstruction = obtenerSystemInstruction(
     primerNombre,
     nombreUsuario,
@@ -148,20 +110,17 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     agendaInmediata
   );
 
-  // Acotar el historial al límite definido para cuidar los tokens y la velocidad de respuesta
-  const historialAcotado = _historial.slice(-RECORDAR_MAX_MENSAJES);
+  const historialAcotado = obtenerHistorial().slice(-RECORDAR_MAX_MENSAJES);
 
   // Si no está corriendo bajo Tauri
   if (!window.__TAURI__) {
-    // Simulación fuera de Windows
-    await new Promise(r => setTimeout(r, 1000));
-    const responseSim = `¡Hola! Soy Pancita. Veo que me escribes desde el navegador. Para habilitar respuestas reales de Gemini, por favor abre Pancitawii en Windows o conecta la API Key. Tu horario indica que estás en: "${bloqueActual?.titulo || 'Tiempo Libre'}"`;
+    await new Promise(r => setTimeout(r, 600));
+    const responseSim = `¡Hola! Soy Pancita. Veo que me escribes desde el navegador. Para habilitar respuestas reales de Gemini, abre Pancitawii en Windows o conecta la API Key. Tu horario indica que estás en: "${bloqueActual?.titulo || 'Tiempo Libre'}"`;
     for (const word of responseSim.split(' ')) {
-      onChunk(word + ' ');
-      await new Promise(r => setTimeout(r, 60));
+      if (typeof onChunk === 'function') onChunk(word + ' ');
+      await new Promise(r => setTimeout(r, 40));
     }
-    _historial.push({ role: 'model', parts: [{ text: responseSim }] });
-    await guardarHistorial();
+    await agregarMensajeModel(responseSim);
     rate.fail();
     return responseSim;
   }
@@ -169,7 +128,6 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
   // Si está corriendo bajo Tauri v2
   const Channel = window.__TAURI__.core.Channel;
   if (!Channel) {
-    // Fallback a Tauri v1
     throw new Error('Tauri IPC Channel no disponible');
   }
 
@@ -178,11 +136,12 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
 
   canal.onmessage = (chunk) => {
     respuestaCompleta += chunk;
-    onChunk(chunk);
+    if (typeof onChunk === 'function') {
+      onChunk(chunk);
+    }
   };
 
   try {
-    // LLamamos al comando unificado en Rust pasándole el historial acotado para cuidar tokens
     await window.__TAURI__.core.invoke('completar_chat_comando', {
       historial: historialAcotado,
       actitud: systemInstruction,
@@ -190,14 +149,11 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
       canal
     });
 
-    _historial.push({ role: 'model', parts: [{ text: respuestaCompleta }] });
-    await guardarHistorial();
+    await agregarMensajeModel(respuestaCompleta);
     rate.fail();
     return respuestaCompleta;
   } catch (err) {
-    // Revertir último mensaje si falló
-    _historial.pop();
-    await guardarHistorial();
+    await removerUltimoMensaje();
     throw err;
   }
 };
@@ -207,7 +163,6 @@ export const obtenerSaludo = () => {
 };
 
 export function agregarMensajeLocalAlHistorial(userText, modelText) {
-  _historial.push({ role: 'user', parts: [{ text: userText }] });
-  _historial.push({ role: 'model', parts: [{ text: modelText }] });
-  guardarHistorial();
+  agregarMensajeUser([{ text: userText }]);
+  agregarMensajeModel(modelText);
 }

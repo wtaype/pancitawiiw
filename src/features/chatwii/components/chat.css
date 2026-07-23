@@ -188,12 +188,18 @@
 .cr_chat_texto {
   padding: 1.2vh 1.6vh;
   border-radius: 1.2vh;
-  font-size: 0.88rem;
-  line-height: 1.45;
+  font-size: var(--fz_m1);
+  line-height: 2;
   box-shadow: var(--bs_l);
   word-break: break-word;
 }
+.cr_chat_texto ul{
+  padding: .1vh 0 1vh 2.5vh;
 
+}
+.cr_chat_burbuja.user .cr_chat_texto {
+  padding: 1vh 1.5vh;
+}
 /* Estilos de burbuja del usuario */
 .cr_chat_burbuja.user .cr_chat_texto {
   background: var(--mco);

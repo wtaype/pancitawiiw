@@ -31,6 +31,8 @@ pub async fn stream_chat(
     custom_key: Option<String>,
     canal: tauri::ipc::Channel<String>,
 ) -> Result<(), String> {
+    let gestor_respuesta = crate::nucleo::chatwii::respuesta_chat::GestorRespuestaChat::nuevo(canal);
+
     let api_key = match custom_key {
         Some(k) if !k.trim().is_empty() => k.trim().to_string(),
         _ => crate::nucleo::chatwii::prompt::obtener_gemini_key_default(),
@@ -98,7 +100,7 @@ pub async fn stream_chat(
                                             }
                                             if let Ok(val) = serde_json::from_str::<serde_json::Value>(json_str) {
                                                 if let Some(chunk) = val["candidates"][0]["content"]["parts"][0]["text"].as_str() {
-                                                    let _ = canal.send(chunk.to_string());
+                                                    let _ = gestor_respuesta.emitir_chunk(chunk);
                                                 }
                                             }
                                         }
