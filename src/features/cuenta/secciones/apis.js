@@ -2,11 +2,12 @@
 // Sub-pestaña: Centro APIs y Métricas de Uso
 
 import { wiSelect, Mensaje, getls } from '@widev';
+import { MODELO_PRINCIPAL } from '@features/chatwii/brain.js';
 import './apis.css';
 
 export function arrancar(panel) {
   const savedKeyVal = localStorage.getItem('gemini_api_key') || '';
-  const savedModelVal = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
+  const savedModelVal = localStorage.getItem('gemini_model') || MODELO_PRINCIPAL;
 
   panel.innerHTML = `
     <div class="cuenta_apis_wrapper">
@@ -30,8 +31,9 @@ export function arrancar(panel) {
           <div class="cuenta_form_grp">
             <label for="cuenta_gemini_model"><i class="fa-solid fa-brain"></i> Modelo Gemini Principal</label>
             <select id="cuenta_gemini_model" class="cuenta_form_select">
-              <option value="gemini-3.1-flash-lite" ${savedModelVal === 'gemini-3.1-flash-lite' ? 'selected' : ''}>gemini-3.1-flash-lite (Ultra Rápido y Ligero)</option>
-              <option value="gemini-2.5-flash" ${savedModelVal === 'gemini-2.5-flash' ? 'selected' : ''}>gemini-2.5-flash (Por Defecto - Rápido)</option>
+              <option value="gemini-3.1-flash-lite" ${savedModelVal === 'gemini-3.1-flash-lite' ? 'selected' : ''}>gemini-3.1-flash-lite (Por Defecto - Ultra Rápido y Ligero)</option>
+              <option value="gemini-3.1-flash" ${savedModelVal === 'gemini-3.1-flash' ? 'selected' : ''}>gemini-3.1-flash (Flash v3.1)</option>
+              <option value="gemini-2.5-flash" ${savedModelVal === 'gemini-2.5-flash' ? 'selected' : ''}>gemini-2.5-flash (Flash v2.5)</option>
               <option value="gemini-2.5-pro" ${savedModelVal === 'gemini-2.5-pro' ? 'selected' : ''}>gemini-2.5-pro (Inteligencia Superior)</option>
               <option value="gemini-2.0-flash" ${savedModelVal === 'gemini-2.0-flash' ? 'selected' : ''}>gemini-2.0-flash (Flash v2)</option>
             </select>
@@ -128,7 +130,7 @@ export function arrancar(panel) {
     // Modelo Activo
     const modeloEl = panel.querySelector('#cuenta_metric_modelo');
     if (modeloEl) {
-      const currentModel = localStorage.getItem('gemini_model') || 'gemini-2.5-flash';
+      const currentModel = localStorage.getItem('gemini_model') || MODELO_PRINCIPAL;
       modeloEl.innerHTML = `<span class="cuenta_model_chip">${currentModel}</span>`;
     }
   };
@@ -139,7 +141,7 @@ export function arrancar(panel) {
   // 4. Acción de Guardar APIs
   const guardarApis = () => {
     const keyInput = panel.querySelector('#cuenta_gemini_key');
-    const modelVal = selectModel ? selectModel.value : 'gemini-2.5-flash';
+    const modelVal = selectModel ? selectModel.value : MODELO_PRINCIPAL;
     const keyVal = keyInput?.value.trim() || '';
 
     localStorage.setItem('gemini_api_key', keyVal);

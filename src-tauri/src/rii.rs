@@ -40,12 +40,30 @@ pub const RUTA_ENV_JS: &str = "../src/env.js";
 
 
 // --- PARÁMETROS DE INTELIGENCIA ARTIFICIAL (GEMINI) ---
-// Modelos de Gemini a intentar en orden de prioridad (cascada de fallbacks)
+pub const MODELO_PRINCIPAL: &str = "gemini-3.1-flash-lite";
+
+pub const MODELOS_RESPALDO: &[&str] = &[
+    "gemini-3.1-flash",
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash"
+];
+
+// Cascadas completas para fallback en el servidor SSE reqwest
 pub const GEMINI_MODELOS: &[&str] = &[
+    "gemini-3.1-flash-lite",
+    "gemini-3.1-flash",
     "gemini-2.5-flash",
     "gemini-2.0-flash",
     "gemini-1.5-flash",
     "gemini-flash-latest"
+];
+
+// --- MODELOS DE VOZ CONVERSACIONAL (FASE 2) ---
+pub const MODELO_PRINCIPAL_VOZ: &str = "gemini-3-flash-live";
+pub const MODELOS_SECUNDARIOS_VOZ: &[&str] = &[
+    "gemini-2.5-flash-native-audio",
+    "gemini-3.1-flash-tts"
 ];
 
 

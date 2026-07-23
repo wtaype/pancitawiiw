@@ -9,6 +9,22 @@ import { obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
 import { obtenerContextoHorario } from './skills/leer_horario.js';
 import { obtenerContextoTiempoReal, obtenerActividadesHoyYManana, obtenerSaludoInteligente } from './lib/chatdev.js';
 
+// Configuración centralizada de modelos de Inteligencia Artificial
+export const MODELO_PRINCIPAL = 'gemini-3.1-flash-lite';
+export const MODELOS_RESPALDO = [
+  'gemini-3.1-flash',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash'
+];
+
+// Configuración centralizada de modelos de Voz (Fase 2)
+export const MODELO_PRINCIPAL_VOZ = 'gemini-3-flash-live';
+export const MODELOS_SECUNDARIOS_VOZ = [
+  'gemini-2.5-flash-native-audio',
+  'gemini-3.1-flash-tts'
+];
+
 // Configuración de límites y optimizaciones del asistente
 export const RECORDAR_MAX_MENSAJES = 10;
 
@@ -93,7 +109,7 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
 
   // Obtener clave API y modelo personalizados desde Cuenta/Centro APIs con getls
   const apiCustomKey = getls('gemini_api_key') || null;
-  const selectModelVal = getls('gemini_model') || 'gemini-2.5-flash';
+  const selectModelVal = getls('gemini_model') || MODELO_PRINCIPAL;
 
   // Obtener datos del perfil wiSmile
   const perfil = getls('wiSmile');
