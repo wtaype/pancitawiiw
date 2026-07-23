@@ -1,5 +1,5 @@
 // src/features/duplicados/duplicados.js
-// Controlador SPA de /duplicados con eliminación suave y amigable mediante Notificacion() de @widev
+// Controlador SPA de /duplicados con parámetros corregidos para paginación, auto-limpieza de búsqueda y Mensaje()
 
 import { renderEscanerConfig } from './secciones/escaner_config.js';
 import { renderResultadosLista } from './secciones/resultados_lista.js';
@@ -12,7 +12,7 @@ import { filtrarGruposDuplicados } from './lib/filtros.js';
 import { aplicarReglaSeleccion } from './lib/reglas_seleccion.js';
 import { renderMusica, bindMusicaEvents } from '@features/musica/musica.js';
 import { tabsComponent } from '@core/componentes/tabs.js';
-import { Mensaje, Notificacion, wiSpin, wiSelect, wiTip, savels, getls, removels } from '@widev';
+import { Mensaje, wiSpin, wiSelect, wiTip, savels, getls, removels } from '@widev';
 import './duplicados.css';
 
 const TAMANO_PAGINA = 20;
@@ -22,9 +22,14 @@ export function getDuplicadosTabs(state) {
   const esPrimera = state.paginaActual <= 1;
   const esUltima = state.paginaActual >= totalPaginas;
 
+  let badgeLabel = `Resultados y Duplicados (${state.gruposFiltrados?.length || 0})`;
+  if (state.busquedaTexto && state.grupos?.length !== state.gruposFiltrados?.length) {
+    badgeLabel = `Resultados (${state.gruposFiltrados?.length || 0} de ${state.grupos?.length || 0})`;
+  }
+
   return [
     { id: 'escaner', label: 'Escáner y Configuración', icon: 'fa-folder-open', position: 'left', active: state.tabActiva === 'escaner' },
-    { id: 'resultados', label: `Resultados y Duplicados (${state.gruposFiltrados?.length || 0})`, icon: 'fa-layer-group', position: 'left', active: state.tabActiva === 'resultados' },
+    { id: 'resultados', label: badgeLabel, icon: 'fa-layer-group', position: 'left', active: state.tabActiva === 'resultados' },
     {
       type: 'custom',
       position: 'right',
@@ -66,7 +71,7 @@ export function getDuplicadosTabs(state) {
 }
 
 // Exportación estática por defecto para el router central
-export const TABS = getDuplicadosTabs({ gruposFiltrados: [], paginaActual: 1, tabActiva: 'escaner', opcionesUltimas: { categoria: 'todos' } });
+export const TABS = getDuplicadosTabs({ grupos: [], gruposFiltrados: [], paginaActual: 1, tabActiva: 'escaner', opcionesUltimas: { categoria: 'todos' } });
 
 export async function arrancar(container) {
   if (container._cleanupDuplicados) {
@@ -136,7 +141,7 @@ export async function arrancar(container) {
 
   async function ejecutarEscaneo(opciones) {
     if (state.rutas.length === 0) {
-      Notificacion('Agrega al menos una carpeta para escanear', 'warning');
+      Mensaje('Agrega al menos una carpeta para escanear', 'warning');
       return;
     }
 
@@ -167,7 +172,7 @@ export async function arrancar(container) {
 
       guardarEstadoEnStorage();
 
-      Notificacion(`Escaneo completado. ${state.gruposFiltrados.length} grupos de duplicados encontrados.`, 'success');
+      Mensaje(`Escaneo completado. ${state.gruposFiltrados.length} grupos de duplicados encontrados.`, 'success');
       
       refrescarSubtabsSuperiores();
       actualizarVistasResultados();
@@ -271,15 +276,19 @@ export async function arrancar(container) {
             state.rutasSeleccionadas.clear();
             state.archivoSeleccionadoRuta = null;
 
+            // Auto-limpiar el campo de búsqueda al eliminar para mostrar el resto de duplicados normalmente
+            state.busquedaTexto = '';
+
             guardarEstadoEnStorage();
             restaurarMusicaEnSidebar();
             refrescarSubtabsSuperiores();
 
-            Notificacion(`¡${eliminados} archivo(s) movidos a la Papelera de Reciclaje!`, 'success');
+            // Uso de Mensaje() en lugar de Notificacion()
+            Mensaje(`¡${eliminados} archivo(s) movidos exitosamente a la Papelera de Reciclaje!`, 'success');
             actualizarVistasResultados();
           } catch (errElim) {
             console.error('[Duplicados] Error al eliminar archivos:', errElim);
-            Notificacion(`Error al eliminar: ${errElim}`, 'error');
+            Mensaje(`Error al eliminar: ${errElim}`, 'error');
           }
         }, 250);
       }
@@ -304,6 +313,7 @@ export async function arrancar(container) {
         state.busquedaTexto = e.target.value;
         state.paginaActual = 1;
         actualizarVistasResultados();
+        refrescarSubtabsSuperiores();
       };
     }
 
@@ -314,6 +324,7 @@ export async function arrancar(container) {
         state.opcionesUltimas.categoria = e.target.value;
         state.paginaActual = 1;
         actualizarVistasResultados();
+        refrescarSubtabsSuperiores();
       };
     }
 
@@ -380,7 +391,7 @@ export async function arrancar(container) {
           state.opcionesUltimas = opciones;
           await ejecutarEscaneo(opciones);
         });
-        Notificacion(`Carpeta agregada: ${ruta}`, 'info');
+        Mensaje(`Carpeta agregada: ${ruta}`, 'info');
       }
     } else if (actionId === 're_escanear_action') {
       const btnRef = document.querySelector('[data-action-id="re_escanear_action"]');
@@ -388,7 +399,7 @@ export async function arrancar(container) {
 
       try {
         await ejecutarEscaneo(state.opcionesUltimas);
-        Notificacion('Resultados de duplicados actualizados', 'success');
+        Mensaje('Resultados de duplicados actualizados', 'success');
       } finally {
         if (btnRef && typeof wiSpin === 'function') wiSpin(btnRef, false);
       }
@@ -410,7 +421,7 @@ export async function arrancar(container) {
 
       restaurarMusicaEnSidebar();
       activarTab('escaner');
-      Notificacion('Historial y resultados limpiados. Listo para un nuevo escaneo.', 'info');
+      Mensaje('Historial y resultados limpiados. Listo para un nuevo escaneo.', 'info');
     }
   };
 

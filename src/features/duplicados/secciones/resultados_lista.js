@@ -1,5 +1,5 @@
 // src/features/duplicados/secciones/resultados_lista.js
-// Renderizado de la lista agrupada con muestra de ruta completa, checkboxes Apple iOS y estado vacío limpio
+// Renderizado de la lista agrupada con muestra de ruta completa, checkboxes Apple iOS y paginación de 20 ítems
 
 import { formatearBytes } from '../lib/filtros.js';
 import { renderPaginacion } from '../componentes/paginacion.js';
@@ -74,7 +74,9 @@ export function renderResultadosLista(
       container.querySelectorAll('.dup_tab_archivo_row').forEach(r => r.classList.remove('selected'));
       row.classList.add('selected');
       const ruta = row.getAttribute('data-ruta');
-      onSeleccionarArchivo(ruta);
+      if (typeof onSeleccionarArchivo === 'function') {
+        onSeleccionarArchivo(ruta);
+      }
     };
   });
 
@@ -93,7 +95,9 @@ export function renderResultadosLista(
   container.querySelectorAll('.dup_checkbox_file').forEach(chk => {
     chk.onchange = () => {
       const ruta = chk.getAttribute('data-ruta');
-      onToggleCheckArchivo(ruta, chk.checked);
+      if (typeof onToggleCheckArchivo === 'function') {
+        onToggleCheckArchivo(ruta, chk.checked);
+      }
     };
   });
 }
