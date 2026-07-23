@@ -1,0 +1,266 @@
+/* src/features/cuenta/secciones/chatwii_config.css */
+/* Estilos premium: Fila superior 50%/50% sincronizada con el diseño general de cuenta_card */
+
+.chatwii_config_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  width: 100%;
+}
+
+/* Fila Superior en 2 columnas de 50% / 50% */
+.chatwii_top_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5vh;
+  width: 100%;
+  align-items: stretch;
+}
+
+.chatwii_top_grid .cuenta_card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* ==================== CLASE ESPECIAL CHAT_CG_VOZ ==================== */
+/* Sincronizada 100% con la estética sobria de cuenta_card (sin box-shadow ni bordes cargados) */
+.chat_cg_voz {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd) !important;
+  box-shadow: 0 8px 32px 0 var(--glass-shd) !important;
+}
+
+.chat_cg_voz_switch {
+  background: var(--bg4);
+  padding: 1.2vh 1.5vh;
+  border-radius: 1vh;
+  border: 1px solid var(--brd);
+  margin-bottom: 1.5vh;
+}
+
+.chat_cg_voz_switch_lbl {
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  font-size: var(--fz_m1);
+  color: var(--tx1);
+  font-weight: 600;
+}
+
+.chat_cg_voz_mic_box {
+  background: var(--bg3);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  padding: 1.6vh 1.8vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+}
+
+.chat_cg_voz_mic_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5vh;
+}
+
+.chat_cg_voz_mic_btn {
+  padding: 1vh 1.6vh;
+  border-radius: 0.8vh;
+  background: var(--wb);
+  border: 1px solid var(--mco);
+  color: var(--tx1);
+  font-weight: 600;
+  font-size: var(--fz_m1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8vh;
+  transition: all 0.2s ease;
+}
+
+.chat_cg_voz_mic_btn:hover {
+  background: var(--bg5);
+  color: var(--tx1);
+}
+
+.chat_cg_voz_mic_btn.active {
+  background: var(--dulce, #ff5c69);
+  border-color: var(--dulce, #ff5c69);
+  color: var(--white, #fff);
+}
+
+.chat_cg_voz_status {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  font-weight: 500;
+  margin: 0;
+}
+
+.chat_cg_voz_meter {
+  width: 100%;
+  height: 1.2vh;
+  min-height: 10px;
+  background: var(--inp);
+  border: 1px solid var(--brd);
+  border-radius: 1vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.chat_cg_voz_bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--mco) 0%, var(--success) 100%);
+  border-radius: 1vh;
+  transition: width 0.08s ease-out;
+}
+
+/* Área Inferior a Ancho Completo (100%) */
+.chatwii_bottom_full {
+  width: 100%;
+}
+
+/* Rejilla horizontal de métricas en 3 columnas */
+.chatwii_metrics_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2vh 3vw;
+  width: 100%;
+}
+
+.cuenta_metric_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2vh 0;
+  border-bottom: 1px solid var(--bg4);
+  box-sizing: border-box;
+}
+
+.cuenta_metric_lbl {
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  font-size: var(--fz_m1);
+  color: var(--tx3);
+  font-weight: 500;
+}
+
+.cuenta_metric_lbl i {
+  color: var(--mco);
+  width: 1.8vh;
+  text-align: center;
+}
+
+.cuenta_metric_val {
+  font-size: var(--fz_m1);
+  color: var(--tx1);
+  font-weight: 600;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Badges y chips */
+.cuenta_metric_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6vh;
+  padding: 0.4vh 1vh;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s4);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cuenta_metric_badge.success {
+  background: var(--bg5, rgba(0, 243, 255, 0.1));
+  color: var(--success, #3cd741);
+}
+
+.cuenta_metric_badge.danger {
+  background: var(--bg4, rgba(255, 92, 105, 0.1));
+  color: var(--dulce, #ff5c69);
+}
+
+.cuenta_model_chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  color: var(--mco);
+  padding: 0.4vh 1vh;
+  border-radius: 0.6vh;
+  font-size: var(--fz_s3);
+  font-weight: 600;
+}
+
+.cuenta_switch_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cuenta_switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.cuenta_switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.cuenta_slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--brd, #2d3a52);
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.cuenta_slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--white, #fff);
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .cuenta_slider {
+  background-color: var(--mco, #00f3ff);
+}
+
+input:checked + .cuenta_slider:before {
+  transform: translateX(20px);
+}
+
+/* Responsividad */
+@media (max-width: 950px) {
+  .chatwii_top_grid {
+    grid-template-columns: 1fr;
+  }
+  .chatwii_metrics_grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .chatwii_metrics_grid {
+    grid-template-columns: 1fr;
+  }
+}

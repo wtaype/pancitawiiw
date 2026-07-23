@@ -12,7 +12,7 @@ const cargados = new Set();
 export const TABS = [
   { id: 'perfil', label: 'Mi Perfil', icon: 'fa-user-astronaut', position: 'left', active: true },
   { id: 'seguridad', label: 'Seguridad', icon: 'fa-shield-halved', position: 'left' },
-  { id: 'apis', label: 'Centro APIs', icon: 'fa-cubes', position: 'left' },
+  { id: 'chatwii_config', label: 'ChatWii', icon: 'fa-robot', position: 'left' },
   { id: 'guardar_perfil_action', label: 'Guardar', icon: 'fa-save', position: 'right', iconOnly: true }
 ];
 
@@ -37,7 +37,7 @@ export function arrancar(container) {
           <div class="cuenta_left">
             <div id="cuenta_section_perfil" class="cuenta_section_content active"></div>
             <div id="cuenta_section_seguridad" class="cuenta_section_content"></div>
-            <div id="cuenta_section_apis" class="cuenta_section_content"></div>
+            <div id="cuenta_section_chatwii_config" class="cuenta_section_content"></div>
           </div>
 
           <!-- Columna Derecha: Resumen de Cuenta e Información de Temas Fijo -->
@@ -164,7 +164,7 @@ export function arrancar(container) {
   // Evento para cambiar de pestaña horizontal
   const handleSubtabChange = (e) => {
     const subtabId = e.detail.subtabId;
-    if (['perfil', 'seguridad', 'apis'].includes(subtabId)) {
+    if (['perfil', 'seguridad', 'chatwii_config'].includes(subtabId)) {
       tabActiva = subtabId;
       
       const grid = container.querySelector('.cuenta_grid');
