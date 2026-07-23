@@ -15,6 +15,9 @@ pub const VENTANA_MIN_ANCHO: f64 = 320.0;
 // Alto mínimo permitido para la redimensión de la ventana
 pub const VENTANA_MIN_ALTO: f64 = 450.0;
 
+// Descuento en píxeles para la barra de tareas de Windows y márgenes de sistema
+pub const BARRA_TAREAS_DESCUENTO_PX: f64 = 48.0;
+
 // --- CONFIGURACIÓN DE VENTANA (SMILE WIDGET) ---
 pub const SMILE_ANCHO: i32 = 75;
 pub const SMILE_ALTO: i32 = 75;
