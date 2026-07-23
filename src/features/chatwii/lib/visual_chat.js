@@ -1,8 +1,8 @@
 // src/features/chatwii/lib/visual_chat.js
-// Renderizador visual, componentes DOM y animaciones de streaming para ChatWii
+// Renderizador visual, componentes DOM y Virtual Scroll a 60-120 FPS para ChatWii
 
 import { mdToHtml as parseMd, procesarHtml } from './escribirmd.js';
-import { wicopy } from '@widev';
+import { wicopy, wiVirtualScroll } from '@widev';
 
 export const mdToHtml = (txt) => {
   const html = parseMd(txt);
@@ -13,16 +13,32 @@ export class VisualChat {
   constructor(messagesContainer) {
     this.container = messagesContainer;
     this.scrollLocked = false;
+    this.messages = [];
+
+    if (this.container) {
+      this.initVirtualScroll();
+    }
+  }
+
+  // Inicializa el motor de Virtual Scroll para mantener ~10-15 nodos activos en el DOM
+  initVirtualScroll() {
+    this.vscroll = new wiVirtualScroll({
+      container: this.container,
+      items: this.messages,
+      itemHeight: 75,
+      buffer: 4,
+      renderRow: (msg) => this.crearBurbujaMensaje(msg.autor, msg.texto, msg.esUsuario)
+    });
   }
 
   // Scroll automático inteligente
   scrollAlFinal() {
-    if (this.container && !this.scrollLocked) {
-      this.container.scrollTop = this.container.scrollHeight;
+    if (this.vscroll && !this.scrollLocked) {
+      this.vscroll.scrollToBottom();
     }
   }
 
-  // Crear burbuja de mensaje
+  // Crear elemento de burbuja de mensaje
   crearBurbujaMensaje(autor, texto, esUsuario = false) {
     const wrapper = document.createElement('div');
     wrapper.className = `cr_chat_msg ${esUsuario ? 'user' : 'bot'}`;
@@ -31,7 +47,7 @@ export class VisualChat {
       ? '<i class="fa-solid fa-user"></i>'
       : '<i class="fa-solid fa-robot"></i>';
 
-    const contenidoHtml = esUsuario ? mdToHtml(texto) : mdToHtml(texto);
+    const contenidoHtml = mdToHtml(texto);
 
     wrapper.innerHTML = `
       <div class="cr_chat_msg_avatar">${iconHtml}</div>
@@ -59,13 +75,28 @@ export class VisualChat {
     return wrapper;
   }
 
-  // Agregar mensaje a la lista visual
+  // Agregar mensaje a la lista virtual
   agregarMensaje(autor, texto, esUsuario = false) {
-    if (!this.container) return null;
-    const node = this.crearBurbujaMensaje(autor, texto, esUsuario);
-    this.container.appendChild(node);
-    this.scrollAlFinal();
-    return node;
+    const msg = { autor, texto, esUsuario };
+    this.messages.push(msg);
+
+    if (this.vscroll) {
+      this.vscroll.updateItems(this.messages, true);
+    }
+    return msg;
+  }
+
+  // Cargar historial masivo con Virtual Scroll instantáneo
+  cargarHistorial(historial = []) {
+    this.messages = historial.map(m => ({
+      autor: m.autor || (m.esUsuario ? 'Tú' : 'Pancitawii'),
+      texto: m.texto || m.content || '',
+      esUsuario: m.esUsuario ?? (m.role === 'user')
+    }));
+
+    if (this.vscroll) {
+      this.vscroll.updateItems(this.messages, true);
+    }
   }
 
   // Crear burbuja de mensaje con streaming activo
@@ -85,7 +116,9 @@ export class VisualChat {
       </div>
     `;
 
-    this.container.appendChild(wrapper);
+    // Montar temporalmente en el viewport de vscroll
+    const targetViewport = this.vscroll?.viewport || this.container;
+    targetViewport.appendChild(wrapper);
     this.scrollAlFinal();
 
     const contentDiv = wrapper.querySelector('.cr_chat_msg_content');
@@ -102,18 +135,18 @@ export class VisualChat {
         this.scrollAlFinal();
       },
       finalizar: () => {
-        wrapper.classList.remove('streaming_active');
-        const indicator = wrapper.querySelector('.cr_chat_streaming_indicator');
-        if (indicator) indicator.remove();
+        wrapper.remove(); // Remover nodo temporal de streaming
+        this.agregarMensaje(autor, bufferTexto, false); // Guardar en lista virtualizada de mensajes
         return bufferTexto;
       }
     };
   }
 
-  // Limpiar mensajes visuales
+  // Limpiar mensajes visuales y reiniciar motor
   limpiar() {
-    if (this.container) {
-      this.container.innerHTML = '';
+    this.messages = [];
+    if (this.vscroll) {
+      this.vscroll.updateItems([], false);
     }
   }
 }

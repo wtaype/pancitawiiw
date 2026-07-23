@@ -15,7 +15,7 @@ export { abrirModal, cerrarModal, cerrarTodos } from './modales.js';
 export { wiPath } from './navegador.js';
 export { Capit, NombreApellido, getNombre, avatar } from './nombre.js';
 export { wiRateLimit } from './ratelimit.js';
-export { wiScroll } from './scroll.js';
+export { wiScroll, wiVirtualScroll } from './scroll.js';
 export { setMeta } from './seometa.js';
 export { wiSpin } from './spin.js';
 export { savels, getls, removels, gosave, getsave, gosaves, getsaves } from './storage.js';
