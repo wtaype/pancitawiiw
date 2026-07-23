@@ -93,9 +93,8 @@ export function Mensaje(msg, tipo = 'success') {
 // ── BANNER apilable lateral ──────────────────────────────────────────────────
 export function Notificacion(msg, tipo = 'error', tiempo = 3000) {
   if (typeof document === 'undefined') return;
-  _inyectarCSS();
 
-  // Obtener o crear el contenedor apilador
+  // Obtener o crear el contenedor apilador (Bajo Demanda - Singleton)
   let container = document.getElementById('notificationsContainer');
   if (!container) {
     container = document.createElement('div');
