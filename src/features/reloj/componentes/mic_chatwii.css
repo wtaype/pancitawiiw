@@ -1,0 +1,36 @@
+/* src/features/reloj/componentes/mic_chatwii.css */
+/* Estilos limpios sin box-shadow recargado para el botón de micrófono en el Reloj */
+
+.mic_chatwii_btn {
+  position: absolute;
+  top: 1.2vh;
+  right: 1.2vh;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--wb, #151b2e);
+  border: 1px solid var(--brd, rgba(255, 255, 255, 0.15));
+  color: var(--tx1, #e0e7ff);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: none;
+}
+
+.mic_chatwii_btn:hover {
+  background: var(--bg5, rgba(0, 243, 255, 0.15));
+  border-color: var(--mco, #00f3ff);
+  color: var(--mco, #00f3ff);
+  transform: scale(1.05);
+}
+
+.mic_chatwii_btn.listening {
+  background: var(--dulce, #ff5c69);
+  border-color: var(--dulce, #ff5c69);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 92, 105, 0.4);
+}

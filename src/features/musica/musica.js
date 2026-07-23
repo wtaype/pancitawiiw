@@ -906,3 +906,132 @@ export function bindMusicaEvents(container) {
   refrescarUICompleta();
   inicializarCarpetaSistema();
 }
+
+export function sincronizarBotonPlayYUI(reproduciendo, track) {
+  isPlaying = reproduciendo;
+
+  // 1. Botón Play/Pause principal en Hero
+  const mainPlayBtn = document.querySelector('#msc_main_play_btn');
+  if (mainPlayBtn) {
+    mainPlayBtn.setAttribute('data-witip', reproduciendo ? 'Pausar' : 'Reproducir');
+    mainPlayBtn.innerHTML = `<i class="fa-solid ${reproduciendo ? 'fa-pause' : 'fa-play'}"></i>`;
+  }
+
+  // 2. Título y Metadata del Hero
+  if (track) {
+    const titleNowEl = document.querySelector('#msc_now_title');
+    const metaTextEl = document.querySelector('#msc_meta_text');
+    if (titleNowEl) titleNowEl.textContent = track.titulo;
+    if (metaTextEl) metaTextEl.textContent = `MP3 · ${track.peso || '0 MB'} · Modificado: ${track.fecha || '-'}`;
+  }
+
+  // 3. Visualizadores de onda neón laterales
+  const vizLeft = document.querySelector('#msc_visualizer_left');
+  const vizRight = document.querySelector('#msc_visualizer_right');
+  [vizLeft, vizRight].forEach(el => {
+    if (el) {
+      if (reproduciendo) el.classList.add('playing');
+      else el.classList.remove('playing');
+    }
+  });
+}
+
+export function reproducirComandoVocalMusica(busqueda) {
+  const lista = (playlistActual && playlistActual.length > 0) ? playlistActual : DEFAULT_PLAYLIST;
+  
+  if (!busqueda || busqueda === 'lofi' || busqueda === 'musica') {
+    const track = lista[0];
+    if (track) {
+      const srcSeguro = resolverUrlPista(track);
+      if (audio.src !== srcSeguro) audio.src = srcSeguro;
+      aplicarVolumen();
+      audio.play().then(() => { 
+        sincronizarBotonPlayYUI(true, track); 
+      }).catch(console.warn);
+      return track.titulo;
+    }
+  }
+
+  const query = busqueda.toLowerCase();
+  const matchIdx = lista.findIndex(t => 
+    (t.titulo || '').toLowerCase().includes(query) ||
+    (t.archivo || '').toLowerCase().includes(query) ||
+    (t.artista || '').toLowerCase().includes(query)
+  );
+
+  const targetIdx = matchIdx !== -1 ? matchIdx : 0;
+  currentTrackIndex = targetIdx;
+  const track = lista[targetIdx];
+  if (track) {
+    const srcSeguro = resolverUrlPista(track);
+    if (audio.src !== srcSeguro) audio.src = srcSeguro;
+    aplicarVolumen();
+    audio.play().then(() => { 
+      sincronizarBotonPlayYUI(true, track); 
+    }).catch(console.warn);
+    return track.titulo;
+  }
+  return 'Música';
+}
+
+export function pausarOReanudarMusica() {
+  const track = playlistActual[currentTrackIndex] || playlistActual[0];
+  if (isPlaying) {
+    audio.pause();
+    sincronizarBotonPlayYUI(false, track);
+  } else {
+    aplicarVolumen();
+    audio.play().then(() => { 
+      sincronizarBotonPlayYUI(true, track); 
+    }).catch(console.warn);
+  }
+}
+
+export function siguienteCancionVocal() {
+  const lista = (playlistActual && playlistActual.length > 0) ? playlistActual : DEFAULT_PLAYLIST;
+  let nextIdx = currentTrackIndex + 1;
+  if (nextIdx >= lista.length) nextIdx = 0;
+  currentTrackIndex = nextIdx;
+  const track = lista[currentTrackIndex];
+  if (track) {
+    const srcSeguro = resolverUrlPista(track);
+    if (audio.src !== srcSeguro) audio.src = srcSeguro;
+    aplicarVolumen();
+    audio.play().then(() => {
+      sincronizarBotonPlayYUI(true, track);
+    }).catch(console.warn);
+    return track.titulo;
+  }
+  return 'Siguiente pista';
+}
+
+export function anteriorCancionVocal() {
+  const lista = (playlistActual && playlistActual.length > 0) ? playlistActual : DEFAULT_PLAYLIST;
+  let prevIdx = currentTrackIndex - 1;
+  if (prevIdx < 0) prevIdx = lista.length - 1;
+  currentTrackIndex = prevIdx;
+  const track = lista[currentTrackIndex];
+  if (track) {
+    const srcSeguro = resolverUrlPista(track);
+    if (audio.src !== srcSeguro) audio.src = srcSeguro;
+    aplicarVolumen();
+    audio.play().then(() => {
+      sincronizarBotonPlayYUI(true, track);
+    }).catch(console.warn);
+    return track.titulo;
+  }
+  return 'Pista anterior';
+}
+
+// Oyentes de comandos de voz Alexa para reproductor
+window.addEventListener('pancita_comando_musica', (e) => {
+  const busqueda = e.detail?.busqueda || '';
+  reproducirComandoVocalMusica(busqueda);
+});
+
+window.addEventListener('pancita_comando_musica_control', (e) => {
+  const accion = e.detail?.accion;
+  if (accion === 'pausa') pausarOReanudarMusica();
+  else if (accion === 'siguiente') siguienteCancionVocal();
+  else if (accion === 'anterior') anteriorCancionVocal();
+});

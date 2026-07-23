@@ -3,6 +3,7 @@
 
 import { getls } from '@widev';
 import { rutas } from '@core/rutas.js';
+import { renderMicChatwii, initMicChatwiiEvents } from './componentes/mic_chatwii.js';
 import '@features/reloj/reloj.css';
 
 const CONFIG_POR_DEFECTO = {
@@ -18,6 +19,7 @@ const CONFIG_POR_DEFECTO = {
 export function renderReloj() {
   return `
     <div class="reloj_hero_card sidebar_only_clock" style="cursor: pointer;" title="Doble clic para configurar">
+      ${renderMicChatwii()}
       <div class="reloj_hero_clock_wrap" style="display: flex; flex-direction: column; align-items: center; gap: 0.8vh;">
         <div class="reloj_hero_clock" id="panel_hero_live_clock">
           00:00:00 p.m.
@@ -34,6 +36,9 @@ export function initRelojTimer(container) {
   const clockEl = container.querySelector('#panel_hero_live_clock');
   const dateEl = container.querySelector('#panel_hero_live_date');
   const wrapper = container.querySelector('#sidebar_reloj_wrapper');
+
+  // Inicializar micrófono Alexa en el reloj
+  initMicChatwiiEvents(container);
 
   function actualizarReloj() {
     const config = getls('wi_clock_config') || CONFIG_POR_DEFECTO;
