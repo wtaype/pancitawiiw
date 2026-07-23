@@ -611,7 +611,7 @@
 }
 
 .msc_btn_play_mini:hover { transform: scale(1.12); }
-.msc_btn_play_mini.pause_mini { background: var(--error); }
+.msc_btn_play_mini.pause_mini { background: var(--mco); }
 
 /* Estado vacío */
 .msc_empty_state {
