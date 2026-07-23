@@ -154,6 +154,9 @@ function aplicarVolumen() {
   audio.volume = isMuted ? 0 : volume;
 }
 
+let refrescarUICompletaRef = null;
+let actualizarPlaylistCombinadaRef = null;
+
 async function inicializarCarpetaSistema() {
   if (typeof window === 'undefined' || !(window.__TAURI__ || window.__TAURI_INTERNALS__)) return;
   try {
@@ -172,16 +175,16 @@ async function inicializarCarpetaSistema() {
         carpetasGuardadas.push(nuevaCarpeta);
         guardarEstado();
         if (combinarTodas) {
-          actualizarPlaylistCombinada();
+          if (typeof actualizarPlaylistCombinadaRef === 'function') actualizarPlaylistCombinadaRef();
         } else {
-          refrescarUICompleta();
+          if (typeof refrescarUICompletaRef === 'function') refrescarUICompletaRef();
         }
       } else {
         const folder = carpetasGuardadas.find(c => c.nombre === res.ruta_raiz || c.id === 'folder_system');
         if (folder) {
           folder.canciones = res.canciones;
           guardarEstado();
-          refrescarUICompleta();
+          if (typeof refrescarUICompletaRef === 'function') refrescarUICompletaRef();
         }
       }
     }
@@ -412,6 +415,7 @@ export function bindMusicaEvents(container) {
     guardarEstado();
     refrescarUICompleta();
   }
+  actualizarPlaylistCombinadaRef = actualizarPlaylistCombinada;
 
   function refrescarUICompleta() {
     const actual = playlistActual[currentTrackIndex] || playlistActual[0];
@@ -527,6 +531,7 @@ export function bindMusicaEvents(container) {
     if (btnPrevTop) btnPrevTop.disabled = paginaActual <= 1;
     if (btnNextTop) btnNextTop.disabled = paginaActual >= totalPaginas;
   }
+  refrescarUICompletaRef = refrescarUICompleta;
 
   function cargarYReproducir(index, autoPlay = true) {
     if (index < 0) index = playlistActual.length - 1;
