@@ -1,20 +1,25 @@
 /* src/features/cuenta/secciones/chatwii_config.css */
-/* Estilos premium: Fila superior 50%/50% sincronizada con el diseño general de cuenta_card */
+/* Estilos alineados 100% con max-width, box-sizing seguro y sin box-shadows excesivos */
 
 .chatwii_config_wrapper {
   display: flex;
   flex-direction: column;
   gap: 2.5vh;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* Fila Superior en 2 columnas de 50% / 50% */
+/* Fila Superior en 2 columnas de 50% / 50% con contención de desbordamiento */
 .chatwii_top_grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 2.5vh;
   width: 100%;
+  max-width: 100%;
   align-items: stretch;
+  box-sizing: border-box;
 }
 
 .chatwii_top_grid .cuenta_card {
@@ -22,16 +27,19 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* ==================== CLASE ESPECIAL CHAT_CG_VOZ ==================== */
-/* Sincronizada 100% con la estética sobria de cuenta_card (sin box-shadow ni bordes cargados) */
+/* Sincronizada con el diseño sobrio de cuenta_card (sin box-shadow recargado) */
 .chat_cg_voz {
   position: relative;
   background: var(--glass-bg);
   border: 1px solid var(--glass-brd) !important;
-  box-shadow: 0 8px 32px 0 var(--glass-shd) !important;
+  box-shadow: 0 4px 16px 0 var(--glass-shd) !important;
 }
 
 .chat_cg_voz_switch {
@@ -40,6 +48,9 @@
   border-radius: 1vh;
   border: 1px solid var(--brd);
   margin-bottom: 1.5vh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .chat_cg_voz_switch_lbl {
@@ -49,6 +60,58 @@
   font-size: var(--fz_m1);
   color: var(--tx1);
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Textarea para frase de demostración */
+.cuenta_voice_demo_textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, rgba(255, 255, 255, 0.15));
+  border-radius: 1vh;
+  color: var(--tx1, #e0e7ff);
+  font-family: var(--ff_P);
+  font-size: var(--fz_m1);
+  padding: 1.2vh 1.5vh;
+  resize: none;
+  min-height: 52px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.cuenta_voice_demo_textarea:focus {
+  border-color: var(--mco);
+}
+
+/* Botón Neón para el Probador de Voz TTS */
+.chat_cg_voz_probador_btn {
+  padding: 1vh 1.8vh;
+  border-radius: 1vh;
+  background: var(--wb, #151b2e);
+  color: var(--tx1, #e0e7ff);
+  border: 1px solid var(--mco, #00f3ff);
+  font-family: var(--ff_P);
+  font-size: var(--fz_m1);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8vh;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.chat_cg_voz_probador_btn:hover {
+  background: var(--bg5, rgba(0, 243, 255, 0.15));
+  color: var(--tx1);
+  border-color: var(--mco);
+  transform: translateY(-1px);
 }
 
 .chat_cg_voz_mic_box {
@@ -59,6 +122,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.2vh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .chat_cg_voz_mic_header {
@@ -66,6 +132,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5vh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .chat_cg_voz_mic_btn {
@@ -99,10 +168,14 @@
   color: var(--tx3);
   font-weight: 500;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chat_cg_voz_meter {
   width: 100%;
+  max-width: 100%;
   height: 1.2vh;
   min-height: 10px;
   background: var(--inp);
@@ -110,6 +183,7 @@
   border-radius: 1vh;
   overflow: hidden;
   position: relative;
+  box-sizing: border-box;
 }
 
 .chat_cg_voz_bar {
@@ -123,6 +197,8 @@
 /* Área Inferior a Ancho Completo (100%) */
 .chatwii_bottom_full {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Rejilla horizontal de métricas en 3 columnas */
@@ -131,6 +207,8 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 2vh 3vw;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .cuenta_metric_row {
@@ -140,6 +218,7 @@
   padding: 1.2vh 0;
   border-bottom: 1px solid var(--bg4);
   box-sizing: border-box;
+  width: 100%;
 }
 
 .cuenta_metric_lbl {
@@ -199,6 +278,10 @@
   border-radius: 0.6vh;
   font-size: var(--fz_s3);
   font-weight: 600;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cuenta_switch_wrap {
@@ -212,6 +295,7 @@
   display: inline-block;
   width: 44px;
   height: 24px;
+  flex-shrink: 0;
 }
 
 .cuenta_switch input {

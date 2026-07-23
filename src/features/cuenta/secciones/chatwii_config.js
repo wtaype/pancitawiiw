@@ -1,18 +1,69 @@
 // src/features/cuenta/secciones/chatwii_config.js
-// Sub-pestaña: Configuración de ChatWii (Card Texto + Card Voz chat_cg_voz + Persistencia voz_chatwii + Métricas Full Width)
+// Sub-pestaña: Configuración de ChatWii (Fase 1.2: Multi-Proveedor de Voz Azure/Google/ElevenLabs + Textarea de Demostración)
 
-import { wiSelect, Mensaje, wiTip, getls, savels } from '@widev';
+import { wiSelect, Mensaje, wiTip, getls, savels, saludoSmile } from '@widev';
 import { MODELO_PRINCIPAL, MODELOS_RESPALDO, MODELO_PRINCIPAL_VOZ, MODELOS_SECUNDARIOS_VOZ } from '@features/chatwii/brain.js';
-import { probarMicrofono, detenerPruebaMicrofono } from '@features/chatwii/lib/voz_asistente.js';
+import { probarMicrofono, detenerPruebaMicrofono, probarDemostrasionVozCustom, detenerAudioHablado } from '@features/chatwii/lib/voz_asistente.js';
+import { PROVEEDORES_VOZ, LISTA_VOCES, obtenerVocesPorProveedor } from '@features/chatwii/lib/lista_voces.js';
 import './chatwii_config.css';
 
-export function arrancar(panel) {
-  const savedKeyVal = localStorage.getItem('gemini_api_key') || '';
-  const savedModelVal = localStorage.getItem('gemini_model') || MODELO_PRINCIPAL;
-  const savedVoiceModelVal = localStorage.getItem('gemini_voice_model') || MODELO_PRINCIPAL_VOZ;
+/**
+ * Obtiene el objeto de configuración unificado desde localStorage
+ */
+export function obtenerConfigChatWii() {
+  const defaults = {
+    apiKey: localStorage.getItem('gemini_api_key') || '',
+    modeloTexto: localStorage.getItem('gemini_model') || MODELO_PRINCIPAL,
+    voz: {
+      activa: getls('chatwii_voz_activa') ?? getls('voz_chatwii') ?? false,
+      modelo: getls('chatwii_voz_modelo') || MODELO_PRINCIPAL_VOZ,
+      proveedor: getls('chatwii_voz_proveedor') || 'azure',
+      tipo: getls('chatwii_voz_tipo') || 'es-MX-DaliaNeural'
+    }
+  };
+
+  const storedObj = getls('chatwii_config');
+  if (storedObj && typeof storedObj === 'object') {
+    return {
+      ...defaults,
+      ...storedObj,
+      voz: {
+        ...defaults.voz,
+        ...(storedObj.voz || {})
+      }
+    };
+  }
+  return defaults;
+}
+
+/**
+ * Guarda la configuración unificada en localStorage
+ */
+export function guardarConfigChatWii(config) {
+  savels('chatwii_config', config);
   
-  // Lectura con getls('voz_chatwii')
-  const savedVozActiva = getls('voz_chatwii') ?? false;
+  if (config.apiKey !== undefined) localStorage.setItem('gemini_api_key', config.apiKey);
+  if (config.modeloTexto !== undefined) localStorage.setItem('gemini_model', config.modeloTexto);
+  if (config.voz) {
+    if (config.voz.activa !== undefined) {
+      savels('chatwii_voz_activa', config.voz.activa);
+      savels('voz_chatwii', config.voz.activa);
+    }
+    if (config.voz.modelo !== undefined) savels('chatwii_voz_modelo', config.voz.modelo);
+    if (config.voz.proveedor !== undefined) savels('chatwii_voz_proveedor', config.voz.proveedor);
+    if (config.voz.tipo !== undefined) savels('chatwii_voz_tipo', config.voz.tipo);
+  }
+}
+
+export function arrancar(panel) {
+  const config = obtenerConfigChatWii();
+
+  let saludoDefecto = '¡Buenas noches!';
+  try {
+    saludoDefecto = saludoSmile() || '¡Buenas noches!';
+  } catch (_) {}
+
+  const textoPruebaInicial = `${saludoDefecto} Soy Pancita, tu asistente personal de IA. Estoy lista para ayudarte con tu música, horarios y actividades.`;
 
   panel.innerHTML = `
     <div class="chatwii_config_wrapper">
@@ -28,7 +79,7 @@ export function arrancar(panel) {
             <div class="cuenta_form_grp">
               <label for="cuenta_gemini_key"><i class="fa-solid fa-key"></i> Clave API de Gemini</label>
               <div class="cuenta_pass_wrap">
-                <input type="password" id="cuenta_gemini_key" value="${savedKeyVal}" placeholder="AIzaSy..." data-witip="Ingresa tu clave privada de Google AI Studio">
+                <input type="password" id="cuenta_gemini_key" value="${config.apiKey}" placeholder="AIzaSy..." data-witip="Ingresa tu clave privada de Google AI Studio">
                 <button type="button" class="cuenta_pass_eye" data-target="cuenta_gemini_key" data-witip="Mostrar u ocultar clave API">
                   <i class="fa-solid fa-eye-slash"></i>
                 </button>
@@ -39,17 +90,17 @@ export function arrancar(panel) {
             <div class="cuenta_form_grp">
               <label for="cuenta_gemini_model"><i class="fa-solid fa-brain"></i> Modelo Gemini Principal</label>
               <select id="cuenta_gemini_model" class="cuenta_form_select" data-witip="Modelo preferido para respuestas de texto">
-                <option value="gemini-3.1-flash-lite" ${savedModelVal === 'gemini-3.1-flash-lite' ? 'selected' : ''}>gemini-3.1-flash-lite (Por Defecto - Ultra Rápido)</option>
-                <option value="gemini-3.1-flash" ${savedModelVal === 'gemini-3.1-flash' ? 'selected' : ''}>gemini-3.1-flash (Flash v3.1)</option>
-                <option value="gemini-2.5-flash" ${savedModelVal === 'gemini-2.5-flash' ? 'selected' : ''}>gemini-2.5-flash (Flash v2.5)</option>
-                <option value="gemini-2.5-pro" ${savedModelVal === 'gemini-2.5-pro' ? 'selected' : ''}>gemini-2.5-pro (Inteligencia Superior)</option>
-                <option value="gemini-2.0-flash" ${savedModelVal === 'gemini-2.0-flash' ? 'selected' : ''}>gemini-2.0-flash (Flash v2)</option>
+                <option value="gemini-3.1-flash-lite" ${config.modeloTexto === 'gemini-3.1-flash-lite' ? 'selected' : ''}>gemini-3.1-flash-lite (Por Defecto - Ultra Rápido)</option>
+                <option value="gemini-3.1-flash" ${config.modeloTexto === 'gemini-3.1-flash' ? 'selected' : ''}>gemini-3.1-flash (Flash v3.1)</option>
+                <option value="gemini-2.5-flash" ${config.modeloTexto === 'gemini-2.5-flash' ? 'selected' : ''}>gemini-2.5-flash (Flash v2.5)</option>
+                <option value="gemini-2.5-pro" ${config.modeloTexto === 'gemini-2.5-pro' ? 'selected' : ''}>gemini-2.5-pro (Inteligencia Superior)</option>
+                <option value="gemini-2.0-flash" ${config.modeloTexto === 'gemini-2.0-flash' ? 'selected' : ''}>gemini-2.0-flash (Flash v2)</option>
               </select>
               <p class="cuenta_form_tip">Modelo optimizado para baja latencia y cuota de 500 RPD.</p>
             </div>
           </div>
 
-          <button id="cuenta_guardar_apis_btn" class="cuenta_btn" style="margin-top: 2vh;" data-witip="Guardar toda la configuración de ChatWii y Voz"><i class="fa-solid fa-save"></i> Guardar Configuración ChatWii</button>
+          <button id="cuenta_guardar_apis_btn" class="cuenta_btn" style="margin-top: 2vh;" data-witip="Guardar toda la configuración de ChatWii en el objeto unificado chatwii_config"><i class="fa-solid fa-save"></i> Guardar Configuración ChatWii</button>
         </div>
 
         <!-- CARD 2 (50%): Asistente de Voz ("Tipo Alexa") con clase chat_cg_voz -->
@@ -62,23 +113,44 @@ export function arrancar(panel) {
                 <i class="fa-solid fa-tower-broadcast"></i> Habilitar Comandos de Voz ("Pancita pon música...")
               </span>
               <label class="cuenta_switch" data-witip="Activa o desactiva la función de micrófono Alexa">
-                <input type="checkbox" id="cuenta_voz_activa" ${savedVozActiva ? 'checked' : ''}>
+                <input type="checkbox" id="cuenta_voz_activa" ${config.voz.activa ? 'checked' : ''}>
                 <span class="cuenta_slider"></span>
               </label>
             </div>
 
+            <!-- Selector de Proveedor de Motor TTS -->
             <div class="cuenta_form_grp" style="margin-top: 1vh;">
-              <label for="cuenta_voice_model"><i class="fa-solid fa-wave-square"></i> Modelo de Voz Principal</label>
-              <select id="cuenta_voice_model" class="cuenta_form_select" data-witip="Modelo de procesamiento de audio en vivo">
-                <option value="gemini-3-flash-live" ${savedVoiceModelVal === 'gemini-3-flash-live' ? 'selected' : ''}>gemini-3-flash-live (Audio en Vivo)</option>
-                <option value="gemini-2.5-flash-native-audio" ${savedVoiceModelVal === 'gemini-2.5-flash-native-audio' ? 'selected' : ''}>gemini-2.5-flash-native-audio (Voz Nativa)</option>
-                <option value="gemini-3.1-flash-tts" ${savedVoiceModelVal === 'gemini-3.1-flash-tts' ? 'selected' : ''}>gemini-3.1-flash-tts (Sintetizador)</option>
+              <label for="cuenta_voice_provider"><i class="fa-solid fa-server"></i> Proveedor de Sintetizador Vocal</label>
+              <select id="cuenta_voice_provider" class="cuenta_form_select" data-witip="Selecciona el servidor de generación de voz">
+                ${PROVEEDORES_VOZ.map(p => `
+                  <option value="${p.id}" ${config.voz.proveedor === p.id ? 'selected' : ''}>
+                    ${p.nombre}
+                  </option>
+                `).join('')}
               </select>
+            </div>
+
+            <!-- Selector Dinámico de Voz por Proveedor -->
+            <div class="cuenta_form_grp" style="margin-top: 1vh;">
+              <label for="cuenta_voice_select"><i class="fa-solid fa-user-gear"></i> Selección de Voz Específica</label>
+              <select id="cuenta_voice_select" class="cuenta_form_select" data-witip="Selecciona el timbre o locutor deseado">
+              </select>
+            </div>
+
+            <!-- Textarea de Frase de Prueba Personalizada -->
+            <div class="cuenta_form_grp" style="margin-top: 1vh;">
+              <label for="cuenta_voice_demo_text"><i class="fa-solid fa-comment-dots"></i> Frase de Demostración Hablada</label>
+              <div style="display: flex; flex-direction: column; gap: 1vh; width: 100%; max-width: 100%;">
+                <textarea id="cuenta_voice_demo_text" class="cuenta_voice_demo_textarea" rows="2" data-witip="Escribe el texto que deseas escuchar al probar la voz">${textoPruebaInicial}</textarea>
+                <button id="cuenta_probar_voz_tts_btn" type="button" class="chat_cg_voz_probador_btn" style="align-self: flex-start;" data-witip="Escuchar la demostración del texto arriba">
+                  <i class="fa-solid fa-volume-high"></i> <span id="cuenta_probar_voz_lbl">Escuchar Frase de Prueba</span>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Probador de Micrófono en Tiempo Real Estilizado -->
-          <div class="cuenta_mic_tester chat_cg_voz_mic_box">
+          <div class="cuenta_mic_tester chat_cg_voz_mic_box" style="margin-top: 1.5vh;">
             <div class="chat_cg_voz_mic_header">
               <button id="cuenta_probar_mic_btn" type="button" class="cuenta_btn_sec chat_cg_voz_mic_btn" data-witip="Prueba el volumen de entrada del micrófono en tiempo real">
                 <i class="fa-solid fa-microphone" id="cuenta_probar_mic_icon"></i> <span id="cuenta_probar_mic_lbl">Probar Micrófono</span>
@@ -116,7 +188,7 @@ export function arrancar(panel) {
             </div>
 
             <div class="cuenta_metric_row" data-witip="Modelo seleccionado para comandos vocales">
-              <span class="cuenta_metric_lbl"><i class="fa-solid fa-waveform"></i> Modelo Voz:</span>
+              <span class="cuenta_metric_lbl"><i class="fa-solid fa-waveform"></i> Motor Voz:</span>
               <span class="cuenta_metric_val" id="cuenta_metric_voz_modelo">—</span>
             </div>
 
@@ -139,14 +211,69 @@ export function arrancar(panel) {
   // 1. Inicializar tooltips wiTip de widev
   wiTip();
 
-  // 2. Controles desplegables wiSelect
+  // 2. Elementos DOM
   const selectModel = panel.querySelector('#cuenta_gemini_model');
-  const selectVoiceModel = panel.querySelector('#cuenta_voice_model');
+  const selectProvider = panel.querySelector('#cuenta_voice_provider');
+  const selectVoice = panel.querySelector('#cuenta_voice_select');
+  const demoTextarea = panel.querySelector('#cuenta_voice_demo_text');
 
+  // Llenar el selector de voces dinámicamente según el proveedor seleccionado
+  const actualizarOpcionesVoces = (provId, vozSeleccionadaId) => {
+    if (!selectVoice) return;
+    const lista = obtenerVocesPorProveedor(provId);
+    selectVoice.innerHTML = lista.map(v => `
+      <option value="${v.id}" ${v.id === vozSeleccionadaId ? 'selected' : ''}>
+        ${v.nombre}
+      </option>
+    `).join('');
+  };
+
+  actualizarOpcionesVoces(config.voz.proveedor, config.voz.tipo);
+
+  // Inicializar wiSelect
   if (selectModel) wiSelect(selectModel, { placeholder: 'Selecciona modelo texto...' });
-  if (selectVoiceModel) wiSelect(selectVoiceModel, { placeholder: 'Selecciona modelo voz...' });
+  if (selectProvider) {
+    wiSelect(selectProvider, {
+      placeholder: 'Selecciona proveedor...',
+      onChange: (val) => {
+        actualizarOpcionesVoces(val, null);
+      }
+    });
+  }
+  if (selectVoice) wiSelect(selectVoice, { placeholder: 'Selecciona voz...' });
 
-  // 3. Alternar visibilidad de contraseña
+  // 3. Botón para probar la demostración de la voz hablada con el texto del textarea
+  const btnProbarVozTTS = panel.querySelector('#cuenta_probar_voz_tts_btn');
+  const lblProbarVoz = panel.querySelector('#cuenta_probar_voz_lbl');
+  let reproduciendoDemo = false;
+
+  if (btnProbarVozTTS) {
+    btnProbarVozTTS.addEventListener('click', () => {
+      if (reproduciendoDemo) {
+        reproduciendoDemo = false;
+        detenerAudioHablado();
+        if (lblProbarVoz) lblProbarVoz.textContent = 'Escuchar Frase de Prueba';
+        Mensaje('Demostración detenida.', 'info');
+        return;
+      }
+
+      const provId = selectProvider ? selectProvider.value : 'azure';
+      const vozId = selectVoice ? selectVoice.value : 'es-MX-DaliaNeural';
+      const texto = demoTextarea ? demoTextarea.value.trim() : textoPruebaInicial;
+
+      reproduciendoDemo = true;
+      if (lblProbarVoz) lblProbarVoz.textContent = 'Detener Audio';
+      Mensaje(`Reproduciendo frase con motor ${provId.toUpperCase()}...`, 'info');
+
+      probarDemostrasionVozCustom(texto, provId, vozId, () => {
+        reproduciendoDemo = false;
+        if (lblProbarVoz) lblProbarVoz.textContent = 'Escuchar Frase de Prueba';
+        Mensaje('Demostración de audio finalizada.', 'success');
+      });
+    });
+  }
+
+  // 4. Alternar visibilidad de contraseña
   const eye = panel.querySelector('.cuenta_pass_eye');
   if (eye) {
     eye.addEventListener('click', (e) => {
@@ -161,16 +288,18 @@ export function arrancar(panel) {
     });
   }
 
-  // 4. Listener de cambio directo en el switch de voz con savels('voz_chatwii')
+  // 5. Listener de cambio directo en el switch de voz
   const switchVoz = panel.querySelector('#cuenta_voz_activa');
   if (switchVoz) {
     switchVoz.addEventListener('change', () => {
-      savels('voz_chatwii', switchVoz.checked);
+      const currentConfig = obtenerConfigChatWii();
+      currentConfig.voz.activa = switchVoz.checked;
+      guardarConfigChatWii(currentConfig);
       Mensaje(`Asistente de voz ${switchVoz.checked ? 'activado' : 'desactivado'}.`, 'info');
     });
   }
 
-  // 5. Probador de Micrófono en Tiempo Real con Notificaciones Mensaje()
+  // 6. Probador de Micrófono en Tiempo Real
   let probandoMic = false;
   const btnMic = panel.querySelector('#cuenta_probar_mic_btn');
   const micIcon = panel.querySelector('#cuenta_probar_mic_icon');
@@ -226,9 +355,10 @@ export function arrancar(panel) {
   // Limpiar recursos al desmontar
   panel._cleanupMic = () => {
     detenerPruebaMicrofono();
+    detenerAudioHablado();
   };
 
-  // 6. Actualizar Métricas
+  // 7. Actualizar Métricas
   const actualizarMetricas = () => {
     const keyInput = panel.querySelector('#cuenta_gemini_key');
     const keyVal = keyInput?.value.trim() || '';
@@ -246,38 +376,46 @@ export function arrancar(panel) {
       peticionesEl.textContent = `${s.n || 0} / 60`;
     }
 
+    const currentConfig = obtenerConfigChatWii();
+
     const modeloEl = panel.querySelector('#cuenta_metric_modelo');
     if (modeloEl) {
-      const currentModel = localStorage.getItem('gemini_model') || MODELO_PRINCIPAL;
-      modeloEl.innerHTML = `<span class="cuenta_model_chip">${currentModel}</span>`;
+      modeloEl.innerHTML = `<span class="cuenta_model_chip">${currentConfig.modeloTexto}</span>`;
     }
 
     const vozModeloEl = panel.querySelector('#cuenta_metric_voz_modelo');
     if (vozModeloEl) {
-      const currentVoiceModel = localStorage.getItem('gemini_voice_model') || MODELO_PRINCIPAL_VOZ;
-      vozModeloEl.innerHTML = `<span class="cuenta_model_chip">${currentVoiceModel}</span>`;
+      vozModeloEl.innerHTML = `<span class="cuenta_model_chip">${currentConfig.voz.proveedor.toUpperCase()} (${currentConfig.voz.tipo})</span>`;
     }
   };
 
   actualizarMetricas();
 
-  // 7. Guardar Configuración con Notificación Mensaje() y savels('voz_chatwii')
+  // 8. Guardar Configuración Unificada
   const guardarApis = () => {
     const keyInput = panel.querySelector('#cuenta_gemini_key');
     const switchVoz = panel.querySelector('#cuenta_voz_activa');
 
     const modelVal = selectModel ? selectModel.value : MODELO_PRINCIPAL;
-    const voiceModelVal = selectVoiceModel ? selectVoiceModel.value : MODELO_PRINCIPAL_VOZ;
+    const voiceProvVal = selectProvider ? selectProvider.value : 'azure';
+    const voiceVal = selectVoice ? selectVoice.value : 'es-MX-DaliaNeural';
     const keyVal = keyInput?.value.trim() || '';
     const vozActiva = switchVoz ? switchVoz.checked : false;
 
-    localStorage.setItem('gemini_api_key', keyVal);
-    localStorage.setItem('gemini_model', modelVal);
-    localStorage.setItem('gemini_voice_model', voiceModelVal);
-    savels('voz_chatwii', vozActiva);
+    const nuevaConfig = {
+      apiKey: keyVal,
+      modeloTexto: modelVal,
+      voz: {
+        activa: vozActiva,
+        modelo: 'gemini-3-flash-live',
+        proveedor: voiceProvVal,
+        tipo: voiceVal
+      }
+    };
 
+    guardarConfigChatWii(nuevaConfig);
     actualizarMetricas();
-    Mensaje('¡Configuración de ChatWii (Texto y Voz) guardada correctamente!', 'success');
+    Mensaje('¡Configuración unificada chatwii_config guardada correctamente!', 'success');
   };
 
   const btnGuardarApis = panel.querySelector('#cuenta_guardar_apis_btn');

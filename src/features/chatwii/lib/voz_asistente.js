@@ -1,14 +1,16 @@
 // src/features/chatwii/lib/voz_asistente.js
-// Motor de Asistente de Voz Conversacional — Reconocimiento STT, Síntesis TTS y Probador VU Meter de Micrófono en Vivo
+// Motor de Asistente de Voz Conversacional — Soporte Multi-Proveedor (Azure Neural, Google Cloud TTS, ElevenLabs y WebSpeech)
 
-import { getls } from '@widev';
-import { MODELO_PRINCIPAL_VOZ } from '../brain.js';
+import { getls, saludoSmile } from '@widev';
+import { AZURE_TTS_KEY, AZURE_TTS_REGION, GOOGLE_TTS_KEY, PUBLIC_ELEVEN_LABS } from '../../../env.js';
+import { obtenerVozPorId } from './lista_voces.js';
 
 let _recognition = null;
 let _audioCtx = null;
 let _micStream = null;
 let _analyser = null;
 let _testAnimFrame = null;
+let _currentAudioEl = null;
 
 /**
  * Inicia la escucha de voz en tiempo real con Web Speech API
@@ -70,7 +72,7 @@ export function detenerEscuchaVoz() {
 }
 
 /**
- * Probador de micrófono en tiempo real (VU Meter para la card en chatwii_config.js)
+ * Probador de micrófono en tiempo real (VU Meter)
  */
 export async function probarMicrofono(onVolume, onError) {
   detenerPruebaMicrofono();
@@ -109,7 +111,7 @@ export async function probarMicrofono(onVolume, onError) {
 }
 
 /**
- * Detiene la prueba de micrófono y libera los recursos del sistema
+ * Detiene la prueba de micrófono y libera recursos
  */
 export function detenerPruebaMicrofono() {
   if (_testAnimFrame) {
@@ -128,22 +130,208 @@ export function detenerPruebaMicrofono() {
 }
 
 /**
- * Reproduce texto sintetizado en voz alta (TTS estilo Alexa)
+ * Detiene la reproducción de audio hablada en curso
  */
-export function decirTextoEnVozAlta(texto, onEnd) {
+export function detenerAudioHablado() {
+  if (_currentAudioEl) {
+    try {
+      _currentAudioEl.pause();
+      _currentAudioEl.currentTime = 0;
+    } catch (_) {}
+    _currentAudioEl = null;
+  }
+  if ('speechSynthesis' in window) {
+    try { window.speechSynthesis.cancel(); } catch (_) {}
+  }
+}
+
+/**
+ * Reproduce audio utilizando Microsoft Azure Speech Neural REST API
+ */
+async function reproducirAzureNeural(texto, vozId, onEnd, onError) {
+  const region = AZURE_TTS_REGION || 'eastus';
+  const url = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+  const cleanText = texto.replace(/<[^>]*>/g, '').trim();
+
+  const ssml = `<speak version='1.0' xml:lang='es-MX'><voice xml:lang='es-MX' name='${vozId}'>${cleanText}</voice></speak>`;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Ocp-Apim-Subscription-Key': AZURE_TTS_KEY,
+        'Content-Type': 'application/ssml+xml',
+        'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3'
+      },
+      body: ssml
+    });
+
+    if (!res.ok) throw new Error(`Azure TTS HTTP ${res.status}`);
+
+    const blob = await res.blob();
+    const audioUrl = URL.createObjectURL(blob);
+    
+    detenerAudioHablado();
+    _currentAudioEl = new Audio(audioUrl);
+    _currentAudioEl.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      if (onEnd) onEnd();
+    };
+    await _currentAudioEl.play();
+    return true;
+  } catch (err) {
+    console.warn('[Azure TTS Fallback a WebSpeech]:', err);
+    if (onError) onError(err);
+    return false;
+  }
+}
+
+/**
+ * Reproduce audio utilizando Google Cloud TTS REST API
+ */
+async function reproducirGoogleTTS(texto, vozId, lang, onEnd, onError) {
+  const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${GOOGLE_TTS_KEY}`;
+  
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: { text: texto },
+        voice: { languageCode: lang || 'es-ES', name: vozId },
+        audioConfig: { audioEncoding: 'MP3' }
+      })
+    });
+
+    if (!res.ok) throw new Error(`Google TTS HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (!data.audioContent) throw new Error('Sin audioContent de Google');
+
+    const audioUrl = `data:audio/mp3;base64,${data.audioContent}`;
+    detenerAudioHablado();
+    _currentAudioEl = new Audio(audioUrl);
+    _currentAudioEl.onended = () => {
+      if (onEnd) onEnd();
+    };
+    await _currentAudioEl.play();
+    return true;
+  } catch (err) {
+    console.warn('[Google TTS Fallback a WebSpeech]:', err);
+    if (onError) onError(err);
+    return false;
+  }
+}
+
+/**
+ * Reproduce audio utilizando ElevenLabs REST API
+ */
+async function reproducirElevenLabs(texto, vozId, onEnd, onError) {
+  const url = `https://api.elevenlabs.io/v1/text-to-speech/${vozId}`;
+  
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'xi-api-key': PUBLIC_ELEVEN_LABS,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: texto,
+        model_id: 'eleven_multilingual_v2'
+      })
+    });
+
+    if (!res.ok) throw new Error(`ElevenLabs HTTP ${res.status}`);
+
+    const blob = await res.blob();
+    const audioUrl = URL.createObjectURL(blob);
+    
+    detenerAudioHablado();
+    _currentAudioEl = new Audio(audioUrl);
+    _currentAudioEl.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      if (onEnd) onEnd();
+    };
+    await _currentAudioEl.play();
+    return true;
+  } catch (err) {
+    console.warn('[ElevenLabs Fallback a WebSpeech]:', err);
+    if (onError) onError(err);
+    return false;
+  }
+}
+
+/**
+ * Reproducción de voz local WebSpeech (Fallback local)
+ */
+function reproducirWebSpeech(texto, vozId, onEnd) {
   if (!('speechSynthesis' in window)) return;
 
-  window.speechSynthesis.cancel();
+  detenerAudioHablado();
   const utterance = new SpeechSynthesisUtterance(texto);
   utterance.lang = 'es-ES';
-  utterance.rate = 1.05;
-  utterance.pitch = 1.0;
+  
+  if (vozId === 'ws-es-ES-masculino') {
+    utterance.pitch = 0.72;
+    utterance.rate = 0.95;
+  } else {
+    utterance.pitch = 1.2;
+    utterance.rate = 1.02;
+  }
 
   utterance.onend = () => {
     if (onEnd) onEnd();
   };
 
   window.speechSynthesis.speak(utterance);
+}
+
+/**
+ * Orquestador Global de Síntesis Vocal (Azure, Google, ElevenLabs o WebSpeech)
+ */
+export async function decirTextoEnVozAlta(texto, proveedorForzado = null, vozIdForzada = null, onEnd = null) {
+  const config = getls('chatwii_config') || {};
+  const proveedor = proveedorForzado || config.voz?.proveedor || 'azure';
+  const vozId = vozIdForzada || config.voz?.tipo || 'es-MX-DaliaNeural';
+
+  const vozMeta = obtenerVozPorId(vozId);
+
+  // 1. Intentar Azure Neural (Recomendado)
+  if (proveedor === 'azure' && AZURE_TTS_KEY) {
+    const ok = await reproducirAzureNeural(texto, vozId, onEnd);
+    if (ok) return;
+  }
+
+  // 2. Intentar Google Cloud TTS
+  if (proveedor === 'google' && GOOGLE_TTS_KEY) {
+    const ok = await reproducirGoogleTTS(texto, vozId, vozMeta.lang, onEnd);
+    if (ok) return;
+  }
+
+  // 3. Intentar ElevenLabs
+  if (proveedor === 'elevenlabs' && PUBLIC_ELEVEN_LABS) {
+    const ok = await reproducirElevenLabs(texto, vozId, onEnd);
+    if (ok) return;
+  }
+
+  // 4. Fallback local WebSpeech
+  reproducirWebSpeech(texto, vozId, onEnd);
+}
+
+/**
+ * Reproduce la prueba del texto personalizado en tiempo real
+ */
+export function probarDemostrasionVozCustom(textoPersonalizado, proveedor, vozId, onEnd) {
+  let saludo = '¡Buenas noches!';
+  try {
+    saludo = saludoSmile() || '¡Buenas noches!';
+  } catch (e) {
+    console.warn('saludoSmile fallback:', e);
+  }
+
+  const textoFinal = textoPersonalizado || `${saludo} Soy Pancita, tu asistente personal de IA. Estoy lista para ayudarte.`;
+  decirTextoEnVozAlta(textoFinal, proveedor, vozId, onEnd);
 }
 
 /**
