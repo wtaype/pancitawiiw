@@ -1,5 +1,5 @@
 // src/features/duplicados/duplicados.js
-// Controlador SPA de /duplicados con libertad de controles libres en la barra superior (Buscador + wiSelect + Paginación < > + Actions)
+// Controlador SPA de /duplicados con persistencia en ult_duplicados (savels/getls), botón Limpiar y barra de controles unificada
 
 import { renderEscanerConfig } from './secciones/escaner_config.js';
 import { renderResultadosLista } from './secciones/resultados_lista.js';
@@ -12,7 +12,7 @@ import { filtrarGruposDuplicados } from './lib/filtros.js';
 import { aplicarReglaSeleccion } from './lib/reglas_seleccion.js';
 import { renderMusica, bindMusicaEvents } from '@features/musica/musica.js';
 import { tabsComponent } from '@core/componentes/tabs.js';
-import { Mensaje, Notificacion, wiSpin, wiSelect, wiTip } from '@widev';
+import { Mensaje, Notificacion, wiSpin, wiSelect, wiTip, savels, getls, removels } from '@widev';
 import './duplicados.css';
 
 const TAMANO_PAGINA = 20;
@@ -51,10 +51,13 @@ export function getDuplicadosTabs(state) {
           </button>
 
           <button class="tab_right_btn icon_only" data-action-id="re_escanear_action" data-witip="Actualizar resultados">
-            <i class="fa-solid fa-arrows-rotate"></i>
+          <i class="fa-solid fa-arrows-rotate"></i>
           </button>
           <button class="tab_right_btn icon_only" data-action-id="abrir_carpeta_action" data-witip="Agregar Carpeta">
-            <i class="fa-solid fa-folder-plus"></i>
+          <i class="fa-solid fa-folder-plus"></i>
+          </button>
+          <button class="tab_right_btn icon_only" data-action-id="limpiar_cache_action" data-witip="Limpiar escaneo e historial">
+            <i class="fa-solid fa-broom"></i>
           </button>
         </div>
       `
@@ -84,16 +87,32 @@ export async function arrancar(container) {
     tabActiva: 'escaner'
   };
 
+  // Restaurar automáticamente el último escaneo desde storage.js ('ult_duplicados')
+  const cacheGuardada = getls('ult_duplicados');
+  if (cacheGuardada && typeof cacheGuardada === 'object') {
+    state.rutas = cacheGuardada.rutas || [];
+    state.opcionesUltimas = cacheGuardada.opcionesUltimas || { categoria: 'todos', tamanoKB: 0 };
+    state.grupos = cacheGuardada.grupos || [];
+    state.gruposFiltrados = filtrarGruposDuplicados(state.grupos, { 
+      categoria: state.opcionesUltimas.categoria, 
+      busqueda: state.busquedaTexto 
+    });
+
+    if (state.grupos.length > 0) {
+      state.tabActiva = 'resultados';
+    }
+  }
+
   container.innerHTML = `
     <div class="dup_container">
       <div class="dup_wrap">
         <!-- Subsección 1: Escáner y Selección de Carpetas -->
-        <div id="dup_section_escaner" class="dup_section_content active">
+        <div id="dup_section_escaner" class="dup_section_content ${state.tabActiva === 'escaner' ? 'active' : ''}">
           <div id="dup_sec_config"></div>
         </div>
 
         <!-- Subsección 2: Lista de Resultados a 100% Ancho -->
-        <div id="dup_section_resultados" class="dup_section_content">
+        <div id="dup_section_resultados" class="dup_section_content ${state.tabActiva === 'resultados' ? 'active' : ''}">
           <div id="dup_sec_resultados" class="dup_resultados_wrapper"></div>
         </div>
       </div>
@@ -111,6 +130,10 @@ export async function arrancar(container) {
 
   refrescarSubtabsSuperiores();
 
+  if (state.grupos.length > 0) {
+    actualizarVistasResultados();
+  }
+
   async function ejecutarEscaneo(opciones) {
     if (state.rutas.length === 0) {
       Notificacion('Agrega al menos una carpeta para escanear', 'warning');
@@ -127,7 +150,6 @@ export async function arrancar(container) {
       </div>
     `;
 
-    // Cambiar automáticamente a la pestaña de resultados al iniciar escaneo
     activarTab('resultados');
 
     try {
@@ -142,6 +164,9 @@ export async function arrancar(container) {
       state.rutasSeleccionadas.clear();
       state.archivoSeleccionadoRuta = null;
       state.paginaActual = 1;
+
+      // Guardar el estado completo en localStorage ('ult_duplicados') por 30 días
+      guardarEstadoEnStorage();
 
       Notificacion(`Escaneo completado. ${state.gruposFiltrados.length} grupos de duplicados encontrados.`, 'success');
       
@@ -159,6 +184,15 @@ export async function arrancar(container) {
     } finally {
       state.cargando = false;
     }
+  }
+
+  function guardarEstadoEnStorage() {
+    savels('ult_duplicados', {
+      rutas: state.rutas,
+      opcionesUltimas: state.opcionesUltimas,
+      grupos: state.grupos,
+      fechaUltimoEscaneo: Date.now()
+    }, 720); // 30 días de persistencia
   }
 
   function actualizarVistasResultados() {
@@ -229,6 +263,7 @@ export async function arrancar(container) {
           state.rutasSeleccionadas.clear();
           state.archivoSeleccionadoRuta = null;
 
+          guardarEstadoEnStorage();
           restaurarMusicaEnSidebar();
           refrescarSubtabsSuperiores();
           actualizarVistasResultados();
@@ -346,6 +381,26 @@ export async function arrancar(container) {
       } finally {
         if (btnRef && typeof wiSpin === 'function') wiSpin(btnRef, false);
       }
+    } else if (actionId === 'limpiar_cache_action') {
+      // Borrar la memoria persistente en localStorage y reiniciar estado
+      removels('ult_duplicados');
+      state.rutas = [];
+      state.grupos = [];
+      state.gruposFiltrados = [];
+      state.rutasSeleccionadas.clear();
+      state.archivoSeleccionadoRuta = null;
+      state.busquedaTexto = '';
+      state.opcionesUltimas = { categoria: 'todos', tamanoKB: 0 };
+      state.paginaActual = 1;
+
+      renderEscanerConfig(configContainer, state, async (opciones) => {
+        state.opcionesUltimas = opciones;
+        await ejecutarEscaneo(opciones);
+      });
+
+      restaurarMusicaEnSidebar();
+      activarTab('escaner');
+      Notificacion('Historial y resultados limpiados. Listo para un nuevo escaneo.', 'info');
     }
   };
 
