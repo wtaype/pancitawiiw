@@ -82,6 +82,23 @@
   color: var(--tx1);
 }
 
+.clock_config_label.is_flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+#clock_size_val {
+  color: var(--mco);
+  font-weight: bold;
+}
+
+.clock_slider_row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.5vh;
+}
+
 .clock_setting_info {
   display: flex;
   flex-direction: column;

@@ -23,7 +23,7 @@ export function renderRutaYoutubeHTML(carpetaNombre = 'Sin Carpeta') {
       </div>
 
       <!-- Sección de progreso de descarga -->
-      <div class="msc_yt_progress_container" id="msc_yt_progress" style="display: none;">
+      <div class="msc_yt_progress_container" id="msc_yt_progress">
         <div class="msc_yt_loader_row">
           <i class="fa-solid fa-circle-notch fa-spin msc_yt_spinner"></i>
           <span class="msc_yt_status_text" id="msc_yt_status">Verificando descargador...</span>

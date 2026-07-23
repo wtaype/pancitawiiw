@@ -56,8 +56,10 @@
 /* RELOJ DIGITAL GIGANTE MASIVO CON FUENTE ORBITRON LOCAL */
 .reloj_hero_clock_wrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.8vh;
   flex: 1;
   margin: 1vh 0;
 }
@@ -164,6 +166,7 @@
   align-items: center;
   padding: 2.2vh 1.2vw;
   min-height: 120px;
+  cursor: pointer;
 }
 
 .reloj_hero_card.sidebar_only_clock .reloj_hero_clock_wrap {

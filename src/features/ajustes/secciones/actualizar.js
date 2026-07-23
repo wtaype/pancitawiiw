@@ -81,7 +81,7 @@ export async function arrancar(container) {
             </div>
           </div>
 
-          <button id="actualizar_btn_instalar" class="actualizar_btn" style="width: 100%; margin-top: 2vh;">
+          <button id="actualizar_btn_instalar" class="actualizar_btn">
             <i class="fa-solid fa-circle-down"></i> Descargar e Instalar Ahora
           </button>
 
@@ -155,10 +155,10 @@ export async function arrancar(container) {
         });
       } else {
         resultadoWrapper.innerHTML = `
-          <div class="actualizar_news_box" style="border: 1px solid var(--success); background: var(--bg3); text-align: center; padding: 4vh 2vh;">
-            <i class="fa-solid fa-circle-check" style="font-size: 5vh; color: var(--success); margin-bottom: 2vh;"></i>
-            <h4 class="actualizar_news_title" style="margin-bottom: 1vh;">¡Pancitawii está actualizado!</h4>
-            <p style="color: var(--tx3); font-size: var(--fz_s3); margin: 0;">Ya tienes instalada la versión más reciente (v${versionActual}).</p>
+          <div class="actualizar_news_box actualizar_news_box_success">
+            <i class="fa-solid fa-circle-check actualizar_success_icon"></i>
+            <h4 class="actualizar_news_title">¡Pancitawii está actualizado!</h4>
+            <p class="actualizar_news_subtext">Ya tienes instalada la versión más reciente (v${versionActual}).</p>
           </div>
         `;
       }
@@ -166,8 +166,8 @@ export async function arrancar(container) {
       console.error('[Actualizador] Error al buscar actualizaciones:', err);
       Mensaje('No se pudo verificar actualizaciones. Inténtalo más tarde.', 'error');
       resultadoWrapper.innerHTML = `
-        <div class="actualizar_news_box" style="border: 1px solid var(--dulce, #ff5c69); background: var(--bg3); text-align: center; padding: 3vh;">
-          <p style="color: var(--dulce, #ff5c69); font-size: var(--fz_s4); margin: 0;">${err.message || 'Error de conexión con el servidor.'}</p>
+        <div class="actualizar_news_box actualizar_news_box_error">
+          <p class="actualizar_error_text">${err.message || 'Error de conexión con el servidor.'}</p>
         </div>
       `;
     } finally {
@@ -198,9 +198,9 @@ function formatearNotas(markdown) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/^### (.*$)/gim, '<strong style="display: block; margin-top: 1.5vh; font-size: var(--fz_m3); color: var(--mco);">$1</strong>')
-    .replace(/^## (.*$)/gim, '<strong style="display: block; margin-top: 2vh; font-size: var(--fz_m4); color: var(--tx1);">$1</strong>')
-    .replace(/^# (.*$)/gim, '<strong style="display: block; margin-top: 2.5vh; font-size: var(--fz_m5); color: var(--tx1);">$1</strong>')
+    .replace(/^### (.*$)/gim, '<strong class="actualizar_md_h3">$1</strong>')
+    .replace(/^## (.*$)/gim, '<strong class="actualizar_md_h2">$1</strong>')
+    .replace(/^# (.*$)/gim, '<strong class="actualizar_md_h1">$1</strong>')
     .replace(/^\* (.*$)/gim, '• $1')
     .replace(/^- (.*$)/gim, '• $1')
     .replace(/\r\n|\r|\n/g, '<br>');

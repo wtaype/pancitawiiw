@@ -18,9 +18,9 @@ const CONFIG_POR_DEFECTO = {
 
 export function renderReloj() {
   return `
-    <div class="reloj_hero_card sidebar_only_clock" style="cursor: pointer;" title="Doble clic para configurar">
+    <div class="reloj_hero_card sidebar_only_clock" title="Doble clic para configurar">
       ${renderMicChatwii()}
-      <div class="reloj_hero_clock_wrap" style="display: flex; flex-direction: column; align-items: center; gap: 0.8vh;">
+      <div class="reloj_hero_clock_wrap">
         <div class="reloj_hero_clock" id="panel_hero_live_clock">
           00:00:00 p.m.
         </div>

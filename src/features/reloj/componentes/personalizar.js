@@ -93,11 +93,11 @@ export function arrancarPersonalizar(panel, onUpdateCallback) {
 
           <!-- Tamaño (Range Slider) -->
           <div class="clock_config_group">
-            <span class="clock_config_label" style="display: flex; justify-content: space-between;">
+            <span class="clock_config_label is_flex">
               <span>Tamaño de la Fuente</span>
-              <span id="clock_size_val" style="color: var(--mco); font-weight: bold;">${config.fontSize}px</span>
+              <span id="clock_size_val">${config.fontSize}px</span>
             </span>
-            <div style="display: flex; align-items: center; width: 100%; margin-top: 0.5vh;">
+            <div class="clock_slider_row">
               <input type="range" id="clock_opt_size" min="20" max="200" value="${config.fontSize}" class="clock_range_slider" />
             </div>
           </div>

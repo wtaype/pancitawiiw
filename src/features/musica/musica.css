@@ -1234,6 +1234,10 @@
 }
 
 /* Indicador de progreso YouTube */
+#msc_yt_progress {
+  display: none;
+}
+
 .msc_yt_progress_container {
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--glass-brd);

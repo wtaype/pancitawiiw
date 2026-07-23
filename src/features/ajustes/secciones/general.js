@@ -31,7 +31,7 @@ export function arrancar(container) {
       <div class="ajustes_card">
         <h3 class="general_card_title"><i class="fa-solid fa-file-export"></i> Exportación de Chats</h3>
         
-        <div class="general_setting_row" style="flex-direction: column; align-items: stretch; gap: 1.5vh; padding: 1vh 0;">
+        <div class="general_setting_row is_column">
           <div class="general_setting_info">
             <span class="general_setting_label">Carpeta de Destino (Markdown)</span>
             <span class="general_setting_desc">Configura una carpeta para guardar automáticamente tus chats exportados (.md) en silencio.</span>

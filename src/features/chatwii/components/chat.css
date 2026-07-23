@@ -1489,3 +1489,17 @@ body.cr-suspended * {
     padding: 2.2vh 1vw;
     box-shadow: 0 10px 36px 0 var(--glass-shd), inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
+
+#cr_chat_file_input {
+    display: none;
+}
+
+.po_hr {
+    border: none;
+    border-top: 1px solid var(--brd);
+    margin: 2vh 0;
+}
+
+.po_todo_check {
+    margin-right: 0.5vh;
+}

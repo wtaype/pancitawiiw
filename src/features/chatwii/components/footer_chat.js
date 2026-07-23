@@ -38,7 +38,7 @@ export const crearFooter = () => {
           </button>
           
           <!-- Input tipo File invisible para abrir explorador de archivos -->
-          <input type="file" id="cr_chat_file_input" accept="image/*" style="display: none;" />
+          <input type="file" id="cr_chat_file_input" accept="image/*" />
           
           <!-- Botón de Enviar (Flecha arriba) -->
           <button class="cr_chat_btn_send" id="cr_chat_btn_send" disabled title="Enviar mensaje">

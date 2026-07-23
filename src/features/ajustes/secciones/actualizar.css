@@ -160,6 +160,64 @@
   transform: none;
 }
 
+#actualizar_btn_instalar {
+  width: 100%;
+  margin-top: 2vh;
+}
+
+.actualizar_news_box_success {
+  border: 1px solid var(--success);
+  background: var(--bg3);
+  text-align: center;
+  padding: 4vh 2vh;
+}
+
+.actualizar_news_box_error {
+  border: 1px solid var(--dulce, #ff5c69);
+  background: var(--bg3);
+  text-align: center;
+  padding: 3vh;
+}
+
+.actualizar_success_icon {
+  font-size: 5vh;
+  color: var(--success);
+  margin-bottom: 2vh;
+}
+
+.actualizar_news_subtext {
+  color: var(--tx3);
+  font-size: var(--fz_s3);
+  margin: 0;
+}
+
+.actualizar_error_text {
+  color: var(--dulce, #ff5c69);
+  font-size: var(--fz_s4);
+  margin: 0;
+}
+
+.actualizar_md_h3 {
+  display: block;
+  margin-top: 1.5vh;
+  font-size: var(--fz_m3);
+  color: var(--mco);
+}
+
+.actualizar_md_h2 {
+  display: block;
+  margin-top: 2vh;
+  font-size: var(--fz_m4);
+  color: var(--tx1);
+}
+
+.actualizar_md_h1 {
+  display: block;
+  margin-top: 2.5vh;
+  font-size: var(--fz_m5);
+  color: var(--tx1);
+}
+
 /* Barra de progreso de descarga */
 .actualizar_progress_wrapper {
   margin-top: 3vh;

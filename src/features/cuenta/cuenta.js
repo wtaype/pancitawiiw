@@ -157,7 +157,7 @@ export function arrancar(container) {
       }
     } catch (err) {
       console.error(`[Cuenta] Error al cargar subsección ${tabId}:`, err);
-      panel.innerHTML = `<div class="cuenta_loading" style="color: var(--dulce);">Error al cargar esta sección.</div>`;
+      panel.innerHTML = `<div class="cuenta_loading error">Error al cargar esta sección.</div>`;
     }
   };
 

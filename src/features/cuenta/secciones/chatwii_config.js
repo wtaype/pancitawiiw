@@ -84,7 +84,7 @@ export function arrancar(panel) {
                   <i class="fa-solid fa-eye-slash"></i>
                 </button>
               </div>
-              <p class="cuenta_form_tip">Obtén tu clave en <a href="https://aistudio.google.com/api-keys" target="_blank" class="cuenta_api_link" data-witip="Abrir consola de Google AI Studio"><i class="fa-solid fa-up-right-from-square" style="font-size: var(--fz_s3);"></i> Google AI Studio</a>.</p>
+              <p class="cuenta_form_tip">Obtén tu clave en <a href="https://aistudio.google.com/api-keys" target="_blank" class="cuenta_api_link" data-witip="Abrir consola de Google AI Studio"><i class="fa-solid fa-up-right-from-square cuenta_api_link_icon"></i> Google AI Studio</a>.</p>
             </div>
 
             <div class="cuenta_form_grp">
@@ -100,7 +100,7 @@ export function arrancar(panel) {
             </div>
           </div>
 
-          <button id="cuenta_guardar_apis_btn" class="cuenta_btn" style="margin-top: 2vh;" data-witip="Guardar toda la configuración de ChatWii en el objeto unificado chatwii_config"><i class="fa-solid fa-save"></i> Guardar Configuración ChatWii</button>
+          <button id="cuenta_guardar_apis_btn" class="cuenta_btn" data-witip="Guardar toda la configuración de ChatWii en el objeto unificado chatwii_config"><i class="fa-solid fa-save"></i> Guardar Configuración ChatWii</button>
         </div>
 
         <!-- CARD 2 (50%): Asistente de Voz ("Tipo Alexa") con clase chat_cg_voz -->
@@ -119,7 +119,7 @@ export function arrancar(panel) {
             </div>
 
             <!-- Selector de Proveedor de Motor TTS -->
-            <div class="cuenta_form_grp" style="margin-top: 1vh;">
+            <div class="cuenta_form_grp mt_1vh">
               <label for="cuenta_voice_provider"><i class="fa-solid fa-server"></i> Proveedor de Sintetizador Vocal</label>
               <select id="cuenta_voice_provider" class="cuenta_form_select" data-witip="Selecciona el servidor de generación de voz">
                 ${PROVEEDORES_VOZ.map(p => `
@@ -131,18 +131,18 @@ export function arrancar(panel) {
             </div>
 
             <!-- Selector Dinámico de Voz por Proveedor -->
-            <div class="cuenta_form_grp" style="margin-top: 1vh;">
+            <div class="cuenta_form_grp mt_1vh">
               <label for="cuenta_voice_select"><i class="fa-solid fa-user-gear"></i> Selección de Voz Específica</label>
               <select id="cuenta_voice_select" class="cuenta_form_select" data-witip="Selecciona el timbre o locutor deseado">
               </select>
             </div>
 
             <!-- Textarea de Frase de Prueba Personalizada -->
-            <div class="cuenta_form_grp" style="margin-top: 1vh;">
+            <div class="cuenta_form_grp mt_1vh">
               <label for="cuenta_voice_demo_text"><i class="fa-solid fa-comment-dots"></i> Frase de Demostración Hablada</label>
-              <div style="display: flex; flex-direction: column; gap: 1vh; width: 100%; max-width: 100%;">
+              <div class="cuenta_tts_tester_container">
                 <textarea id="cuenta_voice_demo_text" class="cuenta_voice_demo_textarea" rows="2" data-witip="Escribe el texto que deseas escuchar al probar la voz">${textoPruebaInicial}</textarea>
-                <button id="cuenta_probar_voz_tts_btn" type="button" class="chat_cg_voz_probador_btn" style="align-self: flex-start;" data-witip="Escuchar la demostración del texto arriba">
+                <button id="cuenta_probar_voz_tts_btn" type="button" class="chat_cg_voz_probador_btn" data-witip="Escuchar la demostración del texto arriba">
                   <i class="fa-solid fa-volume-high"></i> <span id="cuenta_probar_voz_lbl">Escuchar Frase de Prueba</span>
                 </button>
               </div>
@@ -150,7 +150,7 @@ export function arrancar(panel) {
           </div>
 
           <!-- Probador de Micrófono en Tiempo Real Estilizado -->
-          <div class="cuenta_mic_tester chat_cg_voz_mic_box" style="margin-top: 1.5vh;">
+          <div class="cuenta_mic_tester chat_cg_voz_mic_box">
             <div class="chat_cg_voz_mic_header">
               <button id="cuenta_probar_mic_btn" type="button" class="cuenta_btn_sec chat_cg_voz_mic_btn" data-witip="Prueba el volumen de entrada del micrófono en tiempo real">
                 <i class="fa-solid fa-microphone" id="cuenta_probar_mic_icon"></i> <span id="cuenta_probar_mic_lbl">Probar Micrófono</span>
@@ -179,7 +179,7 @@ export function arrancar(panel) {
             
             <div class="cuenta_metric_row" data-witip="Límite de solicitudes diarias en Free Tier">
               <span class="cuenta_metric_lbl"><i class="fa-solid fa-chart-pie"></i> Peticiones Hoy:</span>
-              <span class="cuenta_metric_val" id="cuenta_metric_peticiones" style="font-family: var(--ff_O); font-weight: 700;">0 / 60</span>
+              <span class="cuenta_metric_val is_mono" id="cuenta_metric_peticiones">0 / 60</span>
             </div>
 
             <div class="cuenta_metric_row" data-witip="Modelo seleccionado para respuestas de chat escrito">
@@ -194,12 +194,12 @@ export function arrancar(panel) {
 
             <div class="cuenta_metric_row" data-witip="Plan de facturación estimado">
               <span class="cuenta_metric_lbl"><i class="fa-solid fa-receipt"></i> Costo Estimado:</span>
-              <span class="cuenta_metric_val" style="color: var(--success); font-weight: 700;">Gratuito (Free Tier)</span>
+              <span class="cuenta_metric_val is_success">Gratuito (Free Tier)</span>
             </div>
 
             <div class="cuenta_metric_row" data-witip="Tiempo estimado de respuesta">
               <span class="cuenta_metric_lbl"><i class="fa-solid fa-gauge-high"></i> Latencia Media:</span>
-              <span class="cuenta_metric_val" style="color: var(--dulce); font-weight: 700;">&lt; 0.5s</span>
+              <span class="cuenta_metric_val is_dulce">&lt; 0.5s</span>
             </div>
           </div>
         </div>

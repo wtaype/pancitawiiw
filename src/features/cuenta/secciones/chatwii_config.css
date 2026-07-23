@@ -349,3 +349,38 @@ input:checked + .cuenta_slider:before {
     grid-template-columns: 1fr;
   }
 }
+
+#cuenta_guardar_apis_btn {
+  margin-top: 2vh;
+}
+
+.cuenta_form_grp.mt_1vh {
+  margin-top: 1vh;
+}
+
+.cuenta_tts_tester_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  width: 100%;
+  max-width: 100%;
+}
+
+.cuenta_api_link_icon {
+  font-size: var(--fz_s3);
+}
+
+.cuenta_metric_val.is_mono {
+  font-family: var(--ff_O);
+  font-weight: 700;
+}
+
+.cuenta_metric_val.is_success {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.cuenta_metric_val.is_dulce {
+  color: var(--dulce);
+  font-weight: 700;
+}

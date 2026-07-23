@@ -9,7 +9,7 @@ export let linkweb = 'https://pancitawii.me';
 export let lanzamiento = 2026;
 export let by = '@wilder.taype';
 export let linkme = 'https://wtaype.github.io/';
-export let versionName = '2.4.0';
+export let versionName = '2.5.0';
 export let version = 'v2';
 export let dtema = 'futuro';
 

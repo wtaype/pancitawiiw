@@ -498,6 +498,10 @@
   padding: 5vh;
 }
 
+.cuenta_loading.error {
+  color: var(--dulce);
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 900px) {
   .cuenta_grid {
