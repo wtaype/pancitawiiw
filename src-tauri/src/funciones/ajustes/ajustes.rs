@@ -32,8 +32,11 @@ pub fn fijar_estado_suspension(evitar_suspension: bool) -> Result<(), String> {
 pub fn abrir_url_externa(url: String) -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
         std::process::Command::new("cmd")
-            .args(&["/C", "start", &url])
+            .creation_flags(CREATE_NO_WINDOW)
+            .args(&["/C", "start", "", &url])
             .spawn()
             .map_err(|e| e.to_string())?;
     }

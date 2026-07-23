@@ -62,8 +62,15 @@ pub async fn descargar_cancion_youtube_interno(
     // Registrar archivos preexistentes para detectar con precisión el archivo nuevo
     let archivos_antes = obtener_lista_archivos(dest_path);
 
-    // Invocar yt-dlp directamente para descargar en formato m4a nativo
-    let output = Command::new(&yt_dlp_path)
+    // Invocar yt-dlp directamente para descargar en formato m4a nativo de forma 100% silenciosa
+    let mut cmd = Command::new(&yt_dlp_path);
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
+    let output = cmd
         .args(&[
             "-f", "bestaudio[ext=m4a]",
             "-o", &format!("{}/%(title)s.%(ext)s", carpeta_destino.replace('\\', "/")),
