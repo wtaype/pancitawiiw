@@ -142,6 +142,12 @@
   transform: scale(1.15);
 }
 
+.clock_color_dot.theme-auto {
+  background-color: var(--mco);
+  box-shadow: 0 0 10px var(--mco);
+  overflow: hidden;
+  border-radius: 50%;
+}
 .clock_color_dot.neon-cyan {
   background-color: #00f2fe;
   box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
@@ -260,10 +266,32 @@
   transform: scale(1.2);
 }
 
-/* --- Exit Button --- */
+/* --- Exit & Reset Buttons --- */
 .clock_pers_actions {
   display: flex;
   justify-content: flex-end;
+  gap: 1.5vw;
+}
+
+.clock_reset_btn {
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  color: var(--tx2);
+  padding: 1.4vh 2.5vh;
+  border-radius: 0.8vh;
+  font-size: var(--fz_m);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.8vh;
+  transition: all var(--tr_f);
+}
+
+.clock_reset_btn:hover {
+  background: var(--bg3);
+  border-color: var(--warning);
+  color: var(--warning);
 }
 
 .clock_exit_btn {
@@ -290,3 +318,4 @@
 .clock_select_native {
   width: 100%;
 }
+

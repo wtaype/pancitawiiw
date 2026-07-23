@@ -6,7 +6,7 @@ import { rutas } from '@core/rutas.js';
 import './personalizar.css';
 
 const CONFIG_POR_DEFECTO = {
-  color: 'neon-cyan',
+  color: 'theme-auto',
   glow: true,
   fontFamily: 'Orbitron',
   fontSize: 48, // En píxeles
@@ -37,8 +37,9 @@ export function arrancarPersonalizar(panel, onUpdateCallback) {
           
           <!-- Preset de Colores -->
           <div class="clock_config_group">
-            <span class="clock_config_label">Preset de Color Neón</span>
+            <span class="clock_config_label">Preset de Color</span>
             <div class="clock_color_palette" id="clock_color_palette">
+              <button class="clock_color_dot theme-auto ${config.color === 'theme-auto' ? 'active' : ''}" data-color="theme-auto" title="Tema Sistema (Auto)"></button>
               <button class="clock_color_dot neon-cyan ${config.color === 'neon-cyan' ? 'active' : ''}" data-color="neon-cyan" title="Celeste Neón"></button>
               <button class="clock_color_dot neon-green ${config.color === 'neon-green' ? 'active' : ''}" data-color="neon-green" title="Verde Matrix"></button>
               <button class="clock_color_dot neon-pink ${config.color === 'neon-pink' ? 'active' : ''}" data-color="neon-pink" title="Rosa Synthwave"></button>
@@ -129,8 +130,11 @@ export function arrancarPersonalizar(panel, onUpdateCallback) {
 
       </div>
 
-      <!-- Botón Salir -->
+      <!-- Botones de Acción -->
       <div class="clock_pers_actions">
+        <button id="clock_btn_reset" class="clock_reset_btn" title="Restaurar valores por defecto del tema">
+          <i class="fa-solid fa-rotate-left"></i> Restablecer por Defecto
+        </button>
         <button id="clock_btn_exit" class="clock_exit_btn">
           <i class="fa-solid fa-arrow-left"></i> Volver a Inicio
         </button>
@@ -208,7 +212,15 @@ export function arrancarPersonalizar(panel, onUpdateCallback) {
     guardarYActualizar();
   });
 
-  // 8. Botón Salir
+  // 8. Botón Restablecer por Defecto
+  const btnReset = panel.querySelector('#clock_btn_reset');
+  btnReset?.addEventListener('click', () => {
+    Object.assign(config, CONFIG_POR_DEFECTO);
+    guardarYActualizar();
+    arrancarPersonalizar(panel, onUpdateCallback);
+  });
+
+  // 9. Botón Salir
   const btnExit = panel.querySelector('#clock_btn_exit');
   btnExit?.addEventListener('click', () => {
     rutas.navegar('/inicio');

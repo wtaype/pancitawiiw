@@ -7,7 +7,7 @@ import { renderMicChatwii, initMicChatwiiEvents } from './componentes/mic_chatwi
 import '@features/reloj/reloj.css';
 
 const CONFIG_POR_DEFECTO = {
-  color: 'neon-cyan',
+  color: 'theme-auto',
   glow: true,
   fontFamily: 'Orbitron',
   fontSize: 48, // 48px por defecto
@@ -103,9 +103,13 @@ export function initRelojTimer(container) {
     wrapper.style.setProperty('--reloj-font-size', `${fontSizeVal}px`);
 
     // 3. Color y Brillo (Glow)
-    let colorHex = '#00f2fe'; // neon-cyan
-    let glowColor = 'rgba(0, 242, 254, 0.6)';
-    if (config.color === 'neon-green') { colorHex = '#39ff14'; glowColor = 'rgba(57, 255, 20, 0.6)'; }
+    let colorHex = 'var(--tx1)'; 
+    let glowColor = 'color-mix(in srgb, var(--mco) 45%, transparent)';
+    if (config.color === 'theme-auto' || !config.color) {
+      colorHex = 'var(--tx1)';
+      glowColor = 'color-mix(in srgb, var(--mco) 45%, transparent)';
+    } else if (config.color === 'neon-cyan') { colorHex = '#00f2fe'; glowColor = 'rgba(0, 242, 254, 0.6)'; }
+    else if (config.color === 'neon-green') { colorHex = '#39ff14'; glowColor = 'rgba(57, 255, 20, 0.6)'; }
     else if (config.color === 'neon-pink') { colorHex = '#ff007f'; glowColor = 'rgba(255, 0, 127, 0.6)'; }
     else if (config.color === 'neon-gold') { colorHex = '#ffd700'; glowColor = 'rgba(255, 215, 0, 0.6)'; }
     else if (config.color === 'neon-purple') { colorHex = '#bd00ff'; glowColor = 'rgba(189, 0, 255, 0.6)'; }
