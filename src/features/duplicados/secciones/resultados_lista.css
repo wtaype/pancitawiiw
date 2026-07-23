@@ -1,5 +1,5 @@
 /* src/features/duplicados/secciones/resultados_lista.css */
-/* Estilos de la lista de duplicados con barra de búsqueda e información agrupada */
+/* Estilos de la lista de duplicados con checkboxes Apple iOS y buscador */
 
 .dup_tab_resultados_wrapper {
   display: flex;
@@ -205,6 +205,45 @@
   background: rgba(255, 56, 73, 0.08);
 }
 
+/* 🍏 Checkboxes Premium Estilo Apple iOS */
+.dup_checkbox_file {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--mco);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.dup_checkbox_file:hover {
+  border-color: var(--mco, #00f3ff);
+  box-shadow: 0 0 8px var(--bg4, rgba(0, 243, 255, 0.25));
+}
+
+.dup_checkbox_file:checked {
+  background: linear-gradient(135deg, var(--mco, #00f3ff), var(--success, #3cd741));
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(0, 243, 255, 0.4);
+  transform: scale(1.08);
+}
+
+.dup_checkbox_file:checked::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: solid var(--txa, #0a0e1a);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
 .dup_tab_file_name_wrap {
   display: flex;
   align-items: center;
@@ -242,6 +281,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: copy;
+  transition: color var(--tr_f);
+}
+
+.dup_tab_file_path:hover {
+  color: var(--mco, #00f3ff);
+  text-decoration: underline;
 }
 
 .dup_tab_col_action {

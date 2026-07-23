@@ -1,8 +1,8 @@
 // src/features/duplicados/componentes/panel_duplicados.js
-// Inspector de vista previa montado temporalmente en #sidebar_musica_wrapper con botón X para restaurar el reproductor de música
+// Inspector de vista previa temporal montado en #sidebar_musica_wrapper con soporte de wicopy para copiar rutas
 
 import { obtenerMetadataArchivo } from '../lib/api.js';
-import { wiTip } from '@widev';
+import { wiTip, wicopy } from '@widev';
 import './panel_duplicados.css';
 
 export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, onAbrirVisorHD) {
@@ -19,7 +19,6 @@ export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, on
     </div>
   `;
 
-  // Asignar inmediatamente el evento de cierre X para poder volver a la música en cualquier momento
   const btnCloseInit = container.querySelector('#dup_panel_btn_close');
   if (btnCloseInit) btnCloseInit.onclick = onCerrar;
 
@@ -101,8 +100,10 @@ export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, on
             <span class="dup_panel_detail_val">${fechaCreacion}</span>
           </div>
           <div class="dup_panel_detail_item full_width">
-            <label>Ruta Completa:</label>
-            <span class="dup_panel_detail_val path_box" title="${meta.ruta}">${meta.ruta}</span>
+            <label>Ruta Completa (Clic para copiar):</label>
+            <span id="dup_panel_path_copy" class="dup_panel_detail_val path_box" title="${meta.ruta}" data-witip="Clic para copiar ruta completa">
+              <i class="fa-regular fa-copy"></i> ${meta.ruta}
+            </span>
           </div>
         </div>
 
@@ -118,6 +119,15 @@ export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, on
 
     const btnClose = container.querySelector('#dup_panel_btn_close');
     if (btnClose) btnClose.onclick = onCerrar;
+
+    const pathCopyEl = container.querySelector('#dup_panel_path_copy');
+    if (pathCopyEl) {
+      pathCopyEl.onclick = () => {
+        if (typeof wicopy === 'function') {
+          wicopy(meta.ruta, pathCopyEl, '¡Ruta copiada!');
+        }
+      };
+    }
 
     const btnHD = container.querySelector('#dup_panel_btn_abrir_hd');
     if (btnHD) {

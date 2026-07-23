@@ -1,9 +1,9 @@
 // src/features/duplicados/secciones/resultados_lista.js
-// Renderizado de la lista agrupada de duplicados con buscador en tiempo real y paginación de 20 ítems
+// Renderizado de la lista agrupada con checkboxes Apple iOS, buscador y copiador de rutas wicopy
 
 import { formatearBytes } from '../lib/filtros.js';
 import { renderPaginacion } from '../componentes/paginacion.js';
-import { wiTip } from '@widev';
+import { wiTip, wicopy } from '@widev';
 import './resultados_lista.css';
 
 export function renderResultadosLista(
@@ -74,7 +74,6 @@ export function renderResultadosLista(
     searchInput.oninput = (e) => {
       onBuscarTexto(e.target.value);
     };
-    // Mantener foco al final del texto al filtrar
     searchInput.focus();
     searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
   }
@@ -101,10 +100,10 @@ export function renderResultadosLista(
     };
   });
 
-  // Event Listeners para clic en item (selecciona para vista previa temporal en sidebar)
+  // Event Listeners para clic en item (vista previa temporal en sidebar)
   container.querySelectorAll('.dup_tab_archivo_row').forEach(row => {
     row.onclick = (e) => {
-      if (e.target.closest('input[type="checkbox"]')) return;
+      if (e.target.closest('input[type="checkbox"]') || e.target.closest('.dup_tab_file_path')) return;
       container.querySelectorAll('.dup_tab_archivo_row').forEach(r => r.classList.remove('selected'));
       row.classList.add('selected');
       const ruta = row.getAttribute('data-ruta');
@@ -112,7 +111,18 @@ export function renderResultadosLista(
     };
   });
 
-  // Event Listeners para Checkbox de selección
+  // Fase 4: Event Listeners para Copiar Ruta con wicopy
+  container.querySelectorAll('.dup_tab_file_path').forEach(pathEl => {
+    pathEl.onclick = (e) => {
+      e.stopPropagation();
+      const ruta = pathEl.getAttribute('title') || pathEl.textContent.trim();
+      if (ruta && typeof wicopy === 'function') {
+        wicopy(ruta, pathEl, '¡Ruta copiada!');
+      }
+    };
+  });
+
+  // Event Listeners para Checkbox de selección (Estilo Apple iOS)
   container.querySelectorAll('.dup_checkbox_file').forEach(chk => {
     chk.onchange = () => {
       const ruta = chk.getAttribute('data-ruta');
@@ -156,14 +166,14 @@ function renderGrupoItem(grupo, gIndex, rutasSeleccionadas) {
               return `
                 <tr class="dup_tab_archivo_row ${estaMarcado ? 'marked' : ''}" data-ruta="${arch.ruta}">
                   <td class="dup_tab_col_action">
-                    <input type="checkbox" class="dup_checkbox_file" data-ruta="${arch.ruta}" ${estaMarcado ? 'checked' : ''} />
+                    <input type="checkbox" class="dup_checkbox_file" data-ruta="${arch.ruta}" ${estaMarcado ? 'checked' : ''} data-witip="Marcar para eliminar" />
                   </td>
                   <td>
                     <div class="dup_tab_file_name_wrap">
                       <i class="fa-solid ${getIconoExtension(arch.extension)}"></i>
                       <div>
                         <div class="dup_tab_file_name">${arch.nombre} ${aIndex === 0 ? '<span class="dup_tab_badge_original">Original</span>' : ''}</div>
-                        <div class="dup_tab_file_path" title="${arch.ruta}">${arch.ruta}</div>
+                        <div class="dup_tab_file_path" title="${arch.ruta}" data-witip="Clic para copiar ruta"><i class="fa-regular fa-copy"></i> ${arch.ruta}</div>
                       </div>
                     </div>
                   </td>
