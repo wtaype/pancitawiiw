@@ -1,0 +1,267 @@
+/* src/features/duplicados/secciones/resultados_lista.css */
+/* Estilos de la lista de duplicados con barra de búsqueda e información agrupada */
+
+.dup_tab_resultados_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.dup_tab_resultados_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--glass-bg, rgba(21, 27, 46, 0.65));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  padding: 1rem 1.25rem;
+  border-radius: 1.2vh;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dup_tab_resultados_header_left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dup_tab_resultados_header h4 {
+  margin: 0;
+  font-size: var(--fz_m4, 1.05rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dup_tab_resultados_header h4 i {
+  color: var(--mco, #00f3ff);
+}
+
+.dup_search_input_wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 260px;
+}
+
+.dup_search_input_wrap i {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--tx2, #a5b4fc);
+  font-size: var(--fz_s4, 0.82rem);
+  pointer-events: none;
+}
+
+.dup_search_input {
+  width: 100%;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  padding: 0.48rem 0.85rem 0.48rem 2.2rem;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s4, 0.83rem);
+  outline: none;
+  transition: all var(--tr_f);
+}
+
+.dup_search_input:focus {
+  border-color: var(--mco, #00f3ff);
+  box-shadow: 0 0 10px var(--bg4);
+}
+
+.dup_tab_badge_total_waste {
+  background: rgba(255, 56, 73, 0.15);
+  border: 1px solid rgba(255, 56, 73, 0.35);
+  color: var(--error, #ff3849);
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s4, 0.82rem);
+  font-weight: 700;
+}
+
+.dup_tab_grupos_accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dup_tab_grupo_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
+  backdrop-filter: blur(var(--glass-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 16px));
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1.2vh;
+  overflow: hidden;
+  box-shadow: 0 8px 24px var(--glass-shd, rgba(0, 0, 0, 0.25));
+  transition: border-color var(--tr_f);
+}
+
+.dup_tab_grupo_card:hover {
+  border-color: var(--glass-brd, rgba(0, 243, 255, 0.3));
+}
+
+.dup_tab_grupo_header {
+  padding: 0.85rem 1.25rem;
+  background: var(--inp, #0f1421);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dup_tab_grupo_info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.dup_tab_grupo_tag {
+  background: var(--bg4, rgba(0, 243, 255, 0.15));
+  color: var(--mco, #00f3ff);
+  font-size: var(--fz_s4, 0.76rem);
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5vh;
+  text-transform: uppercase;
+}
+
+.dup_tab_grupo_hash {
+  font-family: monospace;
+  font-size: var(--fz_s4, 0.78rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_tab_grupo_meta {
+  font-size: var(--fz_s4, 0.8rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_tab_grupo_right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dup_tab_badge_waste {
+  color: var(--dulce, #FF5C69);
+  font-size: var(--fz_s4, 0.8rem);
+  font-weight: 600;
+}
+
+.dup_chevron {
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_tab_grupo_body {
+  padding: 0;
+}
+
+.dup_tab_hidden {
+  display: none !important;
+}
+
+.dup_tab_archivos_table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fz_m, 0.85rem);
+}
+
+.dup_tab_archivos_table th {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--tx2, #a5b4fc);
+  text-align: left;
+  padding: 0.6rem 1rem;
+  font-size: var(--fz_s4, 0.78rem);
+  font-weight: 600;
+  border-bottom: 1px solid var(--brd, #2d3a52);
+}
+
+.dup_tab_archivos_table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(45, 58, 82, 0.4);
+  color: var(--tx, #e0e7ff);
+}
+
+.dup_tab_archivo_row {
+  cursor: pointer;
+  transition: background var(--tr_f);
+}
+
+.dup_tab_archivo_row:hover {
+  background: var(--bg4, rgba(0, 243, 255, 0.08));
+}
+
+.dup_tab_archivo_row.selected {
+  background: rgba(0, 243, 255, 0.12);
+}
+
+.dup_tab_archivo_row.marked {
+  background: rgba(255, 56, 73, 0.08);
+}
+
+.dup_tab_file_name_wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dup_tab_file_name_wrap i {
+  font-size: 1.1rem;
+  color: var(--mco, #00f3ff);
+}
+
+.dup_tab_file_name {
+  font-weight: 600;
+  color: var(--tx, #e0e7ff);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dup_tab_badge_original {
+  background: var(--success, #3cd741);
+  color: var(--txa, #0a0e1a);
+  font-size: var(--fz_s4, 0.68rem);
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.4vh;
+  text-transform: uppercase;
+}
+
+.dup_tab_file_path {
+  font-size: var(--fz_s4, 0.75rem);
+  color: var(--tx2, #a5b4fc);
+  font-family: monospace;
+  max-width: 450px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dup_tab_col_action {
+  width: 50px;
+  text-align: center;
+}
+
+.dup_tab_col_mod {
+  width: 120px;
+}
+
+.dup_tab_col_size {
+  width: 100px;
+  font-weight: 600;
+}
+
+.dup_date, .dup_size {
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_tab_text_danger {
+  color: var(--error, #ff3849);
+}

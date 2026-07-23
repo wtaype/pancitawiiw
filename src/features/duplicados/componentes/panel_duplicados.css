@@ -1,0 +1,185 @@
+/* src/features/duplicados/componentes/panel_duplicados.css */
+/* Estilos del inspector de vista previa temporal montado en el sidebar derecho (#sidebar_musica_wrapper) */
+
+.dup_panel_sidebar_card {
+  position: relative;
+  background: var(--glass-bg, rgba(21, 27, 46, 0.85));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 1.2vh;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  box-shadow: 0 12px 32px var(--glass-shd, rgba(0, 0, 0, 0.35));
+  width: 100%;
+  box-sizing: border-box;
+  animation: dup_panel_fade_in 0.25s ease-out;
+}
+
+@keyframes dup_panel_fade_in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dup_panel_close_btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 56, 73, 0.15);
+  border: 1px solid rgba(255, 56, 73, 0.35);
+  color: var(--error, #ff3849);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: all var(--tr_f);
+  z-index: 10;
+}
+
+.dup_panel_close_btn:hover {
+  background: var(--error, #ff3849);
+  color: var(--txa, #fff);
+  transform: scale(1.1);
+}
+
+.dup_panel_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 2.2rem;
+}
+
+.dup_panel_header h4 {
+  margin: 0;
+  font-size: var(--fz_m4, 0.98rem);
+  font-weight: 600;
+  color: var(--tx, #e0e7ff);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dup_panel_header h4 i {
+  color: var(--mco, #00f3ff);
+}
+
+.dup_panel_badge_type {
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--mco, #00f3ff);
+  font-size: var(--fz_s4, 0.72rem);
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4vh;
+  text-transform: uppercase;
+}
+
+.dup_panel_media_box {
+  width: 100%;
+  height: 190px;
+  background: var(--inp, #0f1421);
+  border-radius: 1vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--brd, #2d3a52);
+}
+
+.dup_panel_media_box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.dup_panel_media_box video {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0.6vh;
+  outline: none;
+}
+
+.dup_panel_media_box.audio_box,
+.dup_panel_media_box.document_box {
+  gap: 0.85rem;
+  color: var(--tx2, #a5b4fc);
+  text-align: center;
+  padding: 1rem;
+}
+
+.dup_panel_details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: var(--fz_m, 0.84rem);
+}
+
+.dup_panel_detail_item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dup_panel_detail_item.full_width {
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dup_panel_detail_item label {
+  color: var(--tx2, #a5b4fc);
+  font-weight: 500;
+}
+
+.dup_panel_detail_val {
+  color: var(--tx, #e0e7ff);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dup_panel_detail_val.highlight {
+  color: var(--success, #3cd741);
+  font-weight: 700;
+}
+
+.dup_panel_detail_val.path_box {
+  font-size: var(--fz_s4, 0.76rem);
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  padding: 0.45rem;
+  border-radius: 0.6vh;
+  word-break: break-all;
+  white-space: normal;
+  font-family: monospace;
+}
+
+.dup_panel_btn_hd {
+  background: var(--mco, #00f3ff);
+  color: var(--txa, #0a0e1a);
+  border: none;
+  border-radius: 0.8vh;
+  padding: 0.65rem 1rem;
+  font-size: var(--fz_m, 0.85rem);
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px var(--bg4);
+  transition: all var(--tr_f);
+}
+
+.dup_panel_btn_hd:hover {
+  background: var(--hv, #00d4ff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--bg5);
+}

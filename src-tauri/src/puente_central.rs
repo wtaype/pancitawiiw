@@ -46,7 +46,12 @@ macro_rules! registrar_puentes {
             $crate::funciones::musica::musica::seleccionar_carpeta_musica_comando,
             $crate::funciones::musica::musica::descargar_cancion_youtube_comando,
             $crate::funciones::musica::musica::escanear_carpeta_musica_comando,
-            $crate::funciones::musica::musica::obtener_y_escanear_musica_sistema_comando
+            $crate::funciones::musica::musica::obtener_y_escanear_musica_sistema_comando,
+
+            // Puente hacia Duplicados (Escáner 3 Etapas y Papelera)
+            $crate::funciones::duplicados::escaner_3etapas::duplicados_iniciar_escaner,
+            $crate::funciones::duplicados::acciones_papelera::duplicados_eliminar_a_papelera,
+            $crate::funciones::duplicados::preview_media::duplicados_obtener_metadata_archivo
         ]
     };
 }

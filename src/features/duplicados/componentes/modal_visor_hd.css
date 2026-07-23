@@ -1,0 +1,163 @@
+/* src/features/duplicados/componentes/modal_visor_hd.css */
+/* Modal HD a pantalla completa para vista previa multimedia en duplicados */
+
+.dup_hd_modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--tr_m);
+}
+
+.dup_hd_modal_overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dup_hd_modal_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.95));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 1.5vh;
+  width: 90vw;
+  max-width: 1100px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: dup_modal_pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dup_modal_pop {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.dup_hd_modal_header {
+  padding: 1rem 1.5rem;
+  background: var(--inp, #0f1421);
+  border-bottom: 1px solid var(--brd, #2d3a52);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dup_hd_modal_title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dup_hd_modal_title i {
+  font-size: var(--fz_m5, 1.25rem);
+  color: var(--mco, #00f3ff);
+}
+
+.dup_hd_modal_title h3 {
+  margin: 0;
+  font-size: var(--fz_m4, 1.1rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+  max-width: 650px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dup_hd_modal_close {
+  background: rgba(255, 56, 73, 0.15);
+  border: 1px solid rgba(255, 56, 73, 0.3);
+  color: var(--error, #ff3849);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--tr_f);
+}
+
+.dup_hd_modal_close:hover {
+  background: var(--error, #ff3849);
+  color: var(--txa, #fff);
+}
+
+.dup_hd_modal_body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.dup_hd_media_wrapper {
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dup_hd_media_wrapper img {
+  max-width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  border-radius: 0.8vh;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dup_hd_media_wrapper video {
+  max-width: 100%;
+  max-height: 65vh;
+  border-radius: 0.8vh;
+  outline: none;
+}
+
+.dup_hd_media_wrapper audio {
+  width: 500px;
+  outline: none;
+}
+
+.dup_hd_audio_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--mco, #00f3ff);
+}
+
+.dup_hd_footer {
+  padding: 0.85rem 1.5rem;
+  background: var(--inp, #0f1421);
+  border-top: 1px solid var(--brd, #2d3a52);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--fz_m, 0.85rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_hd_footer_path {
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5vh;
+  max-width: 650px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

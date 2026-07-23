@@ -23,6 +23,20 @@ export const SEO = {
     icon: 'fa-robot',
     position: 'left'
   },
+  '/duplicados': {
+    tag: 'Duplicados',
+    title: 'Buscador de Archivos Duplicados',
+    subtitle: 'Escáner ultrarrápido y gestión de espacio',
+    icon: 'fa-copy',
+    position: 'left'
+  },
+  '/optimizar': {
+    tag: 'Optimizar',
+    title: 'Centro de Optimización',
+    subtitle: 'Limpieza profunda y rendimiento del PC',
+    icon: 'fa-gauge-high',
+    position: 'left'
+  },
   '/cuenta': {
     tag: 'Cuenta',
     title: 'Mi Cuenta',

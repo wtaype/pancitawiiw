@@ -1,0 +1,224 @@
+/* src/features/duplicados/secciones/escaner_config.css */
+/* Estilos premium para la sección de configuración y selección de carpetas con WiTema */
+
+.dup_tab_escaner_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.dup_tab_config_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.65));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.18));
+  border-radius: 1.2vh;
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 12px 32px var(--glass-shd, rgba(0, 0, 0, 0.35));
+  transition: border-color var(--tr_m), box-shadow var(--tr_m);
+}
+
+.dup_tab_config_card:hover {
+  border-color: var(--mco, #00f3ff);
+  box-shadow: 0 16px 40px var(--bg4, rgba(0, 243, 255, 0.12));
+}
+
+.dup_tab_config_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dup_tab_config_title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dup_tab_config_title i {
+  font-size: var(--fz_x1, 2.2rem);
+  color: var(--mco, #00f3ff);
+  filter: drop-shadow(0 0 10px var(--bg5));
+}
+
+.dup_tab_config_title h3 {
+  margin: 0;
+  font-size: var(--fz_m5, 1.25rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+  font-family: var(--ff_P);
+}
+
+.dup_tab_config_title p {
+  margin: 0.25rem 0 0 0;
+  font-size: var(--fz_m, 0.88rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_tab_btn_agregar {
+  background: var(--mco, #00f3ff);
+  color: var(--txa, #0a0e1a);
+  border: none;
+  border-radius: 0.8vh;
+  padding: 0.6rem 1.25rem;
+  font-size: var(--fz_m, 0.88rem);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px var(--bg4);
+  transition: all var(--tr_f);
+}
+
+.dup_tab_btn_agregar:hover {
+  background: var(--hv, #00d4ff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--bg5);
+}
+
+/* Carpetas Chips */
+.dup_tab_carpetas_wrapper {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1vh;
+  padding: 0.85rem 1rem;
+  min-height: 52px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dup_tab_chip_empty {
+  font-size: var(--fz_m, 0.88rem);
+  color: var(--tx2, #a5b4fc);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dup_tab_chip_empty i {
+  color: var(--mco, #00f3ff);
+}
+
+.dup_tab_chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+  border: 1px solid var(--brd, #2d3a52);
+  padding: 0.4rem 0.85rem;
+  border-radius: 2vh;
+  font-size: var(--fz_m, 0.85rem);
+  color: var(--tx, #e0e7ff);
+  transition: all var(--tr_f);
+}
+
+.dup_tab_chip:hover {
+  background: var(--bg5, rgba(0, 243, 255, 0.25));
+  border-color: var(--mco, #00f3ff);
+}
+
+.dup_tab_chip_path {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
+.dup_tab_chip_remove {
+  background: none;
+  border: none;
+  color: var(--error, #ff3849);
+  cursor: pointer;
+  padding: 0;
+  font-size: var(--fz_m1, 0.95rem);
+  display: flex;
+  align-items: center;
+  transition: color var(--tr_f);
+}
+
+.dup_tab_chip_remove:hover {
+  color: var(--dulce, #FF5C69);
+}
+
+/* Opciones de Filtro */
+.dup_tab_config_opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  border-top: 1px solid var(--brd, #2d3a52);
+  padding-top: 1.25rem;
+}
+
+.dup_tab_input_group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.dup_tab_input_group label {
+  font-size: var(--fz_m, 0.85rem);
+  font-weight: 500;
+  color: var(--tx2, #a5b4fc);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dup_tab_input_group label i {
+  color: var(--mco, #00f3ff);
+}
+
+.dup_tab_select {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 0.8vh;
+  color: var(--tx, #e0e7ff);
+  padding: 0.6rem 0.85rem;
+  font-size: var(--fz_m, 0.88rem);
+  font-family: var(--ff_P);
+  outline: none;
+  transition: border-color var(--tr_f), box-shadow var(--tr_f);
+}
+
+.dup_tab_select:focus {
+  border-color: var(--mco, #00f3ff);
+  box-shadow: 0 0 0 3px var(--bg4);
+}
+
+.dup_tab_btn_escanear {
+  background: var(--success, #3cd741);
+  color: var(--txa, #fff);
+  border: none;
+  border-radius: 0.8vh;
+  padding: 0.65rem 1.5rem;
+  font-size: var(--fz_m1, 0.95rem);
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 16px rgba(60, 215, 65, 0.3);
+  transition: all var(--tr_f);
+  height: 42px;
+  align-self: flex-end;
+}
+
+.dup_tab_btn_escanear:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(60, 215, 65, 0.5);
+}
+
+.dup_tab_btn_escanear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}

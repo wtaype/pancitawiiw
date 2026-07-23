@@ -1,0 +1,64 @@
+/* src/features/duplicados/componentes/paginacion.css */
+/* Estilos del componente de paginación para duplicados con WiTema */
+
+.dup_paginacion_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--brd, #2d3a52);
+}
+
+.dup_paginacion_info {
+  font-size: var(--fz_m, 0.85rem);
+  color: var(--tx2, #a5b4fc);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dup_paginacion_info i {
+  color: var(--mco, #00f3ff);
+}
+
+.dup_paginacion_controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dup_btn_pag {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s4, 0.82rem);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all var(--tr_f);
+}
+
+.dup_btn_pag:hover:not(:disabled) {
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+  border-color: var(--mco, #00f3ff);
+  color: var(--mco, #00f3ff);
+}
+
+.dup_btn_pag:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.dup_pag_page_badge {
+  background: var(--bg4, rgba(0, 243, 255, 0.15));
+  color: var(--mco, #00f3ff);
+  font-size: var(--fz_s4, 0.82rem);
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.6vh;
+}

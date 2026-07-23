@@ -1,0 +1,105 @@
+/* src/features/duplicados/componentes/modal_reglas.css */
+/* Modal de reglas de auto-selección inteligente de 1-clic */
+
+.dup_reglas_modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 14, 26, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--tr_m);
+}
+
+.dup_reglas_modal_overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dup_reglas_modal_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.95));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 1.5vh;
+  width: 90vw;
+  max-width: 540px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: dup_modal_pop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dup_reglas_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dup_reglas_title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dup_reglas_title i {
+  font-size: var(--fz_m5, 1.3rem);
+  color: var(--mco, #00f3ff);
+}
+
+.dup_reglas_title h3 {
+  margin: 0;
+  font-size: var(--fz_m4, 1.15rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+}
+
+.dup_reglas_options_list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dup_regla_option_btn {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1vh;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--tr_f);
+}
+
+.dup_regla_option_btn:hover {
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+  border-color: var(--mco, #00f3ff);
+  transform: translateX(4px);
+}
+
+.dup_regla_option_btn i {
+  font-size: 1.4rem;
+  color: var(--mco, #00f3ff);
+}
+
+.dup_regla_option_info h4 {
+  margin: 0 0 0.2rem 0;
+  font-size: var(--fz_m, 0.92rem);
+  color: var(--tx, #e0e7ff);
+}
+
+.dup_regla_option_info p {
+  margin: 0;
+  font-size: var(--fz_s4, 0.78rem);
+  color: var(--tx2, #a5b4fc);
+}

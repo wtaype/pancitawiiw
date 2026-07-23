@@ -1,0 +1,61 @@
+/* src/features/duplicados/duplicados.css */
+/* Estilos generales del módulo Duplicados a 100% ancho con inspector temporal en el sidebar */
+
+.dup_container {
+  padding: 1.5rem;
+  color: var(--tx, #e0e7ff);
+  min-height: calc(100vh - 120px);
+  box-sizing: border-box;
+}
+
+.dup_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.dup_section_content {
+  display: none;
+}
+
+.dup_section_content.active {
+  display: block;
+}
+
+.dup_resultados_wrapper {
+  width: 100%;
+}
+
+.dup_empty_state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: var(--glass-bg, rgba(21, 27, 46, 0.65));
+  border: 1px dashed var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 1.5vh;
+  text-align: center;
+  gap: 1rem;
+}
+
+.dup_empty_state i {
+  font-size: 3rem;
+  color: var(--mco, #00f3ff);
+}
+
+.dup_empty_state h3 {
+  margin: 0;
+  font-size: var(--fz_m5, 1.25rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+}
+
+.dup_empty_state p {
+  margin: 0;
+  font-size: var(--fz_m, 0.9rem);
+  color: var(--tx2, #a5b4fc);
+  max-width: 480px;
+}

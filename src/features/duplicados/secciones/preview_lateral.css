@@ -1,0 +1,163 @@
+/* src/features/duplicados/secciones/preview_lateral.css */
+/* Estilos premium para el panel lateral de vista previa con WiTema */
+
+.dup_tab_preview_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.65));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1.2vh;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  position: sticky;
+  top: 1.5rem;
+  box-shadow: 0 12px 32px var(--glass-shd, rgba(0, 0, 0, 0.35));
+}
+
+.dup_tab_preview_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dup_tab_preview_header h4 {
+  margin: 0;
+  font-size: var(--fz_m4, 1rem);
+  font-weight: 600;
+  color: var(--tx, #e0e7ff);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dup_tab_preview_header h4 i {
+  color: var(--mco, #00f3ff);
+}
+
+.dup_tab_preview_badge_type {
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--mco, #00f3ff);
+  font-size: var(--fz_s4, 0.72rem);
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4vh;
+  text-transform: uppercase;
+}
+
+.dup_tab_preview_media_box {
+  width: 100%;
+  height: 190px;
+  background: var(--inp, #0f1421);
+  border-radius: 1vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--brd, #2d3a52);
+}
+
+.dup_tab_preview_media_box img,
+.dup_tab_preview_media_box video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.dup_tab_preview_media_box.audio_box,
+.dup_tab_preview_media_box.document_box {
+  gap: 0.85rem;
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_tab_preview_details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: var(--fz_m, 0.84rem);
+}
+
+.dup_tab_detail_item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dup_tab_detail_item.full_width {
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dup_tab_detail_item label {
+  color: var(--tx2, #a5b4fc);
+  font-weight: 500;
+}
+
+.dup_tab_detail_val {
+  color: var(--tx, #e0e7ff);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dup_tab_detail_val.highlight {
+  color: var(--success, #3cd741);
+  font-weight: 700;
+}
+
+.dup_tab_detail_val.path_box {
+  font-size: var(--fz_s4, 0.76rem);
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  padding: 0.45rem;
+  border-radius: 0.6vh;
+  word-break: break-all;
+  white-space: normal;
+  font-family: monospace;
+}
+
+.dup_tab_btn_hd {
+  background: var(--mco, #00f3ff);
+  color: var(--txa, #0a0e1a);
+  border: none;
+  border-radius: 0.8vh;
+  padding: 0.65rem 1rem;
+  font-size: var(--fz_m, 0.85rem);
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px var(--bg4);
+  transition: all var(--tr_f);
+}
+
+.dup_tab_btn_hd:hover {
+  background: var(--hv, #00d4ff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--bg5);
+}
+
+.dup_tab_preview_empty {
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  color: var(--tx2, #a5b4fc);
+  font-size: var(--fz_m, 0.88rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--glass-bg, rgba(21, 27, 46, 0.65));
+  border-radius: 1.2vh;
+  border: 1px dashed var(--brd, #2d3a52);
+}
+
+.dup_tab_preview_empty i {
+  font-size: var(--fz_l1, 2.2rem);
+  color: var(--mco, #00f3ff);
+}

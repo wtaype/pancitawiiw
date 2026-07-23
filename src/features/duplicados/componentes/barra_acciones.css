@@ -1,0 +1,101 @@
+/* src/features/duplicados/componentes/barra_acciones.css */
+/* Barra flotante de acciones inferiores para eliminacion a la Papelera */
+
+.dup_barra_acciones_sticky {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--glass-bg, rgba(21, 27, 46, 0.95));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 2vh;
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  z-index: 99900;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.dup_barra_acciones_sticky.active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dup_barra_info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dup_barra_info i {
+  font-size: 1.5rem;
+  color: var(--mco, #00f3ff);
+}
+
+.dup_barra_text h4 {
+  margin: 0;
+  font-size: var(--fz_m, 0.92rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+}
+
+.dup_barra_text p {
+  margin: 0.1rem 0 0 0;
+  font-size: var(--fz_s4, 0.78rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.dup_barra_btns {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.dup_btn_reglas {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  padding: 0.6rem 1.1rem;
+  border-radius: 1vh;
+  font-size: var(--fz_m, 0.85rem);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--tr_f);
+}
+
+.dup_btn_reglas:hover {
+  border-color: var(--mco, #00f3ff);
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+}
+
+.dup_btn_eliminar_papelera {
+  background: var(--error, #ff3849);
+  color: var(--txa, #fff);
+  border: none;
+  padding: 0.65rem 1.35rem;
+  border-radius: 1vh;
+  font-size: var(--fz_m, 0.88rem);
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 16px rgba(255, 56, 73, 0.35);
+  transition: all var(--tr_f);
+}
+
+.dup_btn_eliminar_papelera:hover {
+  background: var(--dulce, #FF5C69);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(255, 56, 73, 0.5);
+}
