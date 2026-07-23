@@ -1,10 +1,23 @@
 // src/features/duplicados/componentes/modal_visor_hd.js
-// Visor modal HD multimedia a pantalla completa para fotos, videos y audios
+// Visor modal HD multimedia para fotos (vía galeria.js), videos, audios y documentos
 
 import { wiTip } from '@widev';
+import { abrirGaleria } from '@core/widev/galeria.js';
 import './modal_visor_hd.css';
 
 export function renderModalVisorHD(meta, onCerrar) {
+  // Si el archivo es una imagen, aprovechar la galeria.js nativa de @widev
+  if (meta.tipo_categoria === 'imagen' && typeof abrirGaleria === 'function') {
+    const tempImg = document.createElement('img');
+    tempImg.className = 'dup_temp_galeria_img';
+    tempImg.src = window.__TAURI__ ? window.__TAURI__.core.convertFileSrc(meta.ruta) : meta.ruta;
+    tempImg.alt = meta.nombre;
+    document.body.appendChild(tempImg);
+    abrirGaleria(tempImg, '.dup_temp_galeria_img', meta.nombre);
+    setTimeout(() => tempImg.remove(), 1000);
+    return;
+  }
+
   // Eliminar cualquier modal previo si existiera
   const antiguo = document.getElementById('dup_modal_hd_root');
   if (antiguo) antiguo.remove();
@@ -12,13 +25,7 @@ export function renderModalVisorHD(meta, onCerrar) {
   const assetUrl = window.__TAURI__ ? window.__TAURI__.core.convertFileSrc(meta.ruta) : meta.ruta;
 
   let bodyMedia = '';
-  if (meta.tipo_categoria === 'imagen') {
-    bodyMedia = `
-      <div class="dup_hd_media_wrapper">
-        <img src="${assetUrl}" alt="${meta.nombre}" />
-      </div>
-    `;
-  } else if (meta.tipo_categoria === 'video') {
+  if (meta.tipo_categoria === 'video') {
     bodyMedia = `
       <div class="dup_hd_media_wrapper">
         <video src="${assetUrl}" controls autoplay preload="auto"></video>

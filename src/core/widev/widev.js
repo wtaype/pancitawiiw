@@ -1,6 +1,6 @@
 // src/lib/widev/widev.js
 // El cerebro del módulo que une y expone las utilidades segmentadas de widev/
-// v1.0.1: Añadido export de atajos.js
+// v1.0.1: Añadido export de atajos.js y abrirGaleria
 
 export { Saludar, saludoSmile } from './saludo.js';
 export { wiTip } from './witip.js';
@@ -33,5 +33,5 @@ export { wiDropdown, cerrarTodosLosDropdowns } from './dropdown.js';
 export { wiSelect } from './wiselect.js';
 export { wiSugerencias } from './sugerencias.js';
 export { wiAtajo } from './atajos.js';
-export { wiGaleria } from './galeria.js';
-export { wiEditor } from './editor.js';
+export { wiGaleria, abrirGaleria } from './galeria.js';
+export { wiEditor } from './editor.js';

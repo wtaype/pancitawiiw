@@ -1,8 +1,9 @@
 // src/features/duplicados/componentes/panel_duplicados.js
-// Inspector de vista previa temporal montado en #sidebar_musica_wrapper con soporte de wicopy para copiar rutas
+// Inspector de vista previa en el sidebar con integración a galeria.js de @widev para imágenes HD y wicopy para copiar rutas
 
 import { obtenerMetadataArchivo } from '../lib/api.js';
 import { wiTip, wicopy } from '@widev';
+import { abrirGaleria } from '@core/widev/galeria.js';
 import './panel_duplicados.css';
 
 export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, onAbrirVisorHD) {
@@ -38,7 +39,7 @@ export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, on
     if (meta.tipo_categoria === 'imagen') {
       previewContent = `
         <div class="dup_panel_media_box">
-          <img src="${assetUrl}" alt="${meta.nombre}" loading="lazy" />
+          <img id="dup_panel_img_thumb" class="dup_galeria_item" src="${assetUrl}" alt="${meta.nombre}" data-witip="Clic para abrir en Galería HD" style="cursor: pointer;" />
         </div>
       `;
     } else if (meta.tipo_categoria === 'video') {
@@ -109,7 +110,7 @@ export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, on
 
         <div class="dup_panel_actions">
           <button id="dup_panel_btn_abrir_hd" class="dup_panel_btn_hd" data-witip="Abrir visor modal en pantalla completa">
-            <i class="fa-solid fa-expand"></i> Ver en Modal HD
+            <i class="fa-solid fa-expand"></i> Ver en Galería HD
           </button>
         </div>
       </div>
@@ -129,9 +130,27 @@ export async function renderPanelDuplicados(container, rutaArchivo, onCerrar, on
       };
     }
 
+    // Fase 3: Integración de galeria.js para imágenes
+    const thumbImg = container.querySelector('#dup_panel_img_thumb');
+    if (thumbImg) {
+      thumbImg.onclick = () => {
+        if (typeof abrirGaleria === 'function') {
+          abrirGaleria(thumbImg, '.dup_galeria_item', meta.nombre);
+        } else {
+          onAbrirVisorHD(meta);
+        }
+      };
+    }
+
     const btnHD = container.querySelector('#dup_panel_btn_abrir_hd');
     if (btnHD) {
-      btnHD.onclick = () => onAbrirVisorHD(meta);
+      btnHD.onclick = () => {
+        if (meta.tipo_categoria === 'imagen' && typeof abrirGaleria === 'function' && thumbImg) {
+          abrirGaleria(thumbImg, '.dup_galeria_item', meta.nombre);
+        } else {
+          onAbrirVisorHD(meta);
+        }
+      };
     }
   } catch (e) {
     if (typeof onCerrar === 'function') onCerrar();
