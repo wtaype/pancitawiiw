@@ -1,5 +1,5 @@
 // src/features/duplicados/duplicados.js
-// Controlador SPA de /duplicados con persistencia en ult_duplicados (savels/getls), botón Limpiar y barra de controles unificada
+// Controlador SPA de /duplicados con eliminación suave y amigable mediante Notificacion() de @widev
 
 import { renderEscanerConfig } from './secciones/escaner_config.js';
 import { renderResultadosLista } from './secciones/resultados_lista.js';
@@ -50,14 +50,14 @@ export function getDuplicadosTabs(state) {
             <i class="fa-solid fa-chevron-right"></i>
           </button>
 
-          <button class="tab_right_btn icon_only" data-action-id="re_escanear_action" data-witip="Actualizar resultados">
-          <i class="fa-solid fa-arrows-rotate"></i>
-          </button>
-          <button class="tab_right_btn icon_only" data-action-id="abrir_carpeta_action" data-witip="Agregar Carpeta">
-          <i class="fa-solid fa-folder-plus"></i>
-          </button>
           <button class="tab_right_btn icon_only" data-action-id="limpiar_cache_action" data-witip="Limpiar escaneo e historial">
             <i class="fa-solid fa-broom"></i>
+          </button>
+          <button class="tab_right_btn icon_only" data-action-id="re_escanear_action" data-witip="Actualizar resultados">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+          <button class="tab_right_btn icon_only" data-action-id="abrir_carpeta_action" data-witip="Agregar Carpeta">
+            <i class="fa-solid fa-folder-plus"></i>
           </button>
         </div>
       `
@@ -165,7 +165,6 @@ export async function arrancar(container) {
       state.archivoSeleccionadoRuta = null;
       state.paginaActual = 1;
 
-      // Guardar el estado completo en localStorage ('ult_duplicados') por 30 días
       guardarEstadoEnStorage();
 
       Notificacion(`Escaneo completado. ${state.gruposFiltrados.length} grupos de duplicados encontrados.`, 'success');
@@ -251,26 +250,38 @@ export async function arrancar(container) {
       },
       async () => {
         const rutasAEliminar = Array.from(state.rutasSeleccionadas);
-        try {
-          const eliminados = await eliminarArchivosAPapelera(rutasAEliminar);
-          Notificacion(`¡${eliminados} archivo(s) movidos exitosamente a la Papelera de Reciclaje!`, 'success');
-          
-          state.grupos.forEach(grupo => {
-            grupo.archivos = grupo.archivos.filter(a => !rutasAEliminar.includes(a.ruta));
-          });
-          state.grupos = state.grupos.filter(g => g.archivos.length >= 2);
-          state.gruposFiltrados = state.grupos;
-          state.rutasSeleccionadas.clear();
-          state.archivoSeleccionadoRuta = null;
+        
+        // Animación suave de desvanecimiento en las filas marcadas antes de eliminarlas
+        rutasAEliminar.forEach(ruta => {
+          const row = resultadosContainer.querySelector(`tr[data-ruta="${CSS.escape(ruta)}"]`);
+          if (row) row.classList.add('removing');
+        });
 
-          guardarEstadoEnStorage();
-          restaurarMusicaEnSidebar();
-          refrescarSubtabsSuperiores();
-          actualizarVistasResultados();
-        } catch (errElim) {
-          console.error('[Duplicados] Error al eliminar archivos:', errElim);
-          Notificacion(`Error al eliminar: ${errElim}`, 'error');
-        }
+        setTimeout(async () => {
+          try {
+            const eliminados = await eliminarArchivosAPapelera(rutasAEliminar);
+
+            // Eliminar los archivos del array local
+            state.grupos.forEach(grupo => {
+              grupo.archivos = grupo.archivos.filter(a => !rutasAEliminar.includes(a.ruta));
+            });
+
+            // Remover grupos que ya solo tengan 1 archivo (duplicado resuelto)
+            state.grupos = state.grupos.filter(g => g.archivos.length >= 2);
+            state.rutasSeleccionadas.clear();
+            state.archivoSeleccionadoRuta = null;
+
+            guardarEstadoEnStorage();
+            restaurarMusicaEnSidebar();
+            refrescarSubtabsSuperiores();
+
+            Notificacion(`¡${eliminados} archivo(s) movidos a la Papelera de Reciclaje!`, 'success');
+            actualizarVistasResultados();
+          } catch (errElim) {
+            console.error('[Duplicados] Error al eliminar archivos:', errElim);
+            Notificacion(`Error al eliminar: ${errElim}`, 'error');
+          }
+        }, 250);
       }
     );
   }
@@ -382,7 +393,6 @@ export async function arrancar(container) {
         if (btnRef && typeof wiSpin === 'function') wiSpin(btnRef, false);
       }
     } else if (actionId === 'limpiar_cache_action') {
-      // Borrar la memoria persistente en localStorage y reiniciar estado
       removels('ult_duplicados');
       state.rutas = [];
       state.grupos = [];

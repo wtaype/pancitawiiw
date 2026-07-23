@@ -1,5 +1,5 @@
 // src/features/duplicados/secciones/resultados_lista.js
-// Renderizado de la lista agrupada con muestra de ruta completa y paginación de 20 ítems
+// Renderizado de la lista agrupada con muestra de ruta completa, checkboxes Apple iOS y estado vacío limpio
 
 import { formatearBytes } from '../lib/filtros.js';
 import { renderPaginacion } from '../componentes/paginacion.js';
@@ -154,10 +154,6 @@ function renderGrupoItem(grupo, gIndex, rutasSeleccionadas) {
       </div>
     </div>
   `;
-}
-
-function calcularEspacioTotalDesperdiciado(grupos) {
-  return grupos.reduce((acc, g) => acc + g.bytes_desperdiciados, 0);
 }
 
 function getIconoExtension(ext) {

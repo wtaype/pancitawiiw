@@ -1,5 +1,5 @@
 /* src/features/duplicados/secciones/resultados_lista.css */
-/* Estilos de la lista de duplicados a alto completo con muestra de ruta entera y checkboxes Apple iOS */
+/* Estilos de la lista de duplicados a alto completo con muestra de ruta entera, checkboxes Apple iOS y animaciones suaves */
 
 .dup_tab_resultados_wrapper {
   display: flex;
@@ -22,7 +22,13 @@
   border-radius: 1.2vh;
   overflow: hidden;
   box-shadow: 0 8px 24px var(--glass-shd, rgba(0, 0, 0, 0.25));
-  transition: border-color var(--tr_f);
+  transition: border-color var(--tr_f), opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+
+.dup_tab_grupo_card.removing {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
 }
 
 .dup_tab_grupo_card:hover {
@@ -114,7 +120,13 @@
 
 .dup_tab_archivo_row {
   cursor: pointer;
-  transition: background var(--tr_f);
+  transition: background var(--tr_f), opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.dup_tab_archivo_row.removing {
+  opacity: 0;
+  transform: translateX(-20px);
+  pointer-events: none;
 }
 
 .dup_tab_archivo_row:hover {
