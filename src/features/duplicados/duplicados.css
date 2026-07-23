@@ -1,5 +1,5 @@
 /* src/features/duplicados/duplicados.css */
-/* Estilos generales del módulo Duplicados a 100% ancho con inspector temporal en el sidebar */
+/* Estilos generales del módulo Duplicados con barra superior de controles unificados a 36px de alto y soporte de z-index */
 
 .dup_container {
   padding: 1.5rem;
@@ -11,7 +11,7 @@
 .dup_wrap {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   max-width: 1300px;
   margin: 0 auto;
 }
@@ -58,4 +58,121 @@
   font-size: var(--fz_m, 0.9rem);
   color: var(--tx2, #a5b4fc);
   max-width: 480px;
+}
+
+/* 🎛️ Barra Superior de Controles Unificada (Homogénea a 36px de alto y Z-Index corregido) */
+.tabs_bar_container,
+.tab_right_wrapper,
+.dup_top_controls_bar {
+  overflow: visible !important;
+  position: relative;
+  z-index: 100;
+}
+
+.dup_top_controls_bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dup_top_search_wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 210px;
+  height: 36px;
+}
+
+.dup_top_search_wrap i {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--tx2, #a5b4fc);
+  font-size: var(--fz_s4, 0.8rem);
+  pointer-events: none;
+}
+
+.dup_top_search_input {
+  width: 100%;
+  height: 36px;
+  box-sizing: border-box;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  padding: 0 0.75rem 0 2.1rem;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s4, 0.82rem);
+  outline: none;
+  transition: all var(--tr_f);
+}
+
+.dup_top_search_input:focus {
+  border-color: var(--mco, #00f3ff);
+  box-shadow: 0 0 8px var(--bg4);
+}
+
+/* Homogeneización de wiSelect trigger */
+.dup_top_controls_bar .wi-select-trigger {
+  height: 36px !important;
+  min-height: 36px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 0.85rem !important;
+  border-radius: 0.8vh !important;
+  font-size: var(--fz_s4, 0.82rem) !important;
+}
+
+.wi-select-panel {
+  z-index: 999999 !important;
+}
+
+.dup_top_cat_select {
+  height: 36px;
+  box-sizing: border-box;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  padding: 0 0.75rem;
+  border-radius: 0.8vh;
+  font-size: var(--fz_s4, 0.82rem);
+  outline: none;
+  cursor: pointer;
+}
+
+.dup_top_nav_btn {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: 0.8vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all var(--tr_f);
+}
+
+.dup_top_nav_btn:hover:not(:disabled) {
+  background: var(--bg4, rgba(0, 243, 255, 0.12));
+  border-color: var(--mco, #00f3ff);
+  color: var(--mco, #00f3ff);
+}
+
+.dup_top_nav_btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.dup_top_controls_bar .tab_right_btn.icon_only {
+  height: 36px !important;
+  width: 36px !important;
+  min-height: 36px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0.8vh !important;
 }

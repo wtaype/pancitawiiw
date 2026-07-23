@@ -1,87 +1,11 @@
 /* src/features/duplicados/secciones/resultados_lista.css */
-/* Estilos de la lista de duplicados con checkboxes Apple iOS y buscador */
+/* Estilos de la lista de duplicados a alto completo con muestra de ruta entera y checkboxes Apple iOS */
 
 .dup_tab_resultados_wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  width: 100%;
-}
-
-.dup_tab_resultados_header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--glass-bg, rgba(21, 27, 46, 0.65));
-  backdrop-filter: blur(var(--glass-blur, 20px));
-  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
-  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
-  padding: 1rem 1.25rem;
-  border-radius: 1.2vh;
-  flex-wrap: wrap;
   gap: 1rem;
-}
-
-.dup_tab_resultados_header_left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.dup_tab_resultados_header h4 {
-  margin: 0;
-  font-size: var(--fz_m4, 1.05rem);
-  font-weight: 700;
-  color: var(--tx, #e0e7ff);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.dup_tab_resultados_header h4 i {
-  color: var(--mco, #00f3ff);
-}
-
-.dup_search_input_wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 260px;
-}
-
-.dup_search_input_wrap i {
-  position: absolute;
-  left: 0.85rem;
-  color: var(--tx2, #a5b4fc);
-  font-size: var(--fz_s4, 0.82rem);
-  pointer-events: none;
-}
-
-.dup_search_input {
   width: 100%;
-  background: var(--inp, #0f1421);
-  border: 1px solid var(--brd, #2d3a52);
-  color: var(--tx, #e0e7ff);
-  padding: 0.48rem 0.85rem 0.48rem 2.2rem;
-  border-radius: 0.8vh;
-  font-size: var(--fz_s4, 0.83rem);
-  outline: none;
-  transition: all var(--tr_f);
-}
-
-.dup_search_input:focus {
-  border-color: var(--mco, #00f3ff);
-  box-shadow: 0 0 10px var(--bg4);
-}
-
-.dup_tab_badge_total_waste {
-  background: rgba(255, 56, 73, 0.15);
-  border: 1px solid rgba(255, 56, 73, 0.35);
-  color: var(--error, #ff3849);
-  padding: 0.4rem 0.85rem;
-  border-radius: 0.8vh;
-  font-size: var(--fz_s4, 0.82rem);
-  font-weight: 700;
 }
 
 .dup_tab_grupos_accordion {
@@ -212,7 +136,7 @@
   width: 20px;
   height: 20px;
   background: var(--inp, #0f1421);
-  border: 1px solid var(--mco);
+  border: 1px solid var(--brd, #2d3a52);
   border-radius: 6px;
   cursor: pointer;
   display: inline-flex;
@@ -273,16 +197,16 @@
   text-transform: uppercase;
 }
 
+/* 📁 Ruta Completa Visible sin truncamiento */
 .dup_tab_file_path {
-  font-size: var(--fz_s4, 0.75rem);
+  font-size: var(--fz_s4, 0.76rem);
   color: var(--tx2, #a5b4fc);
   font-family: monospace;
-  max-width: 450px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-all;
+  white-space: normal;
   cursor: copy;
   transition: color var(--tr_f);
+  margin-top: 0.2rem;
 }
 
 .dup_tab_file_path:hover {

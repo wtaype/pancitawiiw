@@ -1,5 +1,5 @@
 // src/features/duplicados/duplicados.js
-// Controlador SPA de /duplicados con Re-Escaneo Rápido (Top Right Button) y Buscador en Tiempo Real (Fase 1)
+// Controlador SPA de /duplicados con libertad de controles libres en la barra superior (Buscador + wiSelect + Paginación < > + Actions)
 
 import { renderEscanerConfig } from './secciones/escaner_config.js';
 import { renderResultadosLista } from './secciones/resultados_lista.js';
@@ -11,18 +11,59 @@ import { iniciarEscanerDuplicados, seleccionarCarpetaNativa, eliminarArchivosAPa
 import { filtrarGruposDuplicados } from './lib/filtros.js';
 import { aplicarReglaSeleccion } from './lib/reglas_seleccion.js';
 import { renderMusica, bindMusicaEvents } from '@features/musica/musica.js';
-import { Mensaje, Notificacion, wiSpin } from '@widev';
+import { tabsComponent } from '@core/componentes/tabs.js';
+import { Mensaje, Notificacion, wiSpin, wiSelect, wiTip } from '@widev';
 import './duplicados.css';
 
-// Sub-tabs de la cabecera: Buscador interno + Actualizar | Agregar Carpeta en el lado derecho
-export const TABS = [
-  { id: 'escaner', label: 'Escáner y Configuración', icon: 'fa-folder-open', position: 'left', active: true },
-  { id: 'resultados', label: 'Resultados y Duplicados', icon: 'fa-layer-group', position: 'left' },
-  { id: 're_escanear_action', label: 'Actualizar resultados', icon: 'fa-arrows-rotate', position: 'right', iconOnly: true },
-  { id: 'abrir_carpeta_action', label: 'Agregar Carpeta', icon: 'fa-folder-plus', position: 'right', iconOnly: true }
-];
-
 const TAMANO_PAGINA = 20;
+
+export function getDuplicadosTabs(state) {
+  const totalPaginas = Math.max(1, Math.ceil((state.gruposFiltrados?.length || 0) / TAMANO_PAGINA));
+  const esPrimera = state.paginaActual <= 1;
+  const esUltima = state.paginaActual >= totalPaginas;
+
+  return [
+    { id: 'escaner', label: 'Escáner y Configuración', icon: 'fa-folder-open', position: 'left', active: state.tabActiva === 'escaner' },
+    { id: 'resultados', label: `Resultados y Duplicados (${state.gruposFiltrados?.length || 0})`, icon: 'fa-layer-group', position: 'left', active: state.tabActiva === 'resultados' },
+    {
+      type: 'custom',
+      position: 'right',
+      customHtml: `
+        <div class="dup_top_controls_bar">
+          <div class="dup_top_search_wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="dup_top_search_input" class="dup_top_search_input" placeholder="Buscar duplicado..." value="${state.busquedaTexto || ''}" data-witip="Filtrar por nombre, ruta o ext..." />
+          </div>
+
+          <select id="dup_top_cat_select" class="dup_top_cat_select" data-witip="Filtrar por categoría">
+            <option value="todos" ${state.opcionesUltimas.categoria === 'todos' ? 'selected' : ''}>Todos</option>
+            <option value="imagenes" ${state.opcionesUltimas.categoria === 'imagenes' ? 'selected' : ''}>Imágenes</option>
+            <option value="videos" ${state.opcionesUltimas.categoria === 'videos' ? 'selected' : ''}>Videos</option>
+            <option value="musica" ${state.opcionesUltimas.categoria === 'musica' ? 'selected' : ''}>Música</option>
+            <option value="documentos" ${state.opcionesUltimas.categoria === 'documentos' ? 'selected' : ''}>Documentos</option>
+          </select>
+
+          <button id="dup_top_btn_prev" class="dup_top_nav_btn" ${esPrimera ? 'disabled' : ''} data-witip="Página anterior">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button id="dup_top_btn_next" class="dup_top_nav_btn" ${esUltima ? 'disabled' : ''} data-witip="Página siguiente">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <button class="tab_right_btn icon_only" data-action-id="re_escanear_action" data-witip="Actualizar resultados">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+          <button class="tab_right_btn icon_only" data-action-id="abrir_carpeta_action" data-witip="Agregar Carpeta">
+            <i class="fa-solid fa-folder-plus"></i>
+          </button>
+        </div>
+      `
+    }
+  ];
+}
+
+// Exportación estática por defecto para el router central
+export const TABS = getDuplicadosTabs({ gruposFiltrados: [], paginaActual: 1, tabActiva: 'escaner', opcionesUltimas: { categoria: 'todos' } });
 
 export async function arrancar(container) {
   if (container._cleanupDuplicados) {
@@ -68,6 +109,8 @@ export async function arrancar(container) {
     await ejecutarEscaneo(opciones);
   });
 
+  refrescarSubtabsSuperiores();
+
   async function ejecutarEscaneo(opciones) {
     if (state.rutas.length === 0) {
       Notificacion('Agrega al menos una carpeta para escanear', 'warning');
@@ -75,9 +118,6 @@ export async function arrancar(container) {
     }
 
     state.cargando = true;
-    
-    // Cambiar automáticamente a la pestaña de resultados al iniciar escaneo
-    activarTab('resultados');
 
     resultadosContainer.innerHTML = `
       <div class="dup_empty_state">
@@ -86,6 +126,9 @@ export async function arrancar(container) {
         <p>Filtrando por tamaño, analizando cabeceras de 64KB y procesando hashes en paralelo con Rayon + Blake3.</p>
       </div>
     `;
+
+    // Cambiar automáticamente a la pestaña de resultados al iniciar escaneo
+    activarTab('resultados');
 
     try {
       const extList = opciones.categoria !== 'todos' ? getExtensionesPorCategoria(opciones.categoria) : null;
@@ -101,6 +144,8 @@ export async function arrancar(container) {
       state.paginaActual = 1;
 
       Notificacion(`Escaneo completado. ${state.gruposFiltrados.length} grupos de duplicados encontrados.`, 'success');
+      
+      refrescarSubtabsSuperiores();
       actualizarVistasResultados();
     } catch (err) {
       console.error('[Duplicados] Error durante el escaneo:', err);
@@ -117,7 +162,6 @@ export async function arrancar(container) {
   }
 
   function actualizarVistasResultados() {
-    // Aplicar filtro combinado de categoría y texto de búsqueda
     state.gruposFiltrados = filtrarGruposDuplicados(state.grupos, { 
       categoria: state.opcionesUltimas.categoria, 
       busqueda: state.busquedaTexto 
@@ -129,14 +173,7 @@ export async function arrancar(container) {
       state.rutasSeleccionadas,
       state.paginaActual,
       TAMANO_PAGINA,
-      state.busquedaTexto,
-      (nuevoTexto) => {
-        state.busquedaTexto = nuevoTexto;
-        state.paginaActual = 1;
-        actualizarVistasResultados();
-      },
       (ruta) => {
-        // Al hacer clic en un archivo, reemplazar TEMPORALMENTE el reproductor de música en el sidebar derecho
         state.archivoSeleccionadoRuta = ruta;
         const sidebarWrapper = document.getElementById('sidebar_musica_wrapper');
         if (sidebarWrapper) {
@@ -161,12 +198,12 @@ export async function arrancar(container) {
       },
       (nuevaPagina) => {
         state.paginaActual = nuevaPagina;
+        refrescarSubtabsSuperiores();
         actualizarVistasResultados();
         resultadosContainer.scrollIntoView({ behavior: 'smooth' });
       }
     );
 
-    // Actualizar o renderizar la barra flotante de acciones (Papelera)
     renderBarraAcciones(
       container,
       state.rutasSeleccionadas,
@@ -193,6 +230,7 @@ export async function arrancar(container) {
           state.archivoSeleccionadoRuta = null;
 
           restaurarMusicaEnSidebar();
+          refrescarSubtabsSuperiores();
           actualizarVistasResultados();
         } catch (errElim) {
           console.error('[Duplicados] Error al eliminar archivos:', errElim);
@@ -200,6 +238,61 @@ export async function arrancar(container) {
         }
       }
     );
+  }
+
+  function refrescarSubtabsSuperiores() {
+    const tabsWrapper = document.getElementById('wimain_tabs_wrapper');
+    if (!tabsWrapper) return;
+
+    const currentTabs = getDuplicadosTabs(state);
+    tabsWrapper.innerHTML = tabsComponent.render(currentTabs);
+    tabsComponent.bindEvents(tabsWrapper, '/duplicados');
+    bindTopControlsEvents(tabsWrapper);
+    if (typeof wiTip === 'function') wiTip();
+  }
+
+  function bindTopControlsEvents(tabsWrapper) {
+    const searchInput = tabsWrapper.querySelector('#dup_top_search_input');
+    if (searchInput) {
+      searchInput.oninput = (e) => {
+        state.busquedaTexto = e.target.value;
+        state.paginaActual = 1;
+        actualizarVistasResultados();
+      };
+    }
+
+    const catSelect = tabsWrapper.querySelector('#dup_top_cat_select');
+    if (catSelect) {
+      if (typeof wiSelect === 'function') wiSelect(catSelect);
+      catSelect.onchange = (e) => {
+        state.opcionesUltimas.categoria = e.target.value;
+        state.paginaActual = 1;
+        actualizarVistasResultados();
+      };
+    }
+
+    const btnPrev = tabsWrapper.querySelector('#dup_top_btn_prev');
+    if (btnPrev && !btnPrev.disabled) {
+      btnPrev.onclick = () => {
+        if (state.paginaActual > 1) {
+          state.paginaActual--;
+          refrescarSubtabsSuperiores();
+          actualizarVistasResultados();
+        }
+      };
+    }
+
+    const btnNext = tabsWrapper.querySelector('#dup_top_btn_next');
+    if (btnNext && !btnNext.disabled) {
+      btnNext.onclick = () => {
+        const totalPaginas = Math.ceil(state.gruposFiltrados.length / TAMANO_PAGINA);
+        if (state.paginaActual < totalPaginas) {
+          state.paginaActual++;
+          refrescarSubtabsSuperiores();
+          actualizarVistasResultados();
+        }
+      };
+    }
   }
 
   function restaurarMusicaEnSidebar() {
@@ -220,19 +313,9 @@ export async function arrancar(container) {
       }
     });
 
-    const tabsWrapper = document.getElementById('wimain_tabs_wrapper');
-    if (tabsWrapper) {
-      tabsWrapper.querySelectorAll('.wi_subtab_btn').forEach(btn => {
-        if (btn.getAttribute('data-subtab') === tabId) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-    }
+    refrescarSubtabsSuperiores();
   }
 
-  // Event Listeners de Sub-tabs globales (tabs.js)
   const handleSubtabChange = (e) => {
     const subtabId = e.detail.subtabId;
     if (['escaner', 'resultados'].includes(subtabId)) {

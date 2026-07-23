@@ -1,5 +1,5 @@
 // src/features/duplicados/secciones/resultados_lista.js
-// Renderizado de la lista agrupada con checkboxes Apple iOS, buscador y copiador de rutas wicopy
+// Renderizado de la lista agrupada con muestra de ruta completa y paginación de 20 ítems
 
 import { formatearBytes } from '../lib/filtros.js';
 import { renderPaginacion } from '../componentes/paginacion.js';
@@ -12,8 +12,6 @@ export function renderResultadosLista(
   rutasSeleccionadas, 
   paginaActual = 1,
   tamanoPagina = 20,
-  busquedaTexto = '',
-  onBuscarTexto,
   onSeleccionarArchivo, 
   onToggleCheckArchivo,
   onCambiarPagina
@@ -35,27 +33,6 @@ export function renderResultadosLista(
 
   const html = `
     <div class="dup_tab_resultados_wrapper">
-      <div class="dup_tab_resultados_header">
-        <div class="dup_tab_resultados_header_left">
-          <h4><i class="fa-solid fa-layer-group"></i> ${grupos.length} Grupos Encontrados</h4>
-          <span class="dup_tab_badge_total_waste">
-            Espacio a liberar: ${formatearBytes(calcularEspacioTotalDesperdiciado(grupos))}
-          </span>
-        </div>
-
-        <div class="dup_search_input_wrap">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input 
-            type="text" 
-            id="dup_search_input" 
-            class="dup_search_input" 
-            placeholder="Buscar por nombre, ruta o ext..." 
-            value="${busquedaTexto}" 
-            data-witip="Filtrar duplicados en tiempo real"
-          />
-        </div>
-      </div>
-      
       <div class="dup_tab_grupos_accordion">
         ${gruposPagina.map((grupo, gIndex) => renderGrupoItem(grupo, inicioIdx + gIndex, rutasSeleccionadas)).join('')}
       </div>
@@ -67,16 +44,6 @@ export function renderResultadosLista(
   container.innerHTML = html;
 
   if (typeof wiTip === 'function') wiTip();
-
-  // Event Listener de Búsqueda en Tiempo Real
-  const searchInput = container.querySelector('#dup_search_input');
-  if (searchInput && typeof onBuscarTexto === 'function') {
-    searchInput.oninput = (e) => {
-      onBuscarTexto(e.target.value);
-    };
-    searchInput.focus();
-    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
-  }
 
   // Renderizar componente de paginación
   const pagContainer = container.querySelector('#dup_paginacion_container');
@@ -111,7 +78,7 @@ export function renderResultadosLista(
     };
   });
 
-  // Fase 4: Event Listeners para Copiar Ruta con wicopy
+  // Event Listeners para Copiar Ruta Completa con wicopy
   container.querySelectorAll('.dup_tab_file_path').forEach(pathEl => {
     pathEl.onclick = (e) => {
       e.stopPropagation();
@@ -153,7 +120,7 @@ function renderGrupoItem(grupo, gIndex, rutasSeleccionadas) {
           <thead>
             <tr>
               <th class="dup_tab_col_action">Acción</th>
-              <th>Nombre y Ruta</th>
+              <th>Nombre y Ruta Completa</th>
               <th class="dup_tab_col_mod">Modificado</th>
               <th class="dup_tab_col_size">Tamaño</th>
             </tr>
@@ -173,7 +140,7 @@ function renderGrupoItem(grupo, gIndex, rutasSeleccionadas) {
                       <i class="fa-solid ${getIconoExtension(arch.extension)}"></i>
                       <div>
                         <div class="dup_tab_file_name">${arch.nombre} ${aIndex === 0 ? '<span class="dup_tab_badge_original">Original</span>' : ''}</div>
-                        <div class="dup_tab_file_path" title="${arch.ruta}" data-witip="Clic para copiar ruta"><i class="fa-regular fa-copy"></i> ${arch.ruta}</div>
+                        <div class="dup_tab_file_path" title="${arch.ruta}" data-witip="Clic para copiar ruta completa"><i class="fa-regular fa-copy"></i> ${arch.ruta}</div>
                       </div>
                     </div>
                   </td>

@@ -1,9 +1,8 @@
 // src/core/componentes/tabs.js
-// Componente dynamic tabs (pestañas) para organizar secciones internas de pancitawii
+// Componente dynamic tabs (pestañas) para organizar secciones internas de pancitawii con soporte para contenido customHtml libre
 
 export const tabsComponent = {
   render(subtabs = []) {
-    // Si no hay pestañas, no renderizar nada
     if (subtabs.length === 0) {
       return '';
     }
@@ -15,7 +14,6 @@ export const tabsComponent = {
       return '';
     }
 
-    // Renderizar cabecera principal de la sección
     let html = `
       <div class="tabs_bar_container">
         <!-- 1. Navegación de Sub-Secciones (tab-left) -->
@@ -36,19 +34,23 @@ export const tabsComponent = {
     html += `
         </div>
 
-        <!-- 2. Botones de Acción (tab-right) -->
+        <!-- 2. Botones de Acción y Controles Libres (tab-right) -->
         <div class="tab_right_wrapper">
     `;
 
     subtabsRight.forEach(btn => {
-      const labelText = btn.iconOnly ? '' : ` <span>${btn.label}</span>`;
-      const extraClass = btn.iconOnly ? 'icon_only' : '';
-      const witipAttr = btn.iconOnly ? ` data-witip="${btn.label}"` : '';
-      html += `
-        <button class="tab_right_btn ${extraClass}" data-action-id="${btn.id}"${witipAttr}>
-          <i class="fa-solid ${btn.icon}"></i>${labelText}
-        </button>
-      `;
+      if (btn.type === 'custom' || btn.customHtml) {
+        html += btn.customHtml || '';
+      } else {
+        const labelText = btn.iconOnly ? '' : ` <span>${btn.label}</span>`;
+        const extraClass = btn.iconOnly ? 'icon_only' : '';
+        const witipAttr = btn.iconOnly ? ` data-witip="${btn.label}"` : '';
+        html += `
+          <button class="tab_right_btn ${extraClass}" data-action-id="${btn.id}"${witipAttr}>
+            <i class="fa-solid ${btn.icon}"></i>${labelText}
+          </button>
+        `;
+      }
     });
 
     html += `
@@ -60,18 +62,13 @@ export const tabsComponent = {
   },
 
   bindEvents(container, route) {
-    // 1. Manejar clics en pestañas del sub-menú (tab-left)
     const leftItems = container.querySelectorAll('.tab_left_item');
     leftItems.forEach(item => {
       item.addEventListener('click', () => {
-        // Remover active de todas
         leftItems.forEach(el => el.classList.remove('active'));
-        // Agregar active a la seleccionada
         item.classList.add('active');
 
         const subtabId = item.getAttribute('data-subtab-id');
-        
-        // Lanzar evento global para que las vistas internas se enteren del cambio
         const event = new CustomEvent('wi_subtab_change', {
           detail: { subtabId, route }
         });
@@ -79,13 +76,11 @@ export const tabsComponent = {
       });
     });
 
-    // 2. Manejar clics en botones de acción (tab-right)
     const rightBtns = container.querySelectorAll('.tab_right_btn');
     rightBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const actionId = btn.getAttribute('data-action-id');
 
-        // Lanzar evento global para que el feature activo ejecute la acción
         const event = new CustomEvent('wi_subtab_action', {
           detail: { actionId, route }
         });
