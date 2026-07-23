@@ -68,7 +68,7 @@
   font-size: var(--reloj-font-size, clamp(2rem, 10vw, 5.2rem));
   font-weight: 800;
   letter-spacing: 2px;
-  color: var(--mco);
+  color: var(--reloj-color-text, var(--mco));
   text-align: center;
   font-family: var(--reloj-font-family, var(--ff_T, 'Orbitron'));
   text-shadow: var(--reloj-glow, 0 0 1.5vh var(--bg5));

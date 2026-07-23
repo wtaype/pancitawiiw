@@ -1,7 +1,7 @@
 // src/features/reloj/componentes/personalizar.js
 // Panel interactivo premium de personalización avanzada de reloj en tiempo real (In-page)
 
-import { getls, savels, wiSelect } from '@widev';
+import { getls, savels, wiSelect, wiTip } from '@widev';
 import { rutas } from '@core/rutas.js';
 import './personalizar.css';
 
@@ -39,13 +39,13 @@ export function arrancarPersonalizar(panel, onUpdateCallback) {
           <div class="clock_config_group">
             <span class="clock_config_label">Preset de Color</span>
             <div class="clock_color_palette" id="clock_color_palette">
-              <button class="clock_color_dot theme-auto ${config.color === 'theme-auto' ? 'active' : ''}" data-color="theme-auto" title="Tema Sistema (Auto)"></button>
-              <button class="clock_color_dot neon-cyan ${config.color === 'neon-cyan' ? 'active' : ''}" data-color="neon-cyan" title="Celeste Neón"></button>
-              <button class="clock_color_dot neon-green ${config.color === 'neon-green' ? 'active' : ''}" data-color="neon-green" title="Verde Matrix"></button>
-              <button class="clock_color_dot neon-pink ${config.color === 'neon-pink' ? 'active' : ''}" data-color="neon-pink" title="Rosa Synthwave"></button>
-              <button class="clock_color_dot neon-gold ${config.color === 'neon-gold' ? 'active' : ''}" data-color="neon-gold" title="Oro Cálido"></button>
-              <button class="clock_color_dot neon-purple ${config.color === 'neon-purple' ? 'active' : ''}" data-color="neon-purple" title="Morado Eléctrico"></button>
-              <button class="clock_color_dot retro-white ${config.color === 'retro-white' ? 'active' : ''}" data-color="retro-white" title="Blanco Clásico"></button>
+              <button class="clock_color_dot theme-auto ${config.color === 'theme-auto' ? 'active' : ''}" data-color="theme-auto" data-witip="Tema Sistema (Auto)" data-wtipo="top"></button>
+              <button class="clock_color_dot neon-cyan ${config.color === 'neon-cyan' ? 'active' : ''}" data-color="neon-cyan" data-witip="Celeste Neón" data-wtipo="top"></button>
+              <button class="clock_color_dot neon-green ${config.color === 'neon-green' ? 'active' : ''}" data-color="neon-green" data-witip="Verde Matrix" data-wtipo="top"></button>
+              <button class="clock_color_dot neon-pink ${config.color === 'neon-pink' ? 'active' : ''}" data-color="neon-pink" data-witip="Rosa Synthwave" data-wtipo="top"></button>
+              <button class="clock_color_dot neon-gold ${config.color === 'neon-gold' ? 'active' : ''}" data-color="neon-gold" data-witip="Oro Cálido" data-wtipo="top"></button>
+              <button class="clock_color_dot neon-purple ${config.color === 'neon-purple' ? 'active' : ''}" data-color="neon-purple" data-witip="Morado Eléctrico" data-wtipo="top"></button>
+              <button class="clock_color_dot retro-white ${config.color === 'retro-white' ? 'active' : ''}" data-color="retro-white" data-witip="Blanco Clásico" data-wtipo="top"></button>
             </div>
           </div>
 
@@ -225,4 +225,7 @@ export function arrancarPersonalizar(panel, onUpdateCallback) {
   btnExit?.addEventListener('click', () => {
     rutas.navegar('/inicio');
   });
+
+  // Inicializar tooltips dinámicos
+  wiTip();
 }

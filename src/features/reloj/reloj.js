@@ -103,10 +103,10 @@ export function initRelojTimer(container) {
     wrapper.style.setProperty('--reloj-font-size', `${fontSizeVal}px`);
 
     // 3. Color y Brillo (Glow)
-    let colorHex = 'var(--tx1)'; 
+    let colorHex = 'var(--mco)'; 
     let glowColor = 'color-mix(in srgb, var(--mco) 45%, transparent)';
     if (config.color === 'theme-auto' || !config.color) {
-      colorHex = 'var(--tx1)';
+      colorHex = 'var(--mco)';
       glowColor = 'color-mix(in srgb, var(--mco) 45%, transparent)';
     } else if (config.color === 'neon-cyan') { colorHex = '#00f2fe'; glowColor = 'rgba(0, 242, 254, 0.6)'; }
     else if (config.color === 'neon-green') { colorHex = '#39ff14'; glowColor = 'rgba(57, 255, 20, 0.6)'; }
