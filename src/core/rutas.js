@@ -38,7 +38,7 @@ export const rutas = {
     const panel = document.getElementById(CONTENEDOR_MAIN_ID);
 
     // Evitar recargas duplicadas si ya estamos en la ruta activa ya cargada
-    if (this.rutaActual === fullPath && panel && !panel.querySelector('.wi_cargador') && panel.hasChildNodes()) {
+    if (this.rutaActual === fullPath && panel && panel.hasChildNodes()) {
       return;
     }
 
@@ -70,10 +70,7 @@ export const rutas = {
       return;
     }
 
-    panel.innerHTML = `
-      <div class="wi_cargador">
-        <i class="fa-solid fa-circle-notch fa-spin"></i> Cargando ${agente}...
-      </div>`;
+    panel.innerHTML = '';
 
     try {
       const folder = agente === 'chat' ? 'chatwii' : agente;
