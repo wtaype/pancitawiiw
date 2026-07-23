@@ -158,9 +158,10 @@
 }
 
 .chat_cg_voz_mic_btn.active {
-  background: var(--dulce, #ff5c69);
-  border-color: var(--dulce, #ff5c69);
-  color: var(--white, #fff);
+  background: var(--bg5, rgba(0, 243, 255, 0.2));
+  border-color: var(--mco, #00f3ff);
+  color: var(--mco, #00f3ff);
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.3);
 }
 
 .chat_cg_voz_status {
