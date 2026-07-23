@@ -35,21 +35,6 @@ export const wiVista = (sel, fn, { stagger = 0, anim = '', threshold = 0.1, once
 export const herowi = (sel = '[data-herowi]', defSt = 45) => {
   if (typeof document === 'undefined') return;
 
-  // Garantizar estilos persistentes para la animación herowi
-  if (!document.getElementById('hwi-css')) {
-    const style = document.createElement('style');
-    style.id = 'hwi-css';
-    style.setAttribute('data-astro-transition-persist', 'hwi-css');
-    style.textContent = `
-      @keyframes hwi_fade {
-        from { opacity: 0; transform: translateY(3vh); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .hwi { animation: hwi_fade 0.8s cubic-bezier(0.4, 0, 0.2, 1) backwards; }
-    `;
-    document.head.appendChild(style);
-  }
-
   const nodes = typeof sel === 'string' ? [...document.querySelectorAll(sel)] : [].concat(sel).filter(Boolean);
   nodes.forEach((t) => {
     const els = (t.hasAttribute('data-herowi') && t.children.length ? [...t.children] : [t]).filter((e) => !e.dataset.hi);
@@ -67,17 +52,6 @@ export const herowi = (sel = '[data-herowi]', defSt = 45) => {
 // ── 3. showi v14.1: Animación al hacer scroll para listados ──────────────────
 export const showi = (sel = '[data-showi]', dSt = 45) => {
   if (typeof document === 'undefined') return;
-
-  // Garantizar estilos persistentes para la animación showi
-  if (!document.getElementById('swi-css')) {
-    const style = document.createElement('style');
-    style.id = 'swi-css';
-    style.setAttribute('data-astro-transition-persist', 'swi-css');
-    style.textContent = `
-      .swi { opacity: 0; transform: translateY(3vh); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-    `;
-    document.head.appendChild(style);
-  }
 
   let n = 0;
   let timer;
