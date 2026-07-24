@@ -1,0 +1,92 @@
+/* src/features/optimizar/secciones/limpieza_general.css */
+/* Estilos para la sección de Limpieza General de temporales y basura del sistema */
+
+.opt_limpieza_gen_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.opt_limpieza_header_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 1.2vh;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.opt_header_btn_wrap {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.opt_limpieza_header_info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: var(--fz_m4, 1.15rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.opt_limpieza_header_info p {
+  margin: 0;
+  font-size: var(--fz_s4, 0.85rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.opt_limpieza_list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.opt_btn_ejecutar_limpieza {
+  background: linear-gradient(135deg, var(--mco, #00f3ff), var(--success, #3cd741));
+  color: var(--txa, #0a0e1a);
+  border: none;
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.8vh;
+  font-weight: 800;
+  font-size: var(--fz_m, 0.95rem);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 16px rgba(0, 243, 255, 0.3);
+  transition: all var(--tr_f);
+}
+
+.opt_btn_ejecutar_limpieza:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(60, 215, 65, 0.45);
+}
+
+.opt_btn_papelera_rapida {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  color: var(--tx, #e0e7ff);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.8vh;
+  font-weight: 700;
+  font-size: var(--fz_m, 0.9rem);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--tr_f);
+}
+
+.opt_btn_papelera_rapida:hover {
+  border-color: var(--mco, #00f3ff);
+  color: var(--mco, #00f3ff);
+}

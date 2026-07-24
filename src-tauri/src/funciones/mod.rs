@@ -3,3 +3,4 @@
 pub mod ajustes;
 pub mod musica;
 pub mod duplicados;
+pub mod optimizar;

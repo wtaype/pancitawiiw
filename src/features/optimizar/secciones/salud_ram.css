@@ -1,0 +1,180 @@
+/* src/features/optimizar/secciones/salud_ram.css */
+/* Estilos para el Centro de Optimización y Salud RAM (Fix solapado de texto en círculo) */
+
+.opt_salud_ram_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+.opt_ram_dashboard_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
+  backdrop-filter: blur(var(--glass-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
+  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
+  border-radius: 1.5vh;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 10px 30px var(--glass-shd, rgba(0, 0, 0, 0.3));
+}
+
+.opt_ram_gauge_container {
+  position: relative;
+  width: 230px;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.opt_ram_svg_circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.opt_ram_circle_bg {
+  fill: none;
+  stroke: var(--inp, #0f1421);
+  stroke-width: 12;
+}
+
+.opt_ram_circle_progress {
+  fill: none;
+  stroke: var(--mco, #00f3ff);
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 565;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease;
+}
+
+.opt_ram_gauge_center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.opt_ram_percentage_val {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--tx, #e0e7ff);
+  line-height: 1;
+}
+
+.opt_ram_health_subtitle {
+  margin-top: 0.5rem;
+  font-size: var(--fz_s4, 0.78rem);
+  font-weight: 600;
+  color: var(--tx2, #a5b4fc);
+  max-width: 140px;
+  line-height: 1.25;
+}
+
+/* 🔘 Botón Dual */
+.opt_btn_xiaomi_action {
+  background: linear-gradient(135deg, var(--mco, #00f3ff), var(--success, #3cd741));
+  color: var(--txa, #0a0e1a);
+  border: none;
+  padding: 0.95rem 2.75rem;
+  border-radius: 3vh;
+  font-weight: 800;
+  font-size: var(--fz_m4, 1.1rem);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 6px 25px rgba(0, 243, 255, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.opt_btn_xiaomi_action:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 35px rgba(60, 215, 65, 0.55);
+}
+
+.opt_btn_xiaomi_action:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.opt_btn_xiaomi_action.btn_scan_mode {
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--mco, #00f3ff);
+  color: var(--mco, #00f3ff);
+  box-shadow: 0 4px 20px rgba(0, 243, 255, 0.2);
+}
+
+.opt_btn_xiaomi_action.btn_scan_mode:hover {
+  background: rgba(0, 243, 255, 0.12);
+}
+
+.opt_btn_xiaomi_action.btn_done_mode {
+  background: rgba(60, 215, 65, 0.2);
+  border: 1px solid var(--success, #3cd741);
+  color: var(--success, #3cd741);
+  box-shadow: none;
+  cursor: default;
+}
+
+/* 📱 Cuadrícula Estilo Microsoft PC Manager */
+.opt_xiaomi_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.opt_xiaomi_card {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
+  backdrop-filter: blur(var(--glass-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 16px));
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1.2vh;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all var(--tr_f);
+  box-shadow: 0 4px 16px var(--glass-shd, rgba(0, 0, 0, 0.2));
+}
+
+.opt_xiaomi_card:hover {
+  border-color: var(--mco, #00f3ff);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 243, 255, 0.25);
+}
+
+.opt_xiaomi_card_icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 1vh;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--mco, #00f3ff);
+  flex-shrink: 0;
+}
+
+.opt_xiaomi_card_content h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: var(--fz_m, 1rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+}
+
+.opt_xiaomi_card_content p {
+  margin: 0;
+  font-size: var(--fz_s4, 0.8rem);
+  color: var(--tx2, #a5b4fc);
+}

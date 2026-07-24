@@ -1,0 +1,37 @@
+/* src/features/optimizar/secciones/limpieza_profundo.css */
+/* Estilos para la sección de Limpieza Profunda con el Escudo Anti-Descargas activo */
+
+.opt_limpieza_prof_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.opt_shield_banner {
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: 1.2vh;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #ffb300;
+}
+
+.opt_shield_banner i {
+  font-size: 1.75rem;
+}
+
+.opt_shield_banner_text h4 {
+  margin: 0 0 0.2rem 0;
+  font-size: var(--fz_m, 0.95rem);
+  font-weight: 700;
+  color: #ffc107;
+}
+
+.opt_shield_banner_text p {
+  margin: 0;
+  font-size: var(--fz_s4, 0.82rem);
+  color: var(--tx2, #a5b4fc);
+}

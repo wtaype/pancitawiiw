@@ -1,0 +1,225 @@
+/* src/features/optimizar/componentes/tarjeta_categoria.css */
+/* Estilos de tarjetas modulares con inspección individual de archivos y clases CSS puras (Sin Inline Styles) */
+
+.dup_tab_hidden {
+  display: none !important;
+}
+
+.opt_card_categoria_wrapper {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
+  backdrop-filter: blur(var(--glass-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 16px));
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1.2vh;
+  overflow: hidden;
+  transition: all var(--tr_f);
+  box-shadow: 0 6px 20px var(--glass-shd, rgba(0, 0, 0, 0.2));
+}
+
+.opt_card_categoria_wrapper:hover {
+  border-color: var(--glass-brd, rgba(0, 243, 255, 0.35));
+}
+
+.opt_card_categoria_header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  background: rgba(15, 20, 33, 0.4);
+}
+
+.opt_card_left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.opt_card_icon {
+  width: 44px;
+  height: 44px;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: var(--mco, #00f3ff);
+}
+
+.opt_card_info h4 {
+  margin: 0 0 0.35rem 0;
+  font-size: var(--fz_m4, 1.05rem);
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.opt_card_info p {
+  margin: 0;
+  font-size: var(--fz_s4, 0.82rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.opt_badge_shield {
+  background: rgba(255, 179, 0, 0.15);
+  border: 1px solid rgba(255, 179, 0, 0.35);
+  color: #ffb300;
+  font-size: var(--fz_s4, 0.72rem);
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.4vh;
+  text-transform: uppercase;
+}
+
+.opt_card_right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.opt_card_size {
+  font-size: var(--fz_m, 0.95rem);
+  font-weight: 700;
+  color: var(--mco, #00f3ff);
+  white-space: nowrap;
+}
+
+.opt_chevron_toggle {
+  color: var(--tx2, #a5b4fc);
+  font-size: 0.9rem;
+  transition: transform 0.25s ease;
+}
+
+.opt_chevron_toggle.open {
+  transform: rotate(180deg);
+}
+
+/* 🌳 Tabla desplegable de archivos individuales colapsada por defecto */
+.opt_files_tree {
+  border-top: 1px solid var(--brd, #2d3a52);
+  background: var(--inp, #0f1421);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.opt_subitem_section {
+  margin-bottom: 0.85rem;
+}
+
+.opt_subitem_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--brd, #2d3a52);
+  padding-bottom: 0.35rem;
+}
+
+.opt_subitem_title {
+  font-weight: 700;
+  color: var(--mco, #00f3ff);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.opt_subitem_total_size {
+  font-weight: 700;
+  color: var(--tx2, #a5b4fc);
+  font-size: 0.85rem;
+}
+
+.opt_files_table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fz_s4, 0.85rem);
+}
+
+.opt_files_table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  color: var(--tx2, #a5b4fc);
+  border-bottom: 1px solid var(--brd, #2d3a52);
+  font-weight: 700;
+}
+
+.opt_files_table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(45, 58, 82, 0.4);
+  color: var(--tx, #e0e7ff);
+}
+
+.opt_col_action {
+  width: 40px;
+}
+
+.opt_col_size {
+  width: 100px;
+  text-align: right;
+  font-weight: 700;
+  color: var(--mco, #00f3ff);
+}
+
+.opt_file_name {
+  font-weight: 600;
+  color: var(--tx, #e0e7ff);
+}
+
+.opt_file_path_copy {
+  color: var(--tx2, #a5b4fc);
+  font-size: 0.78rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  word-break: break-all;
+}
+
+.opt_file_path_copy:hover {
+  color: var(--mco, #00f3ff);
+}
+
+/* 🍏 Checkbox Apple iOS */
+.opt_checkbox_cat {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--inp, #0f1421);
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.opt_checkbox_cat:hover {
+  border-color: var(--mco, #00f3ff);
+}
+
+.opt_checkbox_cat:checked {
+  background: linear-gradient(135deg, var(--mco, #00f3ff), var(--success, #3cd741));
+  border-color: transparent;
+  transform: scale(1.08);
+}
+
+.opt_checkbox_cat:checked::after {
+  content: '';
+  width: 4px;
+  height: 8px;
+  border: solid var(--txa, #0a0e1a);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}

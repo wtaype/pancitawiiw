@@ -51,7 +51,15 @@ macro_rules! registrar_puentes {
             // Puente hacia Duplicados (Escáner 3 Etapas y Papelera)
             $crate::funciones::duplicados::escaner_3etapas::duplicados_iniciar_escaner,
             $crate::funciones::duplicados::acciones_papelera::duplicados_eliminar_a_papelera,
-            $crate::funciones::duplicados::preview_media::duplicados_obtener_metadata_archivo
+            $crate::funciones::duplicados::preview_media::duplicados_obtener_metadata_archivo,
+
+            // Puente hacia Optimizar (Salud RAM, Vaciar Papelera y Escáner de Basura)
+            $crate::funciones::optimizar::ram_turbo::optimizar_obtener_estado_ram,
+            $crate::funciones::optimizar::ram_turbo::optimizar_liberar_ram_turbo,
+            $crate::funciones::optimizar::papelera_nativa::optimizar_vaciar_papelera_nativa,
+            $crate::funciones::optimizar::escaner_basura::optimizar_escanear_basura_general,
+            $crate::funciones::optimizar::escaner_basura::optimizar_escanear_basura_profundo,
+            $crate::funciones::optimizar::escaner_basura::optimizar_ejecutar_limpieza
         ]
     };
 }

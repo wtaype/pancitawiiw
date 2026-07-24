@@ -1,5 +1,5 @@
 /* src/features/optimizar/optimizar.css */
-/* Estilos iniciales para la sección Optimizar */
+/* Estilos generales del módulo Optimizar con sub-tabs y contenedores de sección */
 
 .opt_container {
   padding: 1.5rem;
@@ -11,41 +11,15 @@
 .opt_wrap {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  max-width: 1200px;
+  gap: 1.25rem;
+  max-width: 1250px;
   margin: 0 auto;
 }
 
-.opt_hero_card {
-  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
-  backdrop-filter: blur(var(--glass-blur, 20px));
-  -webkit-backdrop-filter: blur(var(--glass-blur, 20px));
-  border: 1px solid var(--glass-brd, rgba(0, 243, 255, 0.25));
-  border-radius: 1.5vh;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  box-shadow: 0 10px 30px var(--glass-shd, rgba(0,0,0,0.3));
+.opt_section_content {
+  display: none;
 }
 
-.opt_hero_card i {
-  font-size: 3.5rem;
-  color: var(--mco, #00f3ff);
-}
-
-.opt_hero_card h2 {
-  margin: 0;
-  font-size: var(--fz_l, 1.5rem);
-  font-weight: 700;
-  color: var(--tx, #e0e7ff);
-}
-
-.opt_hero_card p {
-  margin: 0;
-  font-size: var(--fz_m, 0.95rem);
-  color: var(--tx2, #a5b4fc);
-  max-width: 540px;
+.opt_section_content.active {
+  display: block;
 }
