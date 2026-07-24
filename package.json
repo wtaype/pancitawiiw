@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"cargo tauri dev\"",
+    "dev": "concurrently -k \"vite\" \"cargo tauri dev\"",
     "build": "vite build",
     "exe": "vite build && cargo tauri build --no-bundle"
   },
