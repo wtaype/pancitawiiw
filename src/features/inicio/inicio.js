@@ -11,16 +11,16 @@ import { obtenerMensajesInteligentes } from './lib/mensajes.js';
 import './inicio.css';
 
 let rolesTimer = null;
-let progressTimer = null;
+let animProgressFrameId = null;
 
 export function limpiar() {
   if (rolesTimer) {
     clearInterval(rolesTimer);
     rolesTimer = null;
   }
-  if (progressTimer) {
-    clearInterval(progressTimer);
-    progressTimer = null;
+  if (animProgressFrameId) {
+    cancelAnimationFrame(animProgressFrameId);
+    animProgressFrameId = null;
   }
 }
 
@@ -169,16 +169,28 @@ export function arrancar(container) {
     quoteEl.textContent = fraseHoy;
   }
 
-  // 3. Progreso del Día Reactivo en Vivo
+  // 3. Progreso del Día Reactivo en Vivo con requestAnimationFrame
   const pctEl = container.querySelector('#inicio_progress_pct');
   const fillEl = container.querySelector('#inicio_progress_fill');
+  let ultMinutoProgreso = -1;
+
   const actualizarProgreso = () => {
     const pct = obtenerProgresoDia();
     if (pctEl) pctEl.textContent = `${pct}%`;
     if (fillEl) fillEl.style.width = `${pct}%`;
   };
+
+  function loopProgreso() {
+    const minActual = new Date().getMinutes();
+    if (minActual !== ultMinutoProgreso) {
+      ultMinutoProgreso = minActual;
+      actualizarProgreso();
+    }
+    animProgressFrameId = requestAnimationFrame(loopProgreso);
+  }
+
   actualizarProgreso();
-  progressTimer = setInterval(actualizarProgreso, 1000);
+  animProgressFrameId = requestAnimationFrame(loopProgreso);
 
   // 4. Rotación de mensajes Pancita con regeneración al dar la vuelta
   let roleIdx = 0;

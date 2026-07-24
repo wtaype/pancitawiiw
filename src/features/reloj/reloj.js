@@ -152,13 +152,36 @@ export function initRelojTimer(container) {
     }
   });
 
-  // Inicializar reloj
+  // Inicializar reloj con requestAnimationFrame inteligente
   aplicarConfig();
-  const clockTimerId = setInterval(actualizarReloj, 1000);
 
-  return () => {
-    clearInterval(clockTimerId);
+  let animFrameId = null;
+  let ultimoSegundo = -1;
+
+  function loopReloj() {
+    const ahora = new Date();
+    const segundoActual = ahora.getSeconds();
+
+    // Solo refrescar el DOM cuando cambie el segundo para 0% desperdicio de CPU
+    if (segundoActual !== ultimoSegundo) {
+      ultimoSegundo = segundoActual;
+      actualizarReloj();
+    }
+
+    animFrameId = requestAnimationFrame(loopReloj);
+  }
+
+  animFrameId = requestAnimationFrame(loopReloj);
+
+  const cleanupFn = () => {
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
   };
+
+  activeRelojCleanup = cleanupFn;
+  return cleanupFn;
 }
 
 let activeRelojCleanup = null;

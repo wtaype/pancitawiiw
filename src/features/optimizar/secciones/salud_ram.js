@@ -208,8 +208,19 @@ export function renderSaludRam(container) {
     }
   }
 
+  let animRamId = null;
+  let ultimoTimestampRam = 0;
+
+  function loopSaludRam(timestamp) {
+    if (!ultimoTimestampRam || (timestamp - ultimoTimestampRam) >= 60000) {
+      ultimoTimestampRam = timestamp;
+      cargarEstadoActualDeterminista();
+    }
+    animRamId = requestAnimationFrame(loopSaludRam);
+  }
+
   cargarEstadoActualDeterminista();
-  intervalId = setInterval(cargarEstadoActualDeterminista, 60000); // Polling suave de 60 segundos
+  animRamId = requestAnimationFrame(loopSaludRam);
 
   if (btnMain) {
     btnMain.onclick = async () => {
@@ -242,6 +253,9 @@ export function renderSaludRam(container) {
   });
 
   container._cleanupSaludRam = () => {
-    if (intervalId) clearInterval(intervalId);
+    if (animRamId) {
+      cancelAnimationFrame(animRamId);
+      animRamId = null;
+    }
   };
 }
