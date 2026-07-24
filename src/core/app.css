@@ -159,9 +159,15 @@ background: transparent;
   color: var(--txa) !important;
 }
 
-#wii_nuevo_chat {
+.win_btn.update {
   color: var(--mco);
+  position: relative;
+}
+
+.win_btn.update:hover {
   background: var(--bg4);
+  color: var(--mco);
+  box-shadow: 0 0 8px var(--glass-shd);
 }
 
 #wii_nuevo_chat:hover {

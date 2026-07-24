@@ -51,6 +51,13 @@ export const SEO = {
     icon: 'fa-gear',
     position: 'right'
   },
+  '/actualizar': {
+    tag: 'Actualizaciones',
+    title: 'Actualizador de Sistema',
+    subtitle: 'Novedades, Control de Versión y Parches',
+    icon: 'fa-cloud-arrow-down',
+    position: 'hidden'
+  },
 };
 
 export const SEO_DEFAULT = SEO['/inicio'];

@@ -1,0 +1,231 @@
+/* src/features/actualizar/actualizar.css */
+/* Módulo Standalone de Actualización de Pancitawii consumiendo exclusivamente variables de witema.css */
+
+.actualizar_container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.actualizar_card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.8vh;
+  padding: 3vh 2.5vw;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5vh;
+  box-shadow:
+    0 10px 40px 0 var(--glass-shd),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  position: relative;
+}
+
+.actualizar_header_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--bg4);
+  padding-bottom: 2vh;
+}
+
+.actualizar_title {
+  font-size: clamp(1.4rem, 2.8vh, 1.8rem);
+  font-weight: 800;
+  color: var(--tx1);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  font-family: var(--ff_O);
+}
+
+.actualizar_title i {
+  color: var(--mco);
+}
+
+.actualizar_status_box {
+  background: var(--bg4);
+  border: 1px solid var(--brd);
+  border-radius: 1.5vh;
+  padding: 2vh 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5vw;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.status_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+}
+
+.status_label {
+  font-size: var(--fz_s3);
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+.status_value {
+  font-size: var(--fz_m3);
+  font-weight: 800;
+  color: var(--tx1);
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+}
+
+.badge_version {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  color: var(--mco);
+  padding: 0.3vh 0.8vw;
+  border-radius: 2vh;
+  font-size: var(--fz_s3);
+  font-weight: 800;
+}
+
+.actualizar_btn {
+  background: var(--mco);
+  color: var(--txa);
+  border: 1px solid var(--mco);
+  padding: 1.2vh 1.8vw;
+  border-radius: 1.2vh;
+  font-size: var(--fz_m1);
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  box-shadow: 0 4px 16px 0 var(--glass-shd);
+  transition: all var(--tr_m);
+}
+
+.actualizar_btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 var(--glass-shd);
+  filter: brightness(1.1);
+}
+
+.actualizar_btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.actualizar_news_box {
+  background: var(--bg4);
+  border: 1px solid var(--glass-brd);
+  border-radius: 1.5vh;
+  padding: 2.5vh 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  animation: hwi_fade 0.5s ease;
+}
+
+.actualizar_news_title {
+  font-size: var(--fz_m3);
+  font-weight: 800;
+  color: var(--mco);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+}
+
+.actualizar_news_content {
+  font-size: var(--fz_m1);
+  color: var(--tx2);
+  line-height: 1.6;
+}
+
+.actualizar_news_content p {
+  margin: 0 0 1vh 0;
+}
+
+.actualizar_news_content h1,
+.actualizar_news_content h2,
+.actualizar_news_content h3 {
+  color: var(--tx1);
+  margin: 1.5vh 0 0.8vh 0;
+}
+
+.actualizar_news_content ul {
+  padding-left: 1.2vw;
+  margin: 0 0 1.5vh 0;
+}
+
+.actualizar_news_content code {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  color: var(--mco);
+  padding: 0.2vh 0.5vw;
+  border-radius: 0.5vh;
+  font-family: monospace;
+}
+
+.actualizar_success_box {
+  background: var(--bg4);
+  border: 1px solid var(--success);
+  border-radius: 1.5vh;
+  padding: 3vh 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1vh;
+  text-align: center;
+}
+
+.actualizar_success_icon {
+  font-size: 2.5rem;
+  color: var(--success);
+}
+
+.actualizar_progress_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  width: 100%;
+  margin-top: 1.5vh;
+}
+
+.progress_stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fz_s3);
+  font-weight: 700;
+  color: var(--tx2);
+}
+
+.progress_percent {
+  color: var(--mco);
+}
+
+.progress_track {
+  width: 100%;
+  height: 1vh;
+  background: var(--bg4);
+  border-radius: 1vh;
+  overflow: hidden;
+  border: 1px solid var(--brd);
+}
+
+.progress_fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mco), var(--success));
+  border-radius: 1vh;
+  transition: width 0.3s ease;
+}

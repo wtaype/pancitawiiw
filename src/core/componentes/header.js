@@ -27,6 +27,9 @@ export function renderHeader() {
         <button id="wii_pin_btn" class="win_btn pin" title="Fijar Sonrisa Flotante">
           <i class="fa-solid fa-thumbtack"></i>
         </button>
+        <button id="wii_actualizar_btn" class="win_btn update" title="Actualizaciones de Sistema">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+        </button>
         <button id="wii_minimizar" class="win_btn" title="Minimizar">
           <i class="fa-solid fa-minus"></i>
         </button>
@@ -42,6 +45,13 @@ export function renderHeader() {
 }
 
 export function bindHeaderEvents(container) {
+  const updateBtn = container.querySelector('#wii_actualizar_btn');
+  if (updateBtn) {
+    updateBtn.addEventListener('click', () => {
+      rutas.navegar('/actualizar');
+    });
+  }
+
   const pinBtn = container.querySelector('#wii_pin_btn');
   if (pinBtn) {
     pinBtn.addEventListener('click', () => {
