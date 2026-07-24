@@ -5,6 +5,8 @@ import { Mensaje } from '@core/widev/mensajes.js';
 import { wiMd } from '@core/widev/wimd.js';
 import { wiSpin } from '@core/widev/spin.js';
 import { wiTip } from '@core/widev/witip.js';
+import { savels } from '@core/widev/storage.js';
+import { esVersionNueva } from './lib/auto_checker.js';
 import './actualizar.css';
 
 let desregistrarProgreso = null;
@@ -88,7 +90,21 @@ export async function bindActualizarEvents(container) {
       const asset = release.assets?.find(a => a.name.endsWith('.zip'));
       const downloadUrl = asset?.browser_download_url || '';
 
-      if (esVersionNueva(versionActual, versionNueva)) {
+      const tieneNueva = esVersionNueva(versionActual, versionNueva);
+      savels('check_update', {
+        versionNueva,
+        versionActual,
+        hasUpdate: tieneNueva,
+        timestamp: Date.now()
+      }, 6);
+
+      const headerUpdateBtn = document.querySelector('#wii_actualizar_btn');
+      if (headerUpdateBtn) {
+        if (tieneNueva) headerUpdateBtn.classList.add('has_update');
+        else headerUpdateBtn.classList.remove('has_update');
+      }
+
+      if (tieneNueva) {
         // Renderizar notas de actualización formateadas con el compilador Markdown wiMd
         const notasHTML = wiMd(release.body || 'Novedades y mejoras de rendimiento.');
 
@@ -211,15 +227,4 @@ export async function bindActualizarEvents(container) {
   };
 }
 
-function esVersionNueva(versionActual, versionNueva) {
-  const vA = (versionActual || '0.0.0').replace(/^v/, '').split('.').map(Number);
-  const vN = (versionNueva || '0.0.0').replace(/^v/, '').split('.').map(Number);
 
-  for (let i = 0; i < Math.max(vA.length, vN.length); i++) {
-    const numA = vA[i] || 0;
-    const numN = vN[i] || 0;
-    if (numN > numA) return true;
-    if (numN < numA) return false;
-  }
-  return false;
-}

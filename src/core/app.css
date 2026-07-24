@@ -160,14 +160,47 @@ background: transparent;
 }
 
 .win_btn.update {
-  color: var(--mco);
+  color: var(--tx2);
   position: relative;
+  transition: all var(--tr_f);
 }
 
 .win_btn.update:hover {
   background: var(--bg4);
-  color: var(--mco);
-  box-shadow: 0 0 8px var(--glass-shd);
+  color: var(--tx1);
+}
+
+.win_btn.update.has_update {
+  color: var(--mco) !important;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.win_btn.update.has_update::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  background: var(--mco);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--mco);
+  animation: update_pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes update_pulse {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 5px rgba(0, 240, 255, 0);
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(0, 240, 255, 0);
+  }
 }
 
 #wii_nuevo_chat:hover {

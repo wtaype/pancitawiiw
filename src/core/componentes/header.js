@@ -4,6 +4,7 @@
 import { getMeta } from '@core/seo.js';
 import { rutas } from '@core/rutas.js';
 import state from '@core/state.js';
+import { comprobarActualizacionSilenciosa } from '../../features/actualizar/lib/auto_checker.js';
 
 export function renderHeader() {
   const meta = getMeta(rutas.rutaActual);
@@ -50,6 +51,8 @@ export function bindHeaderEvents(container) {
     updateBtn.addEventListener('click', () => {
       rutas.navegar('/actualizar');
     });
+
+    comprobarActualizacionSilenciosa(updateBtn);
   }
 
   const pinBtn = container.querySelector('#wii_pin_btn');
