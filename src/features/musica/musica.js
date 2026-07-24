@@ -150,6 +150,27 @@ let combinarTodas     = estado.config?.combinarTodas ?? false;
 const audio = new Audio();
 audio.volume = isMuted ? 0 : volume;
 
+// Gestor de ciclo de vida: pausar sonido y enviar solicitud de cierre limpio
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    try { audio.pause(); } catch (_) {}
+  });
+
+  if (window.__TAURI__) {
+    try {
+      const getWin = window.__TAURI__.webviewWindow?.getCurrentWebviewWindow || window.__TAURI__.window?.getCurrentWindow;
+      const currentWin = typeof getWin === 'function' ? getWin() : null;
+      currentWin?.onCloseRequested(async () => {
+        try { audio.pause(); } catch (_) {}
+        const core = window.__TAURI__.core || window.__TAURI__.tauri;
+        await core?.invoke('cerrar_aplicacion_completa').catch(() => {});
+      });
+    } catch (e) {
+      console.warn('[Musica] Error al registrar listener de cierre:', e);
+    }
+  }
+}
+
 function aplicarVolumen() {
   audio.volume = isMuted ? 0 : volume;
 }

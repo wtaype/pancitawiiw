@@ -39,7 +39,12 @@ document.addEventListener('click', (e) => {
       else win.maximize();
     }).catch(console.error);
   } else if (e.target.closest('#wii_cerrar')) {
-    win.close().catch(console.error);
+    if (window.__TAURI__) {
+      const core = window.__TAURI__.core || window.__TAURI__.tauri;
+      core?.invoke('cerrar_aplicacion_completa').catch(() => win.close());
+    } else {
+      win.close().catch(console.error);
+    }
   }
 });
 

@@ -14,6 +14,9 @@ macro_rules! registrar_puentes {
             $crate::nucleo::ventana::ventanas::fijar_sonrisa,
             $crate::nucleo::ventana::ventanas::restablecer_posiciones,
 
+            // Puente hacia Sistema (Cierre de Aplicación)
+            $crate::nucleo::sistema::cerrar_app::cerrar_aplicacion_completa,
+
             // Puente hacia ChatWii (Asistente e IA Gemini)
             $crate::nucleo::chatwii::gemini::completar_chat_comando,
             $crate::nucleo::chatwii::gemini::chatwii_guardar_historial,

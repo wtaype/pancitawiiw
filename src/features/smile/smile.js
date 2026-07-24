@@ -71,4 +71,22 @@ document.addEventListener('DOMContentLoaded', () => {
       document.documentElement.setAttribute('data-font', e.newValue);
     }
   });
+
+  // Escuchar evento de cierre de la ventana sonrisa desde la barra de tareas de Windows
+  if (typeof window !== 'undefined' && window.__TAURI__) {
+    try {
+      const getCurrentWin = window.__TAURI__.webviewWindow?.getCurrentWebviewWindow || window.__TAURI__.window?.getCurrentWindow;
+      if (typeof getCurrentWin === 'function') {
+        const currentWin = getCurrentWin();
+        currentWin?.onCloseRequested(async () => {
+          const core = window.__TAURI__.core || window.__TAURI__.tauri;
+          if (core && typeof core.invoke === 'function') {
+            await core.invoke('cerrar_aplicacion_completa').catch(() => {});
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('[Smile] Error al registrar onCloseRequested:', err);
+    }
+  }
 });
