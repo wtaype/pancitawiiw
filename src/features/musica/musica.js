@@ -1124,6 +1124,27 @@ export function anteriorCancionVocal() {
   return 'Pista anterior';
 }
 
+export function obtenerPistaActualInfo() {
+  const lista = (playlistActual && playlistActual.length > 0) ? playlistActual : DEFAULT_PLAYLIST;
+  const track = lista[currentTrackIndex] || lista[0];
+  return {
+    id: track?.id || 1,
+    titulo: track?.titulo || track?.nombre || 'Desconocida',
+    artista: track?.artista || 'Artista local',
+    sonando: isPlaying
+  };
+}
+
+if (typeof window !== 'undefined') {
+  window.wiMusica = window.wiMusica || {};
+  window.wiMusica.getTrackActual = obtenerPistaActualInfo;
+  window.wiMusica.playTrack = reproducirComandoVocalMusica;
+  window.wiMusica.play = pausarOReanudarMusica;
+  window.wiMusica.pause = pausarOReanudarMusica;
+  window.wiMusica.next = siguienteCancionVocal;
+  window.wiMusica.prev = anteriorCancionVocal;
+}
+
 // Oyentes de comandos de voz Alexa para reproductor
 window.addEventListener('pancita_comando_musica', (e) => {
   const busqueda = e.detail?.busqueda || '';

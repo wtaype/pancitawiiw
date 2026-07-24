@@ -1,8 +1,15 @@
 // src/features/chatwii/skills/dj_musica.js
-// Habilidad de Música para ChatWii: Muestreo inteligente y metadatos de canciones para el asistente de IA
+// Habilidad de Música Inteligente para ChatWii: Buscador Fuzzy / Memoria de Rotación / Pista Activa en Tiempo Real
 
 import { obtenerListaPredeterminada } from '../../musica/lista/lista.js';
 import { getls } from '@widev';
+
+// Memoria interna de rotación para consultas consecutivas ("otra de love", "siguiente de pearl")
+let memoriaRotacion = {
+  termino: '',
+  coincidencias: [],
+  indiceActual: 0
+};
 
 // Metadatos asociados a las canciones predeterminadas por su ID
 const METADATOS_CANCIONES = {
@@ -16,11 +23,15 @@ const METADATOS_CANCIONES = {
   8: { genero: 'Phonk / Sad Phonk', estilo: 'Ultra Slowed & Reverb', temas: ['triste', 'melancólico', 'nocturno', 'nostálgico', 'relajante'] }
 };
 
-/**
- * Obtiene la playlist cargada en el reproductor (predeterminada o personalizada del usuario)
- * y la enriquece con metadatos de búsqueda si corresponden a los temas por defecto.
- */
-export function obtenerPlaylistConMetadatos() {
+function normalizarTexto(txt = '') {
+  return String(txt || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+export function obtenerPlaylistCompleta() {
   let playlist = obtenerListaPredeterminada();
   try {
     const carpetasGuardadas = getls('musica_carpetas') || [];
@@ -54,54 +65,117 @@ export function obtenerPlaylistConMetadatos() {
 
   return playlist.map(cancion => {
     const meta = METADATOS_CANCIONES[cancion.id];
-    if (meta) {
-      return {
-        id: cancion.id,
-        titulo: cancion.titulo,
-        genero: meta.genero,
-        estilo: meta.estilo,
-        temas: meta.temas
-      };
-    }
-    // Para canciones personalizadas de carpetas del usuario (sin metadatos predefinidos)
     return {
       id: cancion.id,
-      titulo: cancion.titulo,
-      genero: 'Personalizada',
-      estilo: 'Local',
-      temas: ['archivo local', 'usuario']
+      titulo: cancion.titulo || cancion.nombre || 'Sin título',
+      genero: meta?.genero || 'Personalizada',
+      estilo: meta?.estilo || 'Local',
+      temas: meta?.temas || ['archivo local']
     };
   });
 }
 
 /**
- * Retorna la lista en un formato de texto compacto y resumido.
- * Si la lista tiene más de 20 canciones, solo envía las primeras 15 y añade una nota explicativa
- * para que Gemini busque el resto semánticamente o por coincidencia de texto.
+ * Obtiene la información exacta de la canción que suena actualmente en el reproductor
  */
-export function obtenerContextoPlaylistParaIA() {
-  const playlist = obtenerPlaylistConMetadatos();
-  if (playlist.length === 0) {
-    return 'La playlist del reproductor está vacía.';
+export function obtenerPistaActivaInfo() {
+  if (typeof window !== 'undefined' && window.wiMusica?.getTrackActual) {
+    try {
+      return window.wiMusica.getTrackActual();
+    } catch (_) {}
+  }
+  const playlist = obtenerPlaylistCompleta();
+  const primera = playlist[0] || { id: 1, titulo: 'Desconocida' };
+  return { id: primera.id, titulo: primera.titulo, sonando: false };
+}
+
+/**
+ * Buscador Fuzzy con Memoria de Rotación sobre 500+ canciones
+ * Soporta "otra de love", "siguiente de pearl", palabras clave e iniciales
+ */
+export function buscarCoincidenciasMusica(query = '') {
+  const qNorm = normalizarTexto(query);
+  if (!qNorm) return [];
+
+  const playlist = obtenerPlaylistCompleta();
+  const palabrasBusqueda = qNorm.split(/\s+/).filter(w => w.length > 0 && !['otra', 'siguiente', 'cambia', 'pon', 'de', 'musica', 'cancion'].includes(w));
+  const busquedaBase = palabrasBusqueda.join(' ') || qNorm;
+
+  const esPeticionSiguiente = /otra|siguiente|cambia|mas/i.test(query);
+
+  // Si el usuario pide "otra de X" y el término coincide con la búsqueda anterior, rotar al siguiente resultado
+  if (esPeticionSiguiente && memoriaRotacion.termino && (busquedaBase.includes(memoriaRotacion.termino) || memoriaRotacion.termino.includes(busquedaBase))) {
+    if (memoriaRotacion.coincidencias.length > 0) {
+      memoriaRotacion.indiceActual = (memoriaRotacion.indiceActual + 1) % memoriaRotacion.coincidencias.length;
+      return memoriaRotacion.coincidencias;
+    }
   }
 
-  let totalCanciones = playlist.length;
-  let cancionesAEnviar = playlist;
-  let esTruncada = false;
+  // Realizar nueva búsqueda Fuzzy sobre las 500+ canciones
+  const coincidencias = playlist.map(cancion => {
+    const tNorm = normalizarTexto(cancion.titulo);
+    let puntaje = 0;
 
-  if (totalCanciones > 20) {
-    cancionesAEnviar = playlist.slice(0, 15);
-    esTruncada = true;
+    if (tNorm.startsWith(busquedaBase)) puntaje += 100;
+    else if (tNorm.includes(busquedaBase)) puntaje += 80;
+
+    palabrasBusqueda.forEach(palabra => {
+      if (tNorm.includes(palabra)) puntaje += 30;
+    });
+
+    const iniciales = tNorm.split(/\s+/).map(w => w[0]).join('');
+    if (iniciales.startsWith(busquedaBase)) puntaje += 40;
+
+    return { ...cancion, puntaje };
+  })
+  .filter(item => item.puntaje > 0)
+  .sort((a, b) => b.puntaje - a.puntaje)
+  .slice(0, 10);
+
+  // Guardar en memoria de rotación
+  memoriaRotacion = {
+    termino: busquedaBase,
+    coincidencias: coincidencias,
+    indiceActual: 0
+  };
+
+  return coincidencias;
+}
+
+/**
+ * Retorna el contexto musical en tiempo real para Gemini
+ */
+export function obtenerContextoPlaylistParaIA(textoUsuario = '') {
+  const playlist = obtenerPlaylistCompleta();
+  const pistaActiva = obtenerPistaActivaInfo();
+
+  let txt = `REPRODUCTOR DE MÚSICA EN TIEMPO REAL:\n`;
+  txt += `- PISTA REPRODUCIÉNDOSE AHORA: "${pistaActiva.titulo}" (ID ${pistaActiva.id}, Estado: ${pistaActiva.sonando ? 'Reproduciendo 🎵' : 'Pausado ⏸️'})\n`;
+  txt += `- Total de canciones en biblioteca: ${playlist.length} canciones cargadas.\n\n`;
+
+  // Limpiar texto para extraer palabras clave de búsqueda
+  const textoLimpio = textoUsuario.replace(/musica|música|cancion|canción|reproducir|play|escuchar|sonar|pone|pon|gracias|amigo/gi, '').trim();
+
+  let coincidencias = [];
+  if (textoLimpio.length >= 2) {
+    coincidencias = buscarCoincidenciasMusica(textoUsuario);
   }
 
-  let txt = `PLAYLIST DE MÚSICA CARGADA EN EL REPRODUCTOR (Total: ${totalCanciones} canciones):\n`;
-  cancionesAEnviar.forEach(c => {
-    txt += `- ID ${c.id}: "${c.titulo}" [Género: ${c.genero}, Estilo: ${c.estilo}, Tags: ${c.temas.join(', ')}]\n`;
-  });
+  if (coincidencias.length > 0) {
+    const idxSeleccionado = memoriaRotacion.indiceActual % coincidencias.length;
+    const cancionElegida = coincidencias[idxSeleccionado];
 
-  if (esTruncada) {
-    txt += `... y hay ${totalCanciones - 15} canciones más cargadas en la carpeta de música del usuario.\n`;
-    txt += `NOTA IMPORTANTE PARA TI (IA): Si el usuario te pide una canción que no está listada arriba (ej: una de sus 300+ canciones locales), puedes generar el comando [MUSIC:PLAY:Nombre de la canción o palabra clave] o [MUSIC:SEARCH:término] e intentar reproducirla. El reproductor buscará la coincidencia en todo su almacenamiento en caliente.\n`;
+    txt += `🎯 COINCIDENCIAS DE TU BÚSQUEDA EN LA BIBLIOTECA (${coincidencias.length} encontradas):\n`;
+    coincidencias.slice(0, 5).forEach((c, idx) => {
+      txt += `  ${idx === idxSeleccionado ? '👉 [SELECCIONADA ACTUALMENTE]' : '  '} ID ${c.id}: "${c.titulo}" [Género: ${c.genero}]\n`;
+    });
+
+    txt += `\nINSTRUCCIÓN PARA TI (IA):
+Responde amigablemente anunciando las primeras 2-3 palabras del título de la canción seleccionada ("${cancionElegida.titulo.split(' ').slice(0, 3).join(' ')}") y emite OBLIGATORIAMENTE el comando [MUSIC:PLAY:${cancionElegida.id}].\n`;
+  } else if (/sonando|reproduciendo|cual es|que musica|que cancion/i.test(textoUsuario)) {
+    txt += `INSTRUCCIÓN PARA TI (IA): El usuario está preguntando por la canción que suena en este momento. Dile claramente que está sonando "${pistaActiva.titulo}".\n`;
+  } else {
+    txt += `Si el usuario te pide una canción por nombre o iniciales no listada, puedes generar [MUSIC:PLAY:TérminoOId] y el reproductor la buscará en tiempo real.\n`;
   }
 
   return txt.trim();

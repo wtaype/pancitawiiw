@@ -8,6 +8,7 @@ import { wiRateLimit, Notificacion, getls, savels } from '@widev';
 import { obtenerContextoPlaylistParaIA } from './skills/dj_musica.js';
 import { obtenerContextoHorario } from './skills/leer_horario.js';
 import { obtenerContextoTiempoReal, obtenerActividadesHoyYManana, obtenerSaludoInteligente } from './lib/chatdev.js';
+import { clasificarIntencion } from './lib/intenciones.js';
 import {
   initEstadoChat,
   obtenerHistorial,
@@ -72,9 +73,10 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
   // Añadir mensaje de usuario al estado
   await agregarMensajeUser(parts);
 
-  // Clasificador de intención dinámico para acotar contexto
-  const quiereMusica = /musica|música|cancion|canción|reproducir|play|escuchar|playlist|sonar|reproductor|temas|phonk|lofi|rock|pop|género/i.test(textoUsuario);
-  const quiereAgenda = /horario|rutina|agenda|semana|calendario|hacer|tarea|actividad|mañana|hoy|lunes|martes|miércoles|jueves|viernes|sábado|domingo|pendiente/i.test(textoUsuario);
+  // Clasificación unificada de intenciones
+  const intencion = clasificarIntencion(textoUsuario, imagenesBase64);
+  const quiereMusica = intencion === 'MUSICA_CONTROL' || /musica|música|cancion|canción|reproducir|play|escuchar|playlist|sonar|reproductor|temas|phonk|lofi|rock|pop|género|pearl|love|sonando/i.test(textoUsuario);
+  const quiereAgenda = intencion === 'LECTURA_HORARIO' || /horario|rutina|agenda|semana|calendario|hacer|tarea|actividad|mañana|hoy|lunes|martes|miércoles|jueves|viernes|sábado|domingo|pendiente/i.test(textoUsuario);
 
   const apiCustomKey = getls('gemini_api_key') || null;
 
@@ -97,8 +99,8 @@ export const enviarMensaje = async (textoUsuario, imagenesBase64, onChunk) => {
     : '';
 
   const infoPlaylist = quiereMusica
-    ? obtenerContextoPlaylistParaIA()
-    : '[Música: Playlist no solicitada en este mensaje].';
+    ? obtenerContextoPlaylistParaIA(textoUsuario)
+    : '[Música: Playlist disponible para reproductor].';
 
   const systemInstruction = obtenerSystemInstruction(
     primerNombre,
