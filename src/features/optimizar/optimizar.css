@@ -5,6 +5,7 @@
   padding: 1.5rem;
   color: var(--tx, #e0e7ff);
   min-height: calc(100vh - 120px);
+  contain: layout style;
   box-sizing: border-box;
 }
 
