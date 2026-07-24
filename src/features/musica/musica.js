@@ -148,6 +148,7 @@ let combinarRutas     = estado.config?.combinarRutas ?? true;
 let combinarTodas     = estado.config?.combinarTodas ?? false;
 
 const audio = new Audio();
+audio.preload = 'none';
 audio.volume = isMuted ? 0 : volume;
 
 // Gestor de ciclo de vida: pausar sonido y enviar solicitud de cierre limpio

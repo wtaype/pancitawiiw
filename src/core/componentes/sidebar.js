@@ -22,12 +22,16 @@ export function renderSidebar() {
 }
 
 export function bindSidebarEvents(container) {
-  // Inicializar temporizadores de reloj
+  // 1. Inicializar temporizadores de reloj inmediatamente
   initRelojTimer(container);
-  
-  // Vincular eventos de música
+
+  // 2. Hidratar eventos de música en segundo plano para 0ms de congelamiento al abrir
   const musicaContainer = container.querySelector('#sidebar_musica_wrapper');
   if (musicaContainer) {
-    bindMusicaEvents(musicaContainer);
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      window.requestIdleCallback(() => bindMusicaEvents(musicaContainer), { timeout: 100 });
+    } else {
+      requestAnimationFrame(() => bindMusicaEvents(musicaContainer));
+    }
   }
 }
