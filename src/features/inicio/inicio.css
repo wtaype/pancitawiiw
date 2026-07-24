@@ -188,12 +188,40 @@
   font-weight: 600;
 }
 
+@media (max-width: 1320px) {
+  .welcome_body_split {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2.5vh;
+    padding: 2vh 0;
+  }
+  .welcome_left_side {
+    width: 100%;
+    flex: 1;
+  }
+  .welcome_right_side {
+    width: 100%;
+    min-width: 100%;
+    flex: 1;
+  }
+  .banner_bottom_bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1vh;
+  }
+  .banner_bottom_left,
+  .banner_bottom_right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 768px) {
   .welcome_body_split {
     flex-direction: column;
     align-items: stretch;
-    gap: 3vh;
-    padding: 2vh 0;
+    gap: 2vh;
+    padding: 1.5vh 0;
   }
   .welcome_right_side {
     min-width: 100%;

@@ -171,6 +171,81 @@ if (typeof window !== 'undefined') {
   }
 }
 
+// ── Sincronización Reactiva estilo YouTube (Media Session API + Eventos Nativos) ──
+function actualizarMediaSession(track) {
+  if (typeof navigator === 'undefined' || !('mediaSession' in navigator) || !track) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.titulo || 'Pista de Audio',
+      artist: track.artista || track.fecha || 'pancitawii',
+      album: carpetaActual || 'Biblioteca pancitawii',
+      artwork: [
+        { src: 'icons/128x128.png', sizes: '128x128', type: 'image/png' }
+      ]
+    });
+  } catch (err) {
+    console.warn('[MediaSession] Error metadata:', err);
+  }
+}
+
+function inicializarMediaSessionHandlers() {
+  if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.setActionHandler('play', () => {
+      const track = playlistActual[currentTrackIndex] || playlistActual[0];
+      if (track) {
+        const srcSeguro = resolverUrlPista(track);
+        if (audio.src !== srcSeguro) audio.src = srcSeguro;
+      }
+      aplicarVolumen();
+      audio.play().catch(console.warn);
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+      audio.pause();
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      const prevIdx = obtenerSiguienteIndex(false);
+      cargarYReproducir(prevIdx, true);
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      const nextIdx = obtenerSiguienteIndex(true);
+      cargarYReproducir(nextIdx, true);
+    });
+
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (details.seekTime && audio.duration) {
+        audio.currentTime = details.seekTime;
+      }
+    });
+  } catch (err) {
+    console.warn('[MediaSession] Error handlers:', err);
+  }
+}
+
+// Escuchadores de eventos nativos del elemento audio
+audio.addEventListener('play', () => {
+  isPlaying = true;
+  if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = 'playing';
+  }
+  const track = playlistActual[currentTrackIndex] || playlistActual[0];
+  if (track) actualizarMediaSession(track);
+  if (typeof refrescarUICompletaRef === 'function') refrescarUICompletaRef();
+});
+
+audio.addEventListener('pause', () => {
+  isPlaying = false;
+  if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = 'paused';
+  }
+  if (typeof refrescarUICompletaRef === 'function') refrescarUICompletaRef();
+});
+
+inicializarMediaSessionHandlers();
+
 function aplicarVolumen() {
   audio.volume = isMuted ? 0 : volume;
 }
