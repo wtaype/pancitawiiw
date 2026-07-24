@@ -92,14 +92,23 @@ function obtenerSugerenciasDinamicas(horario) {
   return [...new Set([...defaults, ...guardados])];
 }
 
+let currentCleanup = null;
+
+export function limpiar() {
+  if (currentCleanup) {
+    currentCleanup();
+    currentCleanup = null;
+  }
+}
+
 export function arrancar(container) {
   let typeSelectControl = null;
   let sugerenciasControl = null;
   let daySelectControl = null;
 
   // Limpiar listeners y timers previos si existen
-  if (container._cleanupHorario) {
-    container._cleanupHorario();
+  if (currentCleanup) {
+    currentCleanup();
   }
 
   const handleSubtabChange = (e) => {
@@ -133,8 +142,11 @@ export function arrancar(container) {
   document.addEventListener('wi_subtab_action', handleSubtabAction);
   document.addEventListener('keydown', handleKeyDown);
 
-  container._cleanupHorario = () => {
-    if (liveTimer) clearInterval(liveTimer);
+  currentCleanup = () => {
+    if (liveTimer) {
+      clearInterval(liveTimer);
+      liveTimer = null;
+    }
     document.removeEventListener('wi_subtab_change', handleSubtabChange);
     document.removeEventListener('wi_subtab_action', handleSubtabAction);
     document.removeEventListener('keydown', handleKeyDown);
@@ -151,6 +163,8 @@ export function arrancar(container) {
       daySelectControl = null;
     }
   };
+  
+  container._cleanupHorario = currentCleanup;
 
   const render = () => {
     // Destruir instancias anteriores para prevenir memory leaks

@@ -23,6 +23,7 @@ const AGENTES = RUTAS.map(r => r.href.replace('/', ''));
 
 export const rutas = {
   rutaActual: null,
+  moduloActual: null,
   cargando: false,
 
   obtenerAgente(path) {
@@ -44,6 +45,17 @@ export const rutas = {
 
     if (this.cargando) return;
     this.cargando = true;
+
+    // 0. Limpieza automática unificada del módulo anterior para liberar RAM/GPU
+    if (this.moduloActual && typeof this.moduloActual.limpiar === 'function') {
+      try {
+        this.moduloActual.limpiar();
+      } catch (errLimpieza) {
+        console.warn(`[Router] Error al ejecutar limpiar() en el módulo anterior:`, errLimpieza);
+      }
+    }
+    this.moduloActual = null;
+
     this.rutaActual = fullPath;
 
     // 1. Sincronizar el botón activo de la navegación horizontal superior
@@ -86,6 +98,7 @@ export const rutas = {
       }
 
       panel.innerHTML = '';
+      this.moduloActual = modulo;
       if (modulo.arrancar) {
         modulo.arrancar(panel);
       }

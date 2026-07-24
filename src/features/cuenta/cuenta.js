@@ -16,10 +16,19 @@ export const TABS = [
   { id: 'guardar_perfil_action', label: 'Guardar', icon: 'fa-save', position: 'right', iconOnly: true }
 ];
 
+let currentCleanup = null;
+
+export function limpiar() {
+  if (currentCleanup) {
+    currentCleanup();
+    currentCleanup = null;
+  }
+}
+
 export function arrancar(container) {
   // Limpiar listeners y timers previos
-  if (container._cleanupCuenta) {
-    container._cleanupCuenta();
+  if (currentCleanup) {
+    currentCleanup();
   }
 
   // Cargar datos actuales
@@ -207,8 +216,9 @@ export function arrancar(container) {
   cargarSubseccion('perfil');
 
   // Guardar función de limpieza
-  container._cleanupCuenta = () => {
+  currentCleanup = () => {
     document.removeEventListener('wi_subtab_change', handleSubtabChange);
     document.removeEventListener('wi_subtab_action', handleSubtabAction);
   };
+  container._cleanupCuenta = currentCleanup;
 }

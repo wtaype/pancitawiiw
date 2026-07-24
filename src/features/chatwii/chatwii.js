@@ -834,21 +834,31 @@ export async function iniciarVisualChat(containerId, persona) {
   });
 }
 
-// Punto de arranque para Pancitawii router
 import { coachPersona } from './personalidad.js';
 
+let currentCleanup = null;
+
+export function limpiar() {
+  if (currentCleanup) {
+    currentCleanup();
+    currentCleanup = null;
+  }
+}
+
 export function arrancar(container) {
-  if (container._cleanupChatWii) {
-    container._cleanupChatWii();
+  if (currentCleanup) {
+    currentCleanup();
   }
 
   iniciarVisualChat(container, coachPersona);
 
-  container._cleanupChatWii = () => {
+  currentCleanup = () => {
     if (_scrollHelper) {
       _scrollHelper.desacoplar();
+      _scrollHelper = null;
     }
     const modal = document.getElementById('chat_confirm');
     if (modal) modal.remove();
   };
+  container._cleanupChatWii = currentCleanup;
 }

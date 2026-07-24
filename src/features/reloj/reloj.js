@@ -160,3 +160,12 @@ export function initRelojTimer(container) {
     clearInterval(clockTimerId);
   };
 }
+
+let activeRelojCleanup = null;
+
+export function limpiar() {
+  if (activeRelojCleanup) {
+    activeRelojCleanup();
+    activeRelojCleanup = null;
+  }
+}

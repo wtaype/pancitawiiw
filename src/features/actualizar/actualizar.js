@@ -11,6 +11,13 @@ import './actualizar.css';
 
 let desregistrarProgreso = null;
 
+export function limpiar() {
+  if (typeof desregistrarProgreso === 'function') {
+    desregistrarProgreso();
+    desregistrarProgreso = null;
+  }
+}
+
 export function renderActualizar() {
   return `
     <div class="actualizar_container">
@@ -40,6 +47,7 @@ export function renderActualizar() {
 }
 
 export function arrancar(container) {
+  limpiar();
   container.innerHTML = renderActualizar();
   bindActualizarEvents(container);
 }

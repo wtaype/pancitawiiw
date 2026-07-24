@@ -13,10 +13,20 @@ import './inicio.css';
 let rolesTimer = null;
 let progressTimer = null;
 
+export function limpiar() {
+  if (rolesTimer) {
+    clearInterval(rolesTimer);
+    rolesTimer = null;
+  }
+  if (progressTimer) {
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
+}
+
 export function arrancar(container) {
   // Limpiar temporizadores previos si existían
-  if (rolesTimer) clearInterval(rolesTimer);
-  if (progressTimer) clearInterval(progressTimer);
+  limpiar();
 
   const hrs = new Date().getHours();
   const iconoSolLuna = hrs >= 6 && hrs < 18 ? 'fa-cloud-sun' : 'fa-moon';

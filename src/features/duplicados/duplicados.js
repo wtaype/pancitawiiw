@@ -73,9 +73,18 @@ export function getDuplicadosTabs(state) {
 // Exportación estática por defecto para el router central
 export const TABS = getDuplicadosTabs({ grupos: [], gruposFiltrados: [], paginaActual: 1, tabActiva: 'escaner', opcionesUltimas: { categoria: 'todos' } });
 
+let currentCleanup = null;
+
+export function limpiar() {
+  if (currentCleanup) {
+    currentCleanup();
+    currentCleanup = null;
+  }
+}
+
 export async function arrancar(container) {
-  if (container._cleanupDuplicados) {
-    container._cleanupDuplicados();
+  if (currentCleanup) {
+    currentCleanup();
   }
 
   // Estado local del módulo
@@ -428,7 +437,7 @@ export async function arrancar(container) {
   document.addEventListener('wi_subtab_change', handleSubtabChange);
   document.addEventListener('wi_subtab_action', handleSubtabAction);
 
-  container._cleanupDuplicados = () => {
+  currentCleanup = () => {
     document.removeEventListener('wi_subtab_change', handleSubtabChange);
     document.removeEventListener('wi_subtab_action', handleSubtabAction);
     const barra = container.querySelector('#dup_barra_acciones_root');
@@ -436,6 +445,7 @@ export async function arrancar(container) {
 
     restaurarMusicaEnSidebar();
   };
+  container._cleanupDuplicados = currentCleanup;
 }
 
 function getExtensionesPorCategoria(cat) {

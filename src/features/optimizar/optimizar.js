@@ -13,9 +13,18 @@ export const TABS = [
   { id: 'profundo', label: 'Limpieza Profunda', icon: 'fa-user-shield', position: 'left' }
 ];
 
+let currentCleanup = null;
+
+export function limpiar() {
+  if (currentCleanup) {
+    currentCleanup();
+    currentCleanup = null;
+  }
+}
+
 export async function arrancar(container) {
-  if (container._cleanupOptimizar) {
-    container._cleanupOptimizar();
+  if (currentCleanup) {
+    currentCleanup();
   }
 
   const state = {
@@ -93,8 +102,11 @@ export async function arrancar(container) {
 
   document.addEventListener('wi_subtab_change', handleSubtabChange);
 
-  container._cleanupOptimizar = () => {
+  currentCleanup = () => {
     document.removeEventListener('wi_subtab_change', handleSubtabChange);
-    if (secSaludRoot._cleanupSaludRam) secSaludRoot._cleanupSaludRam();
+    if (secSaludRoot && secSaludRoot._cleanupSaludRam) {
+      secSaludRoot._cleanupSaludRam();
+    }
   };
+  container._cleanupOptimizar = currentCleanup;
 }

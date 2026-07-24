@@ -13,10 +13,19 @@ export const TABS = [
   { id: 'terminos', label: 'Términos', icon: 'fa-file-signature', position: 'left' }
 ];
 
+let currentCleanup = null;
+
+export function limpiar() {
+  if (currentCleanup) {
+    currentCleanup();
+    currentCleanup = null;
+  }
+}
+
 export function arrancar(container) {
   // Limpiar listeners previos si existen
-  if (container._cleanupAjustes) {
-    container._cleanupAjustes();
+  if (currentCleanup) {
+    currentCleanup();
   }
 
   tabActiva = 'general';
@@ -91,8 +100,9 @@ export function arrancar(container) {
   cargarSubseccion('general');
 
   // Guardar función de limpieza
-  container._cleanupAjustes = () => {
+  currentCleanup = () => {
     document.removeEventListener('wi_subtab_change', handleSubtabChange);
     document.removeEventListener('wi_subtab_action', handleSubtabAction);
   };
+  container._cleanupAjustes = currentCleanup;
 }

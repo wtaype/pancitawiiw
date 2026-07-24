@@ -1157,3 +1157,7 @@ window.addEventListener('pancita_comando_musica_control', (e) => {
   else if (accion === 'siguiente') siguienteCancionVocal();
   else if (accion === 'anterior') anteriorCancionVocal();
 });
+
+export function limpiar() {
+  // Limpieza de interfaz de música al cambiar de vista
+}
