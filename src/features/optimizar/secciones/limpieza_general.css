@@ -1,5 +1,5 @@
 /* src/features/optimizar/secciones/limpieza_general.css */
-/* Estilos para la sección de Limpieza General de temporales y basura del sistema */
+/* Estilos para la sección de Limpieza General con Barra Maestra Marcar Todo */
 
 .opt_limpieza_gen_wrapper {
   display: flex;
@@ -42,6 +42,41 @@
   margin: 0;
   font-size: var(--fz_s4, 0.85rem);
   color: var(--tx2, #a5b4fc);
+}
+
+/* 🎛️ Barra Maestra Marcar / Desmarcar Todo */
+.opt_master_bar {
+  background: var(--glass-bg, rgba(21, 27, 46, 0.75));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--brd, #2d3a52);
+  border-radius: 1vh;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.opt_master_left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-weight: 700;
+  color: var(--tx, #e0e7ff);
+  font-size: var(--fz_m, 0.95rem);
+  cursor: pointer;
+}
+
+.opt_master_desc {
+  font-size: var(--fz_s4, 0.82rem);
+  color: var(--tx2, #a5b4fc);
+}
+
+.opt_master_total_size {
+  font-size: var(--fz_m, 0.95rem);
+  font-weight: 800;
+  color: var(--mco, #00f3ff);
 }
 
 .opt_limpieza_list {

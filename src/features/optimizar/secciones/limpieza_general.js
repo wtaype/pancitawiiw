@@ -1,5 +1,5 @@
 // src/features/optimizar/secciones/limpieza_general.js
-// Sub-Tab Limpieza General con botón Analizar, desgloses colapsados y sin inline styles
+// Sub-Tab Limpieza General con Barra Maestra Marcar Todo y Papelera como Pilar 1 descolapsado por defecto
 
 import { escanearBasuraGeneral, ejecutarLimpieza } from '../lib/api.js';
 import { renderTarjetaCategoria, bindTarjetaCategoriaEvents } from '../componentes/tarjeta_categoria.js';
@@ -10,7 +10,7 @@ import './limpieza_general.css';
 export function renderLimpiezaGeneral(container) {
   const state = {
     categorias: [],
-    seleccionadas: new Set(['pilar_temp_user', 'pilar_temp_sys', 'pilar_prefetch', 'pilar_apps_logs', 'pilar_papelera']),
+    seleccionadas: new Set(['pilar_papelera', 'pilar_temp_user', 'pilar_temp_sys', 'pilar_prefetch', 'pilar_apps_logs']),
     cargando: false
   };
 
@@ -31,6 +31,16 @@ export function renderLimpiezaGeneral(container) {
         </div>
       </div>
 
+      <!-- Barra Maestra Marcar / Desmarcar Todo -->
+      <div class="opt_master_bar">
+        <label class="opt_master_left" data-witip="Marcar o desmarcar todos los pilares">
+          <input type="checkbox" id="opt_master_chk_gen" class="opt_checkbox_cat" checked />
+          <span>Marcar Todo</span>
+        </label>
+        <div class="opt_master_desc">Inspector de los 5 Pilares Generales del Sistema</div>
+        <div class="opt_master_total_size" id="opt_master_size_gen">0 Bytes</div>
+      </div>
+
       <div id="opt_gen_list_container" class="opt_limpieza_list">
         <div class="dup_empty_state">
           <i class="fa-solid fa-spinner fa-spin"></i>
@@ -46,6 +56,8 @@ export function renderLimpiezaGeneral(container) {
   const summaryTxt = container.querySelector('#opt_gen_summary_txt');
   const btnAnalizar = container.querySelector('#opt_btn_analizar_gen');
   const btnLimpiar = container.querySelector('#opt_btn_ejecutar_gen');
+  const masterChk = container.querySelector('#opt_master_chk_gen');
+  const masterSizeTxt = container.querySelector('#opt_master_size_gen');
 
   async function analizarBasuraGeneral() {
     if (typeof wiSpin === 'function') wiSpin(btnAnalizar, true);
@@ -74,6 +86,10 @@ export function renderLimpiezaGeneral(container) {
   function renderLista() {
     if (!listContainer) return;
 
+    const totalBytes = state.categorias.reduce((acc, c) => acc + c.bytes, 0);
+    if (summaryTxt) summaryTxt.textContent = `${formatearBytes(totalBytes)} de temporales detectados listos para optimizar.`;
+    if (masterSizeTxt) masterSizeTxt.textContent = formatearBytes(totalBytes);
+
     if (state.categorias.length === 0) {
       listContainer.innerHTML = `
         <div class="dup_empty_state">
@@ -82,12 +98,8 @@ export function renderLimpiezaGeneral(container) {
           <p>Tu equipo no tiene archivos basura acumulados en los temporales.</p>
         </div>
       `;
-      if (summaryTxt) summaryTxt.textContent = '0 Bytes de archivos temporales detectados.';
       return;
     }
-
-    const totalBytes = state.categorias.reduce((acc, c) => acc + c.bytes, 0);
-    if (summaryTxt) summaryTxt.textContent = `${formatearBytes(totalBytes)} de temporales detectados listos para optimizar.`;
 
     const html = state.categorias
       .map(cat => renderTarjetaCategoria(cat, state.seleccionadas.has(cat.id)))
@@ -101,7 +113,25 @@ export function renderLimpiezaGeneral(container) {
       } else {
         state.seleccionadas.delete(catId);
       }
+
+      if (masterChk) {
+        masterChk.checked = state.seleccionadas.size === state.categorias.length;
+      }
     });
+  }
+
+  if (masterChk) {
+    masterChk.onchange = () => {
+      const checked = masterChk.checked;
+      state.categorias.forEach(cat => {
+        if (checked) {
+          state.seleccionadas.add(cat.id);
+        } else {
+          state.seleccionadas.delete(cat.id);
+        }
+      });
+      renderLista();
+    };
   }
 
   analizarBasuraGeneral();

@@ -1,11 +1,10 @@
 // src/features/optimizar/optimizar.js
-// Controlador SPA principal del módulo Optimizar (Salud RAM, Limpieza General y Limpieza Profunda)
+// Controlador SPA principal del módulo Optimizar (Salud RAM, Limpieza General y Limpieza Profunda con refresco dinámico al cambiar pestaña)
 
 import { renderSaludRam } from './secciones/salud_ram.js';
 import { renderLimpiezaGeneral } from './secciones/limpieza_general.js';
 import { renderLimpiezaProfundo } from './secciones/limpieza_profundo.js';
-import { renderMusica, bindMusicaEvents } from '@features/musica/musica.js';
-import { wiTip, savels, getls } from '@widev';
+import { wiTip } from '@widev';
 import './optimizar.css';
 
 export const TABS = [
@@ -48,7 +47,7 @@ export async function arrancar(container) {
   const secGeneralRoot = container.querySelector('#opt_sec_general_root');
   const secProfundoRoot = container.querySelector('#opt_sec_profundo_root');
 
-  // Renderizar secciones activas
+  // Carga inicial
   renderSaludRam(secSaludRoot);
   renderLimpiezaGeneral(secGeneralRoot);
   renderLimpiezaProfundo(secProfundoRoot);
@@ -73,6 +72,15 @@ export async function arrancar(container) {
           btn.classList.remove('active');
         }
       });
+    }
+
+    // ⚡ Refresco dinámico automático en tiempo real al cambiar de pestaña
+    if (subtabId === 'salud') {
+      renderSaludRam(secSaludRoot);
+    } else if (subtabId === 'general') {
+      renderLimpiezaGeneral(secGeneralRoot);
+    } else if (subtabId === 'profundo') {
+      renderLimpiezaProfundo(secProfundoRoot);
     }
   }
 

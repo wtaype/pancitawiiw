@@ -1,5 +1,5 @@
 // src/features/optimizar/secciones/limpieza_profundo.js
-// Sub-Tab Limpieza Profunda con botón Analizar, desgloses colapsados y sin inline styles
+// Sub-Tab Limpieza Profunda con Barra Maestra Marcar Todo y Papelera como Pilar 1 descolapsado por defecto
 
 import { escanearBasuraProfundo, ejecutarLimpieza } from '../lib/api.js';
 import { renderTarjetaCategoria, bindTarjetaCategoriaEvents } from '../componentes/tarjeta_categoria.js';
@@ -10,7 +10,7 @@ import './limpieza_profundo.css';
 export function renderLimpiezaProfundo(container) {
   const state = {
     categorias: [],
-    seleccionadas: new Set(['pilar_prof_5', 'pilar_prof_6', 'pilar_prof_7', 'pilar_prof_8', 'pilar_prof_9']),
+    seleccionadas: new Set(['pilar_papelera', 'pilar_prof_5', 'pilar_prof_6', 'pilar_prof_7', 'pilar_prof_8', 'pilar_prof_9']),
     cargando: false
   };
 
@@ -39,6 +39,16 @@ export function renderLimpiezaProfundo(container) {
         </div>
       </div>
 
+      <!-- Barra Maestra Marcar / Desmarcar Todo -->
+      <div class="opt_master_bar">
+        <label class="opt_master_left" data-witip="Marcar o desmarcar todos los pilares profundos">
+          <input type="checkbox" id="opt_master_chk_prof" class="opt_checkbox_cat" />
+          <span>Marcar / Desmarcar Todo</span>
+        </label>
+        <div class="opt_master_desc">Inspector de los 10 Pilares Profundos del Sistema</div>
+        <div class="opt_master_total_size" id="opt_master_size_prof">0 Bytes</div>
+      </div>
+
       <div id="opt_prof_list_container" class="opt_limpieza_list">
         <div class="dup_empty_state">
           <i class="fa-solid fa-spinner fa-spin"></i>
@@ -54,6 +64,8 @@ export function renderLimpiezaProfundo(container) {
   const summaryTxt = container.querySelector('#opt_prof_summary_txt');
   const btnAnalizar = container.querySelector('#opt_btn_analizar_prof');
   const btnLimpiar = container.querySelector('#opt_btn_ejecutar_prof');
+  const masterChk = container.querySelector('#opt_master_chk_prof');
+  const masterSizeTxt = container.querySelector('#opt_master_size_prof');
 
   async function analizarBasuraProfunda() {
     if (typeof wiSpin === 'function') wiSpin(btnAnalizar, true);
@@ -86,6 +98,10 @@ export function renderLimpiezaProfundo(container) {
   function renderLista() {
     if (!listContainer) return;
 
+    const totalBytes = state.categorias.reduce((acc, c) => acc + c.bytes, 0);
+    if (summaryTxt) summaryTxt.textContent = `${formatearBytes(totalBytes)} de cachés detectadas listos para optimizar.`;
+    if (masterSizeTxt) masterSizeTxt.textContent = formatearBytes(totalBytes);
+
     if (state.categorias.length === 0) {
       listContainer.innerHTML = `
         <div class="dup_empty_state">
@@ -94,12 +110,8 @@ export function renderLimpiezaProfundo(container) {
           <p>Los navegadores instalados se encuentran optimizados.</p>
         </div>
       `;
-      if (summaryTxt) summaryTxt.textContent = '0 Bytes de caché profunda detectados.';
       return;
     }
-
-    const totalBytes = state.categorias.reduce((acc, c) => acc + c.bytes, 0);
-    if (summaryTxt) summaryTxt.textContent = `${formatearBytes(totalBytes)} de cachés detectadas listos para optimizar.`;
 
     const html = state.categorias
       .map(cat => renderTarjetaCategoria(cat, state.seleccionadas.has(cat.id)))
@@ -113,7 +125,25 @@ export function renderLimpiezaProfundo(container) {
       } else {
         state.seleccionadas.delete(catId);
       }
+
+      if (masterChk) {
+        masterChk.checked = state.seleccionadas.size === state.categorias.length;
+      }
     });
+  }
+
+  if (masterChk) {
+    masterChk.onchange = () => {
+      const checked = masterChk.checked;
+      state.categorias.forEach(cat => {
+        if (checked) {
+          state.seleccionadas.add(cat.id);
+        } else {
+          state.seleccionadas.delete(cat.id);
+        }
+      });
+      renderLista();
+    };
   }
 
   analizarBasuraProfunda();

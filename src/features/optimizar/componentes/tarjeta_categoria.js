@@ -1,20 +1,32 @@
 // src/features/optimizar/componentes/tarjeta_categoria.js
-// Componente modular con inspección de archivos individuales sin inline styles (Estilo Duplicados)
+// Componente modular con Checkbox a la izquierda, Papelera descolapsada por defecto e inspección transparente
 
 import { formatearBytes } from '../lib/filtros_optimizar.js';
 import { obtenerEstadoInicialCheck } from '../lib/seguridad.js';
-import { wiTip, wicopy } from '@widev';
+import { vaciarPapeleraNativa } from '../lib/api.js';
+import { Mensaje, wiTip, wicopy } from '@widev';
 import './tarjeta_categoria.css';
 
 export function renderTarjetaCategoria(categoria, estaChecked, onToggleCheck) {
   const checked = estaChecked !== undefined ? estaChecked : obtenerEstadoInicialCheck(categoria);
   const esProtegida = categoria.protegida;
-  const tieneSubitems = categoria.subitems && categoria.subitems.length > 0;
+  const esPapelera = categoria.id === 'pilar_papelera';
+  const tieneSubitems = (categoria.subitems && categoria.subitems.length > 0) || (esPapelera && categoria.bytes > 0);
+  
+  // Pilar 1 (Papelera) desplegado por defecto para máxima transparencia
+  const descolapsadoPorDefecto = esPapelera;
 
   const html = `
     <div class="opt_card_categoria_wrapper" data-cat-id="${categoria.id}">
       <div class="opt_card_categoria_header">
         <div class="opt_card_left">
+          <input 
+            type="checkbox" 
+            class="opt_checkbox_cat opt_parent_checkbox" 
+            data-cat-id="${categoria.id}" 
+            ${checked ? 'checked' : ''} 
+            data-witip="${esProtegida ? 'Categoría sensible. Marca solo si deseas vaciar esta carpeta.' : 'Marcar/desmarcar todos los archivos de esta categoría'}"
+          />
           <div class="opt_card_icon">
             <i class="fa-solid ${getIconoCategoria(categoria.id)}"></i>
           </div>
@@ -29,21 +41,30 @@ export function renderTarjetaCategoria(categoria, estaChecked, onToggleCheck) {
 
         <div class="opt_card_right">
           <span class="opt_card_size">${formatearBytes(categoria.bytes)}</span>
-          <input 
-            type="checkbox" 
-            class="opt_checkbox_cat opt_parent_checkbox" 
-            data-cat-id="${categoria.id}" 
-            ${checked ? 'checked' : ''} 
-            data-witip="${esProtegida ? 'Categoría sensible. Marca solo si deseas vaciar esta carpeta.' : 'Marcar/desmarcar todos los archivos de esta categoría'}"
-          />
-          ${tieneSubitems ? '<span class="opt_chevron_toggle"><i class="fa-solid fa-chevron-down"></i></span>' : ''}
+          ${tieneSubitems ? `<span class="opt_chevron_toggle ${descolapsadoPorDefecto ? 'open' : ''}"><i class="fa-solid fa-chevron-down"></i></span>` : ''}
         </div>
       </div>
 
       ${tieneSubitems ? `
-        <div class="opt_files_tree dup_tab_hidden">
-          ${categoria.subitems.map(sub => {
+        <div class="opt_files_tree ${descolapsadoPorDefecto ? '' : 'dup_tab_hidden'}">
+          ${(categoria.subitems && categoria.subitems.length > 0) ? categoria.subitems.map(sub => {
             const archivos = sub.archivos || [];
+            if (archivos.length === 0) {
+              return `
+                <div class="opt_subitem_section">
+                  <div class="opt_subitem_header">
+                    <span class="opt_subitem_title">
+                      <i class="fa-solid ${sub.icono}"></i> ${sub.nombre}
+                    </span>
+                    <span class="opt_subitem_total_size">${formatearBytes(sub.bytes)}</span>
+                  </div>
+                  <div style="padding: 0.75rem; text-align: center; color: var(--tx2, #a5b4fc); font-size: 0.85rem;">
+                    Archivos administrados nativamente por Windows (${formatearBytes(sub.bytes)})
+                  </div>
+                </div>
+              `;
+            }
+
             return `
               <div class="opt_subitem_section">
                 <div class="opt_subitem_header">
@@ -82,7 +103,16 @@ export function renderTarjetaCategoria(categoria, estaChecked, onToggleCheck) {
                 </table>
               </div>
             `;
-          }).join('')}
+          }).join('') : `
+            <div class="opt_subitem_section" style="text-align: center; padding: 1rem 0;">
+              <i class="fa-solid fa-trash-can" style="font-size: 2rem; color: var(--mco, #00f3ff); margin-bottom: 0.5rem;"></i>
+              <h4 style="margin: 0; color: var(--tx, #e0e7ff); font-size: 0.95rem;">Papelera de Reciclaje de Windows (${formatearBytes(categoria.bytes)})</h4>
+              <p style="margin: 0.35rem 0 1rem 0; font-size: 0.82rem; color: var(--tx2, #a5b4fc);">Elementos pendientes de eliminación permanente en el sistema.</p>
+              <button class="opt_btn_papelera_rapida opt_btn_vaciar_pape_inline" style="margin: 0 auto;">
+                <i class="fa-solid fa-broom"></i> Vaciar Papelera Nativamente
+              </button>
+            </div>
+          `}
         </div>
       ` : ''}
     </div>
@@ -124,6 +154,23 @@ export function bindTarjetaCategoriaEvents(container, onToggleCheck) {
     };
   });
 
+  // Botón inline vaciar papelera nativa
+  container.querySelectorAll('.opt_btn_vaciar_pape_inline').forEach(btn => {
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      try {
+        await vaciarPapeleraNativa();
+        Mensaje('¡Papelera de Reciclaje vaciada por completo!', 'success');
+        const btnAnalizarGen = document.querySelector('#opt_btn_analizar_gen');
+        const btnAnalizarProf = document.querySelector('#opt_btn_analizar_prof');
+        if (btnAnalizarGen) btnAnalizarGen.click();
+        if (btnAnalizarProf) btnAnalizarProf.click();
+      } catch (err) {
+        Mensaje(`Error al vaciar papelera: ${err}`, 'error');
+      }
+    };
+  });
+
   // Checkbox principal (Seleccionar Todo el grupo)
   container.querySelectorAll('.opt_parent_checkbox').forEach(parentChk => {
     parentChk.onchange = () => {
@@ -141,11 +188,14 @@ export function bindTarjetaCategoriaEvents(container, onToggleCheck) {
 
 function getIconoCategoria(id) {
   switch (id) {
+    case 'pilar_papelera': return 'fa-trash-can';
     case 'pilar_temp_user': return 'fa-folder-open';
     case 'pilar_temp_sys': return 'fa-gears';
     case 'pilar_prefetch': return 'fa-bolt';
     case 'pilar_apps_logs': return 'fa-layer-group';
-    case 'pilar_papelera': return 'fa-trash-can';
+    case 'pilar_prof_2': return 'fa-folder-open';
+    case 'pilar_prof_3': return 'fa-gears';
+    case 'pilar_prof_4': return 'fa-bolt';
     case 'pilar_prof_5': return 'fa-chrome';
     case 'pilar_prof_6': return 'fa-edge';
     case 'pilar_prof_7': return 'fa-firefox-browser';
