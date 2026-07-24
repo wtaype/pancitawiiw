@@ -61,8 +61,8 @@ export function bindHeaderEvents(container) {
       if (window.__TAURI__) {
         const core = window.__TAURI__.core || window.__TAURI__.tauri;
         if (core && typeof core.invoke === 'function') {
-          core.invoke('fijar_sonrisa', { fijar: true })
-            .catch(err => console.error('Error al fijar sonrisa:', err));
+          core.invoke('toggle_smile')
+            .catch(err => console.error('Error al alternar sonrisa:', err));
         }
       }
     });

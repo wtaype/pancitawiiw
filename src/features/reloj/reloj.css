@@ -12,6 +12,7 @@
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
+  contain: layout style;
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   box-shadow:

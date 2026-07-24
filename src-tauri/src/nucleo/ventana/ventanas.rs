@@ -69,10 +69,10 @@ pub fn toggle_smile(app_handle: tauri::AppHandle) -> Result<(), String> {
 
     if main_visible {
         posicionar_sonrisa_en_monitor_activo(&main_window, &smile_window);
-        main_window.hide().map_err(|e| e.to_string())?;
         smile_window.show().map_err(|e| e.to_string())?;
         smile_window.unminimize().map_err(|e| e.to_string())?;
         smile_window.set_focus().map_err(|e| e.to_string())?;
+        main_window.hide().map_err(|e| e.to_string())?;
     } else {
         poner_pantalla_completa(&main_window);
         main_window.show().map_err(|e| e.to_string())?;
@@ -86,10 +86,10 @@ pub fn toggle_smile(app_handle: tauri::AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 pub fn fijar_sonrisa(app_handle: tauri::AppHandle, fijar: bool) -> Result<bool, String> {
-    let smile_window = app_handle.get_webview_window("smile")
-        .ok_or_else(|| "No se encontró la ventana de la sonrisa 'smile'".to_string())?;
     let main_window = app_handle.get_webview_window("main")
         .ok_or_else(|| "No se encontró la ventana principal 'main'".to_string())?;
+    let smile_window = app_handle.get_webview_window("smile")
+        .ok_or_else(|| "No se encontró la ventana de la sonrisa 'smile'".to_string())?;
 
     {
         let mut f = FIJAR_SONRISA.lock().unwrap();
