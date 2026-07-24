@@ -51,6 +51,7 @@ pub async fn descargar_cancion_youtube_interno(
     app: AppHandle,
     url: String,
     carpeta_destino: String,
+    formato: Option<String>,
 ) -> Result<PistaMusica, String> {
     let yt_dlp_path = asegurar_yt_dlp(&app).await?;
 
@@ -62,7 +63,6 @@ pub async fn descargar_cancion_youtube_interno(
     // Registrar archivos preexistentes para detectar con precisión el archivo nuevo
     let archivos_antes = obtener_lista_archivos(dest_path);
 
-    // Invocar yt-dlp directamente para descargar en formato m4a nativo de forma 100% silenciosa
     let mut cmd = Command::new(&yt_dlp_path);
     #[cfg(target_os = "windows")]
     {
@@ -70,14 +70,45 @@ pub async fn descargar_cancion_youtube_interno(
         const CREATE_NO_WINDOW: u32 = 0x08000000;
         cmd.creation_flags(CREATE_NO_WINDOW);
     }
-    let output = cmd
-        .args(&[
-            "-f", "bestaudio[ext=m4a]",
-            "-o", &format!("{}/%(title)s.%(ext)s", carpeta_destino.replace('\\', "/")),
-            &url
-        ])
-        .output()
-        .map_err(|e| format!("No se pudo ejecutar yt-dlp: {}", e))?;
+
+    let out_pattern = format!("{}/%(title)s.%(ext)s", carpeta_destino.replace('\\', "/"));
+    let fmt_str = formato.unwrap_or_else(|| "m4a".to_string()).to_lowercase();
+
+    let output = match fmt_str.as_str() {
+        "mp3_320" | "mp3" => {
+            cmd.args(&[
+                "-x",
+                "--audio-format", "mp3",
+                "--audio-quality", "320k",
+                "-o", &out_pattern,
+                &url
+            ]).output()
+        },
+        "mp3_128" => {
+            cmd.args(&[
+                "-x",
+                "--audio-format", "mp3",
+                "--audio-quality", "128k",
+                "-o", &out_pattern,
+                &url
+            ]).output()
+        },
+        "opus" => {
+            cmd.args(&[
+                "-x",
+                "--audio-format", "opus",
+                "-o", &out_pattern,
+                &url
+            ]).output()
+        },
+        _ => {
+            cmd.args(&[
+                "-f", "bestaudio[ext=m4a]",
+                "-o", &out_pattern,
+                &url
+            ]).output()
+        }
+    }.map_err(|e| format!("No se pudo ejecutar yt-dlp: {}", e))?;
 
     if !output.status.success() {
         let error_msg = String::from_utf8_lossy(&output.stderr).to_string();

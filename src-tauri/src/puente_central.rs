@@ -50,6 +50,7 @@ macro_rules! registrar_puentes {
             $crate::funciones::musica::musica::descargar_cancion_youtube_comando,
             $crate::funciones::musica::musica::escanear_carpeta_musica_comando,
             $crate::funciones::musica::musica::obtener_y_escanear_musica_sistema_comando,
+            $crate::funciones::musica::escaner_yt::escanear_lista_youtube_comando,
 
             // Puente hacia Duplicados (Escáner 3 Etapas y Papelera)
             $crate::funciones::duplicados::escaner_3etapas::duplicados_iniciar_escaner,

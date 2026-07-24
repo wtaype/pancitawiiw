@@ -4,3 +4,4 @@
 pub mod local_lista;
 pub mod youtube_lista;
 pub mod musica;
+pub mod escaner_yt;

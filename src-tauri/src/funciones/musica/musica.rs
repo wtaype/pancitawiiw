@@ -14,6 +14,7 @@ pub async fn descargar_cancion_youtube_comando(
     app: tauri::AppHandle,
     url: String,
     carpeta_destino: String,
+    formato: Option<String>,
 ) -> Result<PistaMusica, String> {
     use tauri::Manager;
     let mut final_dest = carpeta_destino;
@@ -27,7 +28,7 @@ pub async fn descargar_cancion_youtube_comando(
             final_dest = download_dir.to_string_lossy().to_string();
         }
     }
-    youtube_lista::descargar_cancion_youtube_interno(app, url, final_dest).await
+    youtube_lista::descargar_cancion_youtube_interno(app, url, final_dest, formato).await
 }
 
 #[tauri::command]
